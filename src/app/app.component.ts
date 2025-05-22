@@ -39,6 +39,11 @@ export class AppComponent {
         {
           label: 'BoK Annotation Tool',
           icon: 'pi pi-pencil',
+          url: 'https://eo4geo-bat.web.app',
+        },
+        {
+          label: 'Skill Portfolio Tool',
+          icon: 'pi pi-user',
           style: {'--p-tieredmenu-item-color': 'var(--hover-color)'},
           iconStyle: {'color': 'var(--hover-color)'}
         },

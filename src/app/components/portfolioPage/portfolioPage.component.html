@@ -1,0 +1,12 @@
+<div class="flex flex-column xl:flex-row gap-5 m-2">
+    <div class="flex flex-column xl:flex-row align-items-center">
+        <user-information class="w-full max-w-30rem" [personalInformation]="userPlaceholder.personalInformation" 
+            [hardSkills]="userPlaceholder.hardSkills" [softSkills]="userPlaceholder.softSkills"></user-information>
+        <p-divider layout="vertical" class="hidden xl:flex"/>
+        <p-divider class="flex xl:hidden"/>
+    </div>
+    <div class="flex flex-column justify-content-between">
+       TODO
+    </div>
+    <p *ngIf="!loading" class="font-italic flex mx-auto justify-content-center">No material found</p>
+</div>

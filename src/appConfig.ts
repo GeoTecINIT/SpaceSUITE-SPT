@@ -11,10 +11,10 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { Auth, getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { provideStorage, getStorage } from '@angular/fire/storage';
-import { MainPageComponent } from './app/components/mainPage/mainPage.component';
+import { PortfolioPageComponent } from './app/components/portfolioPage/portfolioPage.component';
 
 const routes: Routes = [
-    { path: '', component: MainPageComponent },
+    { path: '', component: PortfolioPageComponent },
     { path: 'profile', component: UserPageComponent, canActivate: [AuthGuard]},
     { path: 'organizations', component: OrganizationPageComponent, canActivate: [AuthGuard]},
     { path: '**', component: NotFoundPageComponent}

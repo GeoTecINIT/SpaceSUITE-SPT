@@ -1,0 +1,5 @@
+<div class="flex flex-wrap gap-2">
+    <ng-content *ngFor="let tag of tags">
+        <p-tag [class]="tag.variant == 'secondary' ? 'secondary-tag' : 'primary-tag'" [rounded]="true">{{tag.label}}</p-tag>
+    </ng-content>
+</div>

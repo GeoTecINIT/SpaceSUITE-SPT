@@ -1,0 +1,15 @@
+.primary-tag {
+    font-size: .8rem;
+    --p-tag-primary-color: white;
+    cursor: default;
+    text-decoration: none;
+    background: var(--primary-color);
+}
+
+.secondary-tag {
+    font-size: .8rem;
+    --p-tag-primary-color: white;
+    cursor: default;
+    text-decoration: none;
+    background: var(--secondary-color);
+}
