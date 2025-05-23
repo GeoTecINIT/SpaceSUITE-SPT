@@ -9,8 +9,7 @@
         <p-card [header]="event.title" [subheader]="formatDate(event.startDate, event.endDate)">
             <div>{{event.organization}}</div>
             <div>{{event.city}}, {{event.country}}</div>
-            <br>
-            <div>{{event.body}}</div>
+            <div class="text-sm mt-2">{{event.body}}</div>
         </p-card>
     </ng-template>
 </p-timeline>

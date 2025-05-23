@@ -5,13 +5,14 @@ import { Education, UserPortfolio, WorkExperience } from '../../model/userPortfo
 import { DividerModule } from 'primeng/divider';
 import { ExperienceTimelineComponent } from "../experienceTimeline/experienceTimeline.component";
 import { TimelineObject } from '../../model/timelineObject';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   standalone: true,
   selector: 'portfolio-page',
   templateUrl: './portfolioPage.component.html',
   styleUrls: ['./portfolioPage.component.css'],
-  imports: [CommonModule, UserInformationComponent, DividerModule, ExperienceTimelineComponent],
+  imports: [CommonModule, UserInformationComponent, DividerModule, ExperienceTimelineComponent, ButtonModule],
 })
 export class PortfolioPageComponent {
   public userPlaceholder: UserPortfolio = {
