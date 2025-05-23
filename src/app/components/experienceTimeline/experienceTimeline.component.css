@@ -1,0 +1,4 @@
+.custom-timeline {
+    --p-card-color: var(--primary-color);
+    --p-card-subtitle-color: var(--secondary-color)
+}

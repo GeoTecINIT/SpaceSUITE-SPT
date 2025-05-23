@@ -1,0 +1,16 @@
+<strong class="flex justify-content-center text-xl mb-4">{{title}}</strong>
+<p-timeline [value]="events" align="alternate" class="custom-timeline">
+    <ng-template #marker let-event>
+        <span class="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle bg-primary">
+            <i class="pi pi-briefcase"></i>
+        </span>
+    </ng-template>
+    <ng-template #content let-event>
+        <p-card [header]="event.title" [subheader]="formatDate(event.startDate, event.endDate)">
+            <div>{{event.organization}}</div>
+            <div>{{event.city}}, {{event.country}}</div>
+            <br>
+            <div>{{event.body}}</div>
+        </p-card>
+    </ng-template>
+</p-timeline>

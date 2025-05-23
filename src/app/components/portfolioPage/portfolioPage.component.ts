@@ -1,18 +1,19 @@
 import { CommonModule } from '@angular/common';
 import {Component} from '@angular/core';
 import { UserInformationComponent } from "../userInformation/userInformation.component";
-import { UserPortfolio } from '../../model/userPortfolio';
+import { Education, UserPortfolio, WorkExperience } from '../../model/userPortfolio';
 import { DividerModule } from 'primeng/divider';
+import { ExperienceTimelineComponent } from "../experienceTimeline/experienceTimeline.component";
+import { TimelineObject } from '../../model/timelineObject';
 
 @Component({
   standalone: true,
   selector: 'portfolio-page',
   templateUrl: './portfolioPage.component.html',
   styleUrls: ['./portfolioPage.component.css'],
-  imports: [CommonModule, UserInformationComponent, DividerModule],
+  imports: [CommonModule, UserInformationComponent, DividerModule, ExperienceTimelineComponent],
 })
 export class PortfolioPageComponent {
-  public loading = true;
   public userPlaceholder: UserPortfolio = {
     personalInformation: {
       fullName: 'Alex Morgan',
@@ -104,4 +105,35 @@ export class PortfolioPageComponent {
       }
     ]
   }
+
+  public workExperienceToTimelineObject(experienceArray: WorkExperience[]): TimelineObject[] {
+    return experienceArray.map( experience => {
+      const newObject: TimelineObject = {
+        title: experience.jobTitle,
+        startDate: experience.startDate,
+        endDate: experience.endDate,
+        organization: experience.employer,
+        city: experience.city,
+        country: experience.country,
+        body: experience.responsibilities.join(', ')
+      }
+      return newObject;
+    })
+  }
+
+  public educationToTimelineObject(experienceArray: Education[]): TimelineObject[] {
+    return experienceArray.map( experience => {
+      const newObject: TimelineObject = {
+        title: experience.qualification,
+        startDate: experience.startDate,
+        endDate: experience.endDate,
+        organization: experience.institution,
+        city: experience.city,
+        country: experience.country,
+        body: experience.subjects.join(', ')
+      }
+      return newObject;
+    })
+  }
+
 }

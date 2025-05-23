@@ -12,7 +12,7 @@
             (click)="copyToClipboard(personalInformation?.phone!, 'phone number')" pTooltip="{{personalInformation?.phone}}" tooltipPosition="bottom"></p-button>
     </div>
     <strong>About me</strong>
-    <div class="text-sm text-justify my-2">{{personalInformation?.profileSummary}}</div>
+    <div class="text-sm text-justify mt-2 mb-3">{{personalInformation?.profileSummary}}</div>
     <strong>Skills</strong>
     <skill-tags class="my-2" style="padding-top: 0.2rem;" [tags]="skillChips"></skill-tags>
 </div>

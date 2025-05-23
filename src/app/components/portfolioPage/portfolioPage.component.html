@@ -1,12 +1,15 @@
 <div class="flex flex-column xl:flex-row gap-5 m-2">
     <div class="flex flex-column xl:flex-row align-items-center">
-        <user-information class="w-full max-w-30rem" [personalInformation]="userPlaceholder.personalInformation" 
+        <user-information class="w-full max-w-28rem mb-auto" [personalInformation]="userPlaceholder.personalInformation" 
             [hardSkills]="userPlaceholder.hardSkills" [softSkills]="userPlaceholder.softSkills"></user-information>
         <p-divider layout="vertical" class="hidden xl:flex"/>
         <p-divider class="flex xl:hidden"/>
     </div>
-    <div class="flex flex-column justify-content-between">
-       TODO
+    <div class="flex flex-1 flex-column align-items-center my-4 gap-6">
+        <experience-timeline [events]="workExperienceToTimelineObject(userPlaceholder.workExperience)" title="Experience" class="w-full"></experience-timeline>
+        <experience-timeline [events]="educationToTimelineObject(userPlaceholder.educationAndTraining)" title="Education" class="w-full"></experience-timeline> 
     </div>
-    <p *ngIf="!loading" class="font-italic flex mx-auto justify-content-center">No material found</p>
+    <div class="my-4 mr-5">
+        <p class="font-italic p-0 m-0">No material found</p>
+    </div>
 </div>
