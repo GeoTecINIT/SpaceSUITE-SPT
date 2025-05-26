@@ -1,4 +1,20 @@
 .custom-timeline {
     --p-card-color: var(--primary-color);
-    --p-card-subtitle-color: var(--secondary-color)
+    --p-card-subtitle-color: var(--secondary-color);
+}
+
+::ng-deep .aligned-timeline .p-timeline-event-content {
+    padding-bottom: 1rem !important;
+}
+
+::ng-deep .aligned-timeline .p-timeline-event-opposite {
+    display: none !important;
+}
+
+a {
+    color: var(--secondary-color);
+}
+
+a:hover {
+    color: var(--hover-color);
 }

@@ -8,7 +8,6 @@ export class UserPortfolio {
   projects: Project[];
   certifications: Certification[];
   interests: string[];
-  references: Reference[];
 
   constructor() {
     this.personalInformation = new PersonalInformation();
@@ -20,7 +19,6 @@ export class UserPortfolio {
     this.projects = [];
     this.certifications = [];
     this.interests = [];
-    this.references = [];
   }
 }
 
@@ -41,6 +39,7 @@ export class WorkExperience {
   city: string = '';
   country: string = '';
   responsibilities: string[] = [];
+  description: string = '';
 }
 
 export class Education {
@@ -51,13 +50,12 @@ export class Education {
   city: string = '';
   country: string = '';
   subjects: string[] = [];
+  description: string = '';
 }
 
 export class LanguageSkill {
   language: string = '';
-  understanding: CEFRLevel = 'A1';
-  speaking: CEFRLevel = 'A1';
-  writing: CEFRLevel = 'A1';
+  level: CEFRLevel = 'A1';
 }
 
 export type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
@@ -75,15 +73,4 @@ export class Certification {
   name: string = '';
   issuer: string = '';
   issueDate: string = '';
-  expiryDate?: string;
-  credentialId?: string;
-  credentialUrl?: string;
-}
-
-export class Reference {
-  name: string = '';
-  position: string = '';
-  organization: string = '';
-  email?: string;
-  phone?: string;
 }

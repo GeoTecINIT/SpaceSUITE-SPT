@@ -12,4 +12,5 @@ import { Tag } from '../../model/tag'
 })
 export class SkillTagComponent {
   @Input() tags: Tag[] = [];
+  @Input() reverse: boolean = true;
 }

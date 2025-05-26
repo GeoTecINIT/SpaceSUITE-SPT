@@ -1,15 +1,29 @@
 <strong class="flex justify-content-center text-xl mb-4">{{title}}</strong>
-<p-timeline [value]="events" align="alternate" class="custom-timeline">
-    <ng-template #marker let-event>
-        <span class="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle bg-primary">
-            <i class="pi pi-briefcase"></i>
-        </span>
-    </ng-template>
-    <ng-template #content let-event>
-        <p-card [header]="event.title" [subheader]="formatDate(event.startDate, event.endDate)">
-            <div>{{event.organization}}</div>
-            <div>{{event.city}}, {{event.country}}</div>
-            <div class="text-sm mt-2">{{event.body}}</div>
-        </p-card>
-    </ng-template>
-</p-timeline>
+<div #timeline>
+    <p-timeline [value]="events" [align]="smallScreen ? 'left' : 'alternate'" [class]="smallScreen ? 'custom-timeline aligned-timeline' : 'custom-timeline'">
+        <ng-template #marker let-event>
+            <span class="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle bg-primary">
+                <i class="pi pi-briefcase"></i>
+            </span>
+        </ng-template>
+        <ng-template #content let-event>
+            <p-card [header]="event.title" [subheader]="formatDate(event.startDate, event.endDate)">
+                <div *ngIf="event.organization"><i class="pi pi-building-columns mr-2"></i>{{event.organization}}</div>
+                <div *ngIf="event.city && event.country"><i class="pi pi-map-marker mr-2"></i>{{event.city}}, {{event.country}}</div>
+                <div class="flex flex-column gap-1">
+                    <div>
+                        <div *ngIf="showDetail[events.indexOf(event)] && event.body" class="text-sm">{{event.body}}</div>
+                        <a *ngIf="showDetail[events.indexOf(event)] && event.source" [href]="event.source" class="text-sm">{{event.source}}</a>
+                    </div>
+                    <div *ngIf="showDetail[events.indexOf(event)] && event.subjects && event.subjects.length > 0" class="my-2">
+                        <skill-tags class="w-full" [tags]="event.subjects" [reverse]="events.indexOf(event) % 2 == 0"></skill-tags>
+                    </div>
+                    <a *ngIf="event.body || event.source || event.subjects" class="text-sm" style="cursor: pointer;" 
+                        (click)="showDetail[events.indexOf(event)] = !showDetail[events.indexOf(event)]">
+                        {{showDetail[events.indexOf(event)] ? 'Collapse' : 'Show Detail'}}
+                    </a>
+                </div>
+            </p-card>
+        </ng-template>
+    </p-timeline>
+</div>
