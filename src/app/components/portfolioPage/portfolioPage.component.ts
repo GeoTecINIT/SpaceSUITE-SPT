@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common';
 import {Component} from '@angular/core';
 import { UserInformationComponent } from "../userInformation/userInformation.component";
-import { PortfolioItem, UserPortfolio } from '../../model/userPortfolio';
+import { UserPortfolio } from '../../model/userPortfolio';
 import { DividerModule } from 'primeng/divider';
 import { ExperienceTimelineComponent } from "../experienceTimeline/experienceTimeline.component";
 import { ButtonModule } from 'primeng/button';
-import { Tag } from '../../model/tag';
 
 @Component({
   standalone: true,
@@ -39,7 +38,7 @@ export class PortfolioPageComponent {
           'Accessibility auditing', 'Agile methodologies', 'Code reviews',
           'Team leadership', 'Mentoring'
         ],
-        bokConcepts: ['GIST', 'AM1', 'PP'],
+        bokConcepts: ['WB', 'WB6', 'WB1', 'WB1-3', 'WB7'],
         description: undefined,
         link: undefined
       },
@@ -56,7 +55,7 @@ export class PortfolioPageComponent {
         softSkills: [
           'Agile methodologies', 'Accessibility auditing', 'Feature definition'
         ],
-        bokConcepts: ['GIST', 'AM1', 'PP'],
+        bokConcepts: ['WB1', 'WB1-3', 'WB7', 'WB7-2'],
         description: undefined,
         link: undefined
       }
@@ -75,7 +74,7 @@ export class PortfolioPageComponent {
         softSkills: [
           'Agile methodologies', 'UX design', 'Accessibility auditing'
         ],
-        bokConcepts: ['GIST', 'AM1', 'PP'],
+        bokConcepts: ['WB1', 'WB1-3', 'WB7', 'WB7-2', 'WB7-3', 'GC4', 'GC3', 'GC3-12', 'IP3-4-7', 'DA4'],
         description: undefined,
         link: undefined
       }
@@ -92,7 +91,7 @@ export class PortfolioPageComponent {
         endDate: undefined,
         hardSkills: ['React', 'Firebase', 'Tailwind CSS', 'GitHub Actions', 'CI/CD'],
         softSkills: ['Accessibility auditing'],
-        bokConcepts: ['GIST', 'AM1', 'PP'],
+        bokConcepts: ['WB1', 'WB1-3', 'WB7', 'WB7-2', 'DA4'],
         description: 'An open-source learning management system for community colleges.',
         link: 'https://github.com/alexmorgan/openedu',
         city: undefined,
@@ -105,7 +104,7 @@ export class PortfolioPageComponent {
         endDate: undefined,
         hardSkills: ['Vue.js', 'SCSS', 'Storybook'],
         softSkills: ['Accessibility auditing', 'UX design'],
-        bokConcepts: ['GIST', 'AM1', 'PP'],
+        bokConcepts: ['WB7', 'WB7-3'],
         description: 'A set of tools and components for building accessible UIs.',
         link: 'https://alexmorgan.dev/inclusivedesign',
         city: undefined,
@@ -122,7 +121,7 @@ export class PortfolioPageComponent {
         country: undefined,
         hardSkills: [],
         softSkills: ['Accessibility auditing'],
-        bokConcepts: ['GIST', 'AM1', 'PP'],
+        bokConcepts: [],
         description: 'Accessibility auditing, Inclusive design',
         link: undefined
       }
