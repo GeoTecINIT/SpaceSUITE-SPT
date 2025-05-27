@@ -13,3 +13,22 @@
     text-decoration: none;
     background: var(--secondary-color);
 }
+
+.bok-tag {
+    font-size: .8rem;
+    --p-tag-primary-color: var(--primary-color);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.bok-tag:hover {
+    --p-tag-primary-color: white;
+}
+
+::ng-deep .custom-p-tooltip-text {
+    --p-tooltip-background: var(--danger-color) !important;
+}
+
+::ng-deep .p-tooltip {
+    --p-tooltip-background: var(--primary-color);
+}

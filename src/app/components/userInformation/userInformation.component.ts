@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import {Component, Input} from '@angular/core';
-import { LanguageSkill, PersonalInformation, UserPortfolio } from '../../model/userPortfolio';
+import { LanguageSkill, UserPortfolio } from '../../model/userPortfolio';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast'
 import { SkillTagComponent } from "../skillTags/skillTags.component";
 import { Tag, Variant } from '../../model/tag';
 import { MessageService } from 'primeng/api';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   standalone: true,
@@ -19,8 +20,38 @@ import { MessageService } from 'primeng/api';
 export class UserInformationComponent {
   @Input() userPortfolio: UserPortfolio | undefined;
 
+  hardSkills: Tag[] = [];
+  softSkills: Tag[] = [];
+  languages: Tag[] = [];
+  interests: Tag[] = [];
 
-  constructor(private messageService: MessageService) {}
+  constructor(private messageService: MessageService, private utilsService: UtilsService) {}
+
+  ngOnInit() {
+    const hardSkillsSet = new Set<string>();
+    const softSkillsSet = new Set<string>();
+
+    this.userPortfolio?.certifications.forEach( certification => {
+      certification.hardSkills?.forEach( value => hardSkillsSet.add(value));
+      certification.softSkills?.forEach( value => softSkillsSet.add(value));
+    })
+    this.userPortfolio?.educationAndTraining.forEach( education => {
+      education.hardSkills?.forEach( value => hardSkillsSet.add(value));
+      education.softSkills?.forEach( value => softSkillsSet.add(value));
+    })
+    this.userPortfolio?.projects.forEach( project => {
+      project.hardSkills?.forEach( value => hardSkillsSet.add(value));
+      project.softSkills?.forEach( value => softSkillsSet.add(value));
+    })
+    this.userPortfolio?.workExperience.forEach( experience => {
+      experience.hardSkills?.forEach( value => hardSkillsSet.add(value));
+      experience.softSkills?.forEach( value => softSkillsSet.add(value));
+    })
+    this.hardSkills = this.utilsService.stringToTag(Array.from(hardSkillsSet));
+    this.softSkills = this.utilsService.stringToTag(Array.from(softSkillsSet), 'secondary');
+    this.languages = this.utilsService.stringToTag((this.userPortfolio?.languageSkills ?? []).map(value => `${value.language}: ${value.level}`));
+    this.interests = this.utilsService.stringToTag((this.userPortfolio?.interests ?? []), 'secondary')
+  }
 
   copyToClipboard(value: string, field: string) {
     navigator.clipboard.writeText(value);
@@ -31,13 +62,5 @@ export class UserInformationComponent {
       life: 3000, 
       closable: true 
     });
-  }
-
-  stringToTag(values: string[], variant?: Variant): Tag[] {
-    return values.map(skill => new Tag(skill, variant ?? undefined))
-  }
-
-  languageTags(skills: LanguageSkill[]): Tag[] {
-    return this.stringToTag(skills.map(value => `${value.language}: ${value.level}`));
   }
 }

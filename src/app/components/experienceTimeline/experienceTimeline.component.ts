@@ -1,9 +1,10 @@
-import {ChangeDetectorRef, Component, ElementRef, HostListener, Input, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, Input, ViewChild} from '@angular/core';
 import { Timeline } from 'primeng/timeline';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
-import { TimelineObject } from '../../model/timelineObject';
 import { SkillTagComponent } from "../skillTags/skillTags.component";
+import { PortfolioItem } from '../../model/userPortfolio';
+import { Tag, Variant } from '../../model/tag';
 
 @Component({
   standalone: true,
@@ -14,7 +15,7 @@ import { SkillTagComponent } from "../skillTags/skillTags.component";
 })
 export class ExperienceTimelineComponent {
   @Input() title: string = ''
-  @Input() events: TimelineObject[] = []
+  @Input() events: PortfolioItem[] = []
 
   showDetail: boolean[] = [];
 
@@ -32,6 +33,10 @@ export class ExperienceTimelineComponent {
   formatDate(startDate: string, endDate: string) {
       return startDate + (endDate ? ' to ' + endDate : '')
   }
+
+  stringToTag(values: string[], variant?: Variant): Tag[] {
+      return values.map(skill => new Tag(skill, variant ?? undefined))
+    }
 
   ngAfterViewInit(): void {
     this.resizeObserver = new ResizeObserver(entries => {

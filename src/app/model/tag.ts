@@ -8,4 +8,4 @@ export class Tag {
     }
 }
 
-export type Variant = 'primary' | 'secondary';
+export type Variant = 'primary' | 'secondary' | 'bok';

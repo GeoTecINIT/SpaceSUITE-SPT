@@ -6,11 +6,11 @@
     </div>
     <div class="flex flex-1 flex-column xl:flex-row my-4 gap-2">
         <div class="flex flex-1 flex-column align-items-center gap-6">
-            <experience-timeline [events]="getExperienceTimeline(userPlaceholder.workExperience)" title="Experience" class="w-full"></experience-timeline>
-            <experience-timeline [events]="getProjectTimeline(userPlaceholder.projects)" title="Projects" class="w-full"></experience-timeline>
-            <experience-timeline [events]="getEducationTimeline(userPlaceholder.educationAndTraining, userPlaceholder.certifications)" title="Education" class="w-full"></experience-timeline>
+            <experience-timeline [events]="userPlaceholder.workExperience" title="Experience" class="w-full"></experience-timeline>
+            <experience-timeline [events]="userPlaceholder.projects" title="Projects" class="w-full"></experience-timeline>
+            <experience-timeline [events]="userPlaceholder.certifications.concat(userPlaceholder.educationAndTraining)" title="Education" class="w-full"></experience-timeline>
         </div>
-        <div class="flex xl:flex-column justify-content-center xl:justify-content-start xl:align-items-center gap-2 px-4 mr-2">
+        <div class="flex xl:flex-column justify-content-center xl:justify-content-start xl:align-items-center gap-2 px-4 mr-2 pt-4 xl:pt-0">
             <p-button class="custom-button" size="small" icon="pi pi-file" label="Document"></p-button>
             <p-button class="custom-button" size="small" icon="pi pi-pencil" label="Edit"></p-button>
             <p-button class="custom-button" size="small" icon="pi pi-share-alt" label="Share"></p-button>
