@@ -31,12 +31,12 @@ export class ExperienceTimelineComponent {
   }
 
   formatDate(startDate: string, endDate: string) {
-      return startDate + (endDate ? ' to ' + endDate : '')
+    return startDate + (endDate ? ' to ' + endDate : '')
   }
 
   stringToTag(values: string[], variant?: Variant): Tag[] {
-      return values.map(skill => new Tag(skill, variant ?? undefined))
-    }
+    return values.map(skill => new Tag(skill, variant ?? undefined))
+  }
 
   ngAfterViewInit(): void {
     this.resizeObserver = new ResizeObserver(entries => {
@@ -54,6 +54,7 @@ export class ExperienceTimelineComponent {
       this.resizeObserver.observe(this.containerDiv.nativeElement);
     }
   }
+  
   ngOnDestroy(): void {
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();

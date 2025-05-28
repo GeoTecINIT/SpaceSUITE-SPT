@@ -1,0 +1,17 @@
+<div #timeline class="my-4" style="margin-left: 12rem; margin-right: 12rem;">
+    <p-timeline [value]="timelineContent" [align]="smallScreen ? 'left' : 'alternate'" [class]="smallScreen ? 'custom-timeline aligned-timeline' : 'custom-timeline'">
+        <ng-template #marker let-event>
+            <span class="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle bg-primary">
+                <i class="pi pi-lightbulb"></i>
+            </span>
+        </ng-template>
+        <ng-template #content let-event>
+            <p-card [header]="event.title" [subheader]="event.subtitle">
+                <div *ngFor="let description of event.description" class="text-sm mb-2">{{description}}</div>
+            </p-card>
+        </ng-template>
+        <ng-template #opposite let-event>
+            <skill-tags></skill-tags>
+        </ng-template>
+    </p-timeline>
+</div>
