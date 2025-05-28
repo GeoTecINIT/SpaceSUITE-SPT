@@ -7,7 +7,10 @@
             </span>
         </ng-template>
         <ng-template #content let-event>
-            <p-card [header]="event.title" [subheader]="formatDate(event.startDate, event.endDate)">
+            <p-card [header]="event.title">
+                <ng-template #subtitle>
+                    <div class="font-italic">{{formatDate(event.startDate, event.endDate)}}</div>
+                </ng-template>
                 <div *ngIf="event.organization"><i class="pi pi-building-columns mr-2"></i>{{event.organization}}</div>
                 <div *ngIf="event.city && event.country"><i class="pi pi-map-marker mr-2"></i>{{event.city}}, {{event.country}}</div>
                 <div class="flex flex-column gap-1">

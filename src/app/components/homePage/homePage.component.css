@@ -1,6 +1,6 @@
 .custom-timeline {
     --p-card-color: var(--primary-color);
-    --p-card-subtitle-color: var(--secondary-color);
+    --p-card-subtitle-color: var(--primary-color);
 }
 
 ::ng-deep .aligned-timeline .p-timeline-event-content {
