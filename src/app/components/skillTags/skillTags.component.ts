@@ -16,7 +16,7 @@ import { TooltipModule } from 'primeng/tooltip';
 })
 export class SkillTagComponent {
   @Input() tags: Tag[] = [];
-  @Input() reverse: boolean = false;
+  @Input() direction: Direction = 'original';
 
   constructor(private bokInfo: BokInformationService, private utilsService: UtilsService) {}
 
@@ -41,4 +41,11 @@ export class SkillTagComponent {
   onClickConcept(code: string) {
     window.open('https://bok.eo4geo.eu/' + code);
   }
+
+  getStyleClass() {
+    if (this.direction == 'center') return 'flex flex-wrap gap-3 align-items-center justify-content-center'
+    return this.direction == 'reverse' ? 'flex flex-wrap gap-2 flex-row-reverse' : 'flex flex-wrap gap-2'
+  }
 }
+
+export type Direction = 'original' | 'center' | 'reverse';

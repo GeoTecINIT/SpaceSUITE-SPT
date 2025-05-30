@@ -4,6 +4,8 @@ import { ButtonModule } from "primeng/button";
 import { Timeline } from 'primeng/timeline';
 import { CardModule } from 'primeng/card';
 import { SkillTagComponent } from "../skillTags/skillTags.component";
+import { Router } from "@angular/router";
+import { FirebaseService } from "../../services/firebase.service";
 
 @Component({
   standalone: true,
@@ -24,28 +26,78 @@ export class HomePageComponent {
       description: ['Traditional resumes often hide your true potential.',
                     'With our tool, recruiters and partners see exactly what you bring to the table, skill by skill.'],
       icon: 'pi pi-info-circle',
-      skills: []
+      skills: [
+                { label: 'Cybersecurity', variant: 'primary' },
+                { label: 'Problem-solving', variant: 'secondary' },
+                { label: 'Python', variant: 'primary' },
+                { label: 'Thinking', variant: 'secondary' },
+                { label: 'RTK', variant: 'primary' },
+                { label: 'Teamwork', variant: 'secondary' },
+                { label: 'Cloud', variant: 'primary' },
+                { label: 'Communication', variant: 'secondary' },
+                { label: 'Git', variant: 'primary' },
+                { label: 'Mentoring', variant: 'secondary' },
+                { label: 'Docker', variant: 'primary' },
+                { label: 'Leadership', variant: 'secondary' },
+                { label: 'SatCom', variant: 'primary' },
+                { label: 'Adaptability', variant: 'secondary' },
+                { label: 'QGIS', variant: 'primary' },
+                { label: 'Analysis', variant: 'secondary' },
+                { label: 'GNSS', variant: 'primary' },
+                { label: 'Detailing', variant: 'secondary' },
+                { label: 'ArcGIS', variant: 'primary' },
+              ]
     },
     {
       title: 'One Profile. Endless Possibilities',
       subtitle: 'Plan your growth',
       description: ['Your Skill Portfolio isn’t just a record, it’s a living asset in a connected ecosystem.',
-                    'Everything stays in sync as you grow, ensuring your profile evolves with your career goals.'],
+                    'Follow your personalized learning path and reach your career goals.'],
       icon: 'pi pi-user',
-      skills: []
+      skills: [
+                { label: 'Networking', variant: 'primary' },
+                { label: 'Creativity', variant: 'secondary' },
+                { label: 'SQL', variant: 'primary' },
+                { label: 'Focus', variant: 'secondary' },
+                { label: 'Kubernetes', variant: 'primary' },
+                { label: 'Empathy', variant: 'secondary' },
+                { label: 'VSAT', variant: 'primary' },
+                { label: 'Curiosity', variant: 'secondary' },
+                { label: 'PostGIS', variant: 'primary' },
+                { label: 'Decision-making', variant: 'secondary' },
+                { label: 'CI/CD', variant: 'primary' },
+                { label: 'Patience', variant: 'secondary' },
+                { label: 'GeoJSON', variant: 'primary' },
+                { label: 'Collaboration', variant: 'secondary' },
+                { label: 'NMEA', variant: 'primary' },
+                { label: 'Responsibility', variant: 'secondary' },
+                { label: 'Remote sensing', variant: 'primary' },
+              ]
     },
     {
       title: 'Ready to Unlock Your Potential?',
       subtitle: 'Log in to start building your Skill Portfolio',
       description: ['Your profile stays private, secure, and always in your control.',
-                    'Already have an account? Great, just log in and pick up where you left off.',
-                    'New here? Sign up and take the first step toward a smarter, skill-based future.'],
+                    'Use your portfolio in other applications of our ecosystem by logging in to them.'],
       icon: 'pi pi-sign-in',
-      skills: []
+      skills: [
+          { label: 'Multi-GNSS', variant: 'primary' },
+          { label: 'Problem analysis', variant: 'secondary' },
+          { label: 'Carrier-phase', variant: 'primary' },
+          { label: 'Accountability', variant: 'secondary' },
+          { label: 'Signal acquisition', variant: 'primary' },
+          { label: 'Precision under pressure', variant: 'secondary' },
+          { label: 'SatNav algorithms', variant: 'primary' },
+          { label: 'Structured thinking', variant: 'secondary' },
+          { label: 'Downlink systems', variant: 'primary' },
+          { label: 'Initiative', variant: 'secondary' },
+          { label: 'Satellite tracking', variant: 'primary' },
+          { label: 'Knowledge sharing', variant: 'secondary' },
+        ]
     }
   ]
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  constructor(private cdRef: ChangeDetectorRef, private router: Router, private firebase: FirebaseService) {}
 
   ngAfterViewInit(): void {
     this.resizeObserver = new ResizeObserver(entries => {
@@ -68,5 +120,13 @@ export class HomePageComponent {
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
     }
+  }
+
+  goToPortfolio() {
+    this.router.navigate(['portfolio'])
+  }
+
+  isLogged(): boolean {
+    return this.firebase.userId != '';
   }
 }

@@ -3,6 +3,11 @@
     --p-card-subtitle-color: var(--primary-color);
 }
 
+::ng-deep .custom-timeline .p-timeline-event-opposite {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
 ::ng-deep .aligned-timeline .p-timeline-event-content {
     padding-bottom: 1rem !important;
 }
@@ -21,4 +26,30 @@ a:hover {
 
 ::ng-deep .p-card {
   border: 1px solid #e2e8f0 !important;
+}
+
+.custom-margin {
+    margin-left: 18rem !important; 
+    margin-right: 18rem !important;
+}
+
+@media screen and (max-width: 1850px) {
+  .custom-margin {
+    margin-left: 12rem !important; 
+    margin-right: 12rem !important;
+  }
+}
+
+@media screen and (max-width: 1450px) {
+  .custom-margin {
+    margin-left: 6rem !important; 
+    margin-right: 6rem !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .custom-margin {
+    margin-left: 2rem !important; 
+    margin-right: 2rem !important;
+  }
 }

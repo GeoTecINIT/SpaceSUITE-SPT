@@ -15,6 +15,7 @@ import { Tag, Variant } from '../../model/tag';
 })
 export class ExperienceTimelineComponent {
   @Input() title: string = ''
+  @Input() icon: string = ''
   @Input() events: PortfolioItem[] = []
 
   showDetail: boolean[] = [];
