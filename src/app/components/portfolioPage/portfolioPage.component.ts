@@ -5,6 +5,9 @@ import { UserPortfolio } from '../../model/userPortfolio';
 import { DividerModule } from 'primeng/divider';
 import { ExperienceTimelineComponent } from "../experienceTimeline/experienceTimeline.component";
 import { ButtonModule } from 'primeng/button';
+import { FirebaseService } from '../../services/firebase.service';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -128,5 +131,19 @@ export class PortfolioPageComponent {
     ],
     interests: ['Open source', 'UX design', 'Inclusive education', 'Cycling']
   };
+
+  private loggedSubscription!: Subscription;
+
+  constructor(private firebaseService: FirebaseService, private router: Router){
+    this.loggedSubscription = this.firebaseService.logged$.asObservable().subscribe( logged => {
+      if (!logged) {
+        this.router.navigate(['']);
+      }
+    })
+  }
+
+  ngOnDestroy() {
+    this.loggedSubscription?.unsubscribe();
+  }
 
 }
