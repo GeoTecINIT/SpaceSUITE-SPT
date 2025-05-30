@@ -20,6 +20,7 @@ import { UtilsService } from '../../services/utils.service';
 export class UserInformationComponent {
   @Input() userPortfolio: UserPortfolio | undefined;
 
+  bokConcepts: Tag[] = [];
   hardSkills: Tag[] = [];
   softSkills: Tag[] = [];
   languages: Tag[] = [];
@@ -30,23 +31,29 @@ export class UserInformationComponent {
   ngOnInit() {
     const hardSkillsSet = new Set<string>();
     const softSkillsSet = new Set<string>();
+    const bokConceptsSet= new Set<string>();
 
     this.userPortfolio?.certifications.forEach( certification => {
       certification.hardSkills?.forEach( value => hardSkillsSet.add(value));
       certification.softSkills?.forEach( value => softSkillsSet.add(value));
+      certification.bokConcepts?.forEach( value => bokConceptsSet.add(value));
     })
     this.userPortfolio?.educationAndTraining.forEach( education => {
       education.hardSkills?.forEach( value => hardSkillsSet.add(value));
       education.softSkills?.forEach( value => softSkillsSet.add(value));
+      education.bokConcepts?.forEach( value => bokConceptsSet.add(value));
     })
     this.userPortfolio?.projects.forEach( project => {
       project.hardSkills?.forEach( value => hardSkillsSet.add(value));
       project.softSkills?.forEach( value => softSkillsSet.add(value));
+      project.bokConcepts?.forEach( value => bokConceptsSet.add(value));
     })
     this.userPortfolio?.workExperience.forEach( experience => {
       experience.hardSkills?.forEach( value => hardSkillsSet.add(value));
       experience.softSkills?.forEach( value => softSkillsSet.add(value));
+      experience.bokConcepts?.forEach( value => bokConceptsSet.add(value));
     })
+    this.bokConcepts = this.utilsService.stringToTag(Array.from(bokConceptsSet).sort(), 'bok');
     this.hardSkills = this.utilsService.stringToTag(Array.from(hardSkillsSet));
     this.softSkills = this.utilsService.stringToTag(Array.from(softSkillsSet), 'secondary');
     this.languages = this.utilsService.stringToTag((this.userPortfolio?.languageSkills ?? []).map(value => `${value.language}: ${value.level}`));
