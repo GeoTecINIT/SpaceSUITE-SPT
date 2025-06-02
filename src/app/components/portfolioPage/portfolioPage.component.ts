@@ -146,4 +146,8 @@ export class PortfolioPageComponent {
     this.loggedSubscription?.unsubscribe();
   }
 
+  editPortfolio() {
+    this.router.navigate(['new']);
+  }
+
 }

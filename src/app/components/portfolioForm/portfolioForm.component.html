@@ -1,0 +1,123 @@
+<p-toast class="custom-toast" position="bottom-right"/>
+<div class="flex flex-column align-items-center justify-content-center p-4">
+    <h2>{{pageName}}</h2>
+    <p-stepper [value]="1" [linear]="true" class="custom-stepper">
+        <p-step-list>
+            <p-step [value]="1">General Information</p-step>
+            <p-step [value]="2">Education</p-step>
+            <p-step [value]="3">Experience</p-step>
+            <p-step [value]="4">Projects</p-step>
+        </p-step-list>
+        <p-step-panels>
+            <p-step-panel [value]="1">
+                <ng-template #content let-activateCallback="activateCallback">
+                    <div class="flex flex-column gap-3">
+                        <div>
+                            <p-floatlabel variant="on" class="custom-floatlabel">
+                                <p-iconfield>
+                                    <input pInputText id="fullName" autocomplete="off" class="w-full custom-input" 
+                                        [class.ng-invalid]="errorMap.get('fullName') != undefined" [class.ng-dirty]="errorMap.get('fullName') != undefined" 
+                                        [(ngModel)]="portfolio.personalInformation.fullName" pTooltip="Full name, including given name and family name" 
+                                        tooltipPosition="right" showDelay="200" hideDelay="200" maxlength="200"/>
+                                    <p-inputicon class="pi pi-user" [style]="errorMap.get('fullName') != undefined ? 'color: var(--danger-color)' : ''" />
+                                </p-iconfield>
+                                <label for="fullName">Full Name *</label>
+                            </p-floatlabel>
+                            <p *ngIf="errorMap.get('fullName')" style="color: var(--danger-color);" class="m-0 p-0 text-xs font-italic">{{errorMap.get('fullName')}}</p>
+                        </div>
+
+                        <p-floatlabel variant="on" class="custom-floatlabel">
+                            <textarea id="description" pTextarea [(ngModel)]="portfolio.personalInformation.shortDescription"
+                                    rows="2" class="w-full custom-textarea" 
+                                    pTooltip="Give a brief overview of who you are or what you do" 
+                                    tooltipPosition="right" showDelay="200" hideDelay="200" maxlength="100"></textarea>
+                            <div class="textarea-length">
+                                <span>{{portfolio.personalInformation.shortDescription.length + ' '}}</span>
+                                <span>/ 100</span>
+                            </div>
+                            <label for="description">Short Description</label>
+                        </p-floatlabel>
+
+                        <p-floatlabel variant="on" class="custom-floatlabel">
+                            <textarea id="aboutMe" pTextarea [(ngModel)]="portfolio.personalInformation.profileSummary"
+                                    rows="4" class="w-full custom-textarea" 
+                                    pTooltip="Share more about your background, interests or experience" 
+                                    tooltipPosition="right" showDelay="200" hideDelay="200" maxlength="2000"></textarea>
+                            <div class="textarea-length">
+                                <span>{{portfolio.personalInformation.profileSummary.length + ' '}}</span>
+                                <span>/ 2000</span>
+                            </div>
+                            <label for="aboutMe">About Me</label>
+                        </p-floatlabel>
+
+                        <div>
+                            <p-floatlabel variant="on" class="custom-floatlabel">
+                                <p-iconfield>
+                                    <input pInputText id="email" autocomplete="off" class="w-full custom-input" 
+                                        [class.ng-invalid]="errorMap.get('email') != undefined" [class.ng-dirty]="errorMap.get('email') != undefined" 
+                                        [(ngModel)]="portfolio.personalInformation.email" pTooltip="Enter a valid email address where we can contact you" 
+                                        tooltipPosition="right" showDelay="200" hideDelay="200" maxlength="200"/>
+                                    <p-inputicon class="pi pi-envelope" [style]="errorMap.get('email') != undefined ? 'color: var(--danger-color)' : ''" />
+                                </p-iconfield>
+                                <label for="email">Email</label>
+                            </p-floatlabel>
+                            <p *ngIf="errorMap.get('email')" style="color: var(--danger-color);" class="m-0 p-0 text-xs font-italic">{{errorMap.get('email')}}</p>
+                        </div>
+
+                        <div>
+                            <p-floatlabel variant="on" class="w-full custom-floatlabel">
+                                <p-iconfield>
+                                    <p-inputnumber id="phone" [min]="0" [useGrouping]="false" maxlength="16" [prefix]="'+'"
+                                        class="custom-input" [(ngModel)]="portfolio.personalInformation.phone" fluid
+                                        [class.ng-invalid]="errorMap.get('phone') != undefined" [class.ng-dirty]="errorMap.get('phone') != undefined"
+                                        pTooltip="Enter your mobile or landline number, including country code" 
+                                        tooltipPosition="right" showDelay="200" hideDelay="200"/>
+                                    <p-inputicon class="pi pi-phone" [style]="errorMap.get('phone') != undefined ? 'color: var(--danger-color)' : ''"/>
+                                </p-iconfield>
+                                <label for="phone">Phone Number</label>
+                            </p-floatlabel>
+                            <p *ngIf="errorMap.get('phone')" style="color: var(--danger-color);" class="m-0 p-0 text-xs font-italic">{{errorMap.get('phone')}}</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-content-between mt-3">
+                        <p-button class="custom-secondary-button" label="Return to Homepage" severity="secondary" icon="pi pi-arrow-left" (onClick)="returnToHomepage()" />
+                        <p-button class="custom-button" label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(2)" />
+                    </div>
+                </ng-template>
+            </p-step-panel>
+            <p-step-panel [value]="2">
+                <ng-template #content let-activateCallback="activateCallback">
+                    <div class="flex flex-column gap-3">
+
+                    </div>
+                    <div class="flex justify-content-between mt-3">
+                        <p-button class="custom-secondary-button" label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(1)" />
+                        <p-button class="custom-button" label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(3)" />
+                    </div>
+                </ng-template>
+            </p-step-panel>
+            <p-step-panel [value]="3">
+                <ng-template #content let-activateCallback="activateCallback">
+                    <div class="flex flex-column gap-3">
+                        
+                    </div>
+                    <div class="flex justify-content-between mt-3">
+                        <p-button class="custom-secondary-button" label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />
+                        <p-button class="custom-button" label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(4)" />
+                    </div>
+                </ng-template>
+            </p-step-panel>
+            <p-step-panel [value]="4">
+                <ng-template #content let-activateCallback="activateCallback">
+                    <div class="flex flex-column gap-3">
+                        
+                    </div>
+                    <div class="flex justify-content-between mt-3">
+                        <p-button class="custom-secondary-button" label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(3)" />
+                        <p-button class="custom-button" label="Submit"/>
+                    </div>
+                </ng-template>
+            </p-step-panel>
+        </p-step-panels>
+    </p-stepper>
+</div>

@@ -13,10 +13,12 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { provideStorage, getStorage } from '@angular/fire/storage';
 import { PortfolioPageComponent } from './app/components/portfolioPage/portfolioPage.component';
 import { HomePageComponent } from './app/components/homePage/homePage.component';
+import { PortfolioFormComponent } from './app/components/portfolioForm/portfolioForm.component';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
     { path: 'portfolio', component: PortfolioPageComponent, canActivate: [AuthGuard]},
+    { path: 'new', component: PortfolioFormComponent, canActivate: [AuthGuard]},
     { path: 'profile', component: UserPageComponent, canActivate: [AuthGuard]},
     { path: 'organizations', component: OrganizationPageComponent, canActivate: [AuthGuard]},
     { path: '**', component: NotFoundPageComponent}
