@@ -1,0 +1,28 @@
+<div class="p-2 custom-border">
+    <div class="ml-1" style="color: #64748b;">Language Skills</div>
+    <div *ngFor="let lang of languages; let  i = index">
+        <div class="flex flex-column sm:flex-row flex-wrap gap-3 mt-3">
+            <div class="flex-1">
+                <p-floatlabel variant="on" class="custom-floatlabel">
+                    <p-select inputId="org" [options]="languageList" [(ngModel)]="lang.language" class="w-full custom-select"
+                        [checkmark]="true" tooltipPosition="right" showDelay="200" hideDelay="200"
+                        pTooltip="The organization under which the resource is to be registered"/>
+                    <label for="org">Language</label>
+                </p-floatlabel>
+            </div>
+            <div class="flex-1">
+                <p-floatlabel variant="on" class="custom-floatlabel">
+                    <p-select inputId="org" [options]="levelList" [(ngModel)]="lang.level" class="w-full custom-select"
+                        [checkmark]="true" tooltipPosition="right" showDelay="200" hideDelay="200"
+                        pTooltip="The organization under which the resource is to be registered"/>
+                    <label for="org">Level</label>
+                </p-floatlabel>
+            </div>
+        </div>
+        <p-divider *ngIf="i != this.languages.length - 1"></p-divider>
+    </div>
+    <div class="flex gap-3 mt-3">
+        <p-button icon="pi pi-plus" rounded class="custom-button" (onClick)="addLanguage()"></p-button>
+        <p-button icon="pi pi-trash" rounded class="delete-button" (onClick)="deleteLanguage()" [disabled]="this.languages.length == 0"></p-button>
+    </div>
+</div>

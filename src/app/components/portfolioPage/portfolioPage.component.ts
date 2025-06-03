@@ -24,6 +24,7 @@ export class PortfolioPageComponent {
       phone: '+44 7911 123456',
       shortDescription: 'Full-stack developer',
       profileSummary: `Creative and detail-oriented software developer with over 8 years of experience in full-stack development, agile methodologies, and project leadership. Passionate about building inclusive and accessible technology.`,
+      nativeLanguage: 'English',
       image: undefined
     },
     workExperience: [
@@ -83,7 +84,6 @@ export class PortfolioPageComponent {
       }
     ],
     languageSkills: [
-      { language: 'English', level: 'C2' },
       { language: 'Spanish', level: 'B2' }
     ],
     projects: [

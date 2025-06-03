@@ -24,6 +24,7 @@ export class PersonalInformation {
   phone: string = '';
   shortDescription: string = '';
   profileSummary: string = '';
+  nativeLanguage?: string;
   image?: string;
 }
 

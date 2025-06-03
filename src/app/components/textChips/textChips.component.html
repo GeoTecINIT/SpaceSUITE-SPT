@@ -1,0 +1,16 @@
+<div #component class="p-2 custom-border">
+    <p-floatlabel variant="on" class="custom-floatlabel">
+        <p-iconfield>
+            <input pInputText id="label" autocomplete="off" class="w-full custom-input" [(ngModel)]="currentText" 
+                (focusout)="focusOut($event)" (keyup.enter)="clickButton()" maxlength="100"/>
+            <p-inputicon [class]="icon"></p-inputicon>
+        </p-iconfield>
+        <label for="label">{{fieldName}}</label>
+    </p-floatlabel>
+    <div class="flex mt-3 flex-wrap gap-2">
+        <ng-content *ngFor="let chip of chips">
+            <p-chip [label]="chip" [removable]="true" (onRemove)="deleteElement(chip)" class="custom-chip"/>
+        </ng-content>
+        <p-button icon="pi pi-plus" rounded class="custom-button" (onClick)="clickButton()" [disabled]="currentText == ''"></p-button>
+    </div>
+</div>

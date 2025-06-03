@@ -100,3 +100,14 @@
     --p-button-secondary-hover-color: color-mix(in srgb, var(--primary-color) 90%, white 10%);
     --p-button-secondary-active-color: var(--primary-color);
 }
+
+.custom-select {
+    --p-select-hover-border-color: var(--hover-color);
+    --p-select-focus-border-color: var(--hover-color);
+}
+
+.invalid-select {
+    --p-select-border-color: var(--danger-color);
+    --p-select-dropdown-color: var(--danger-color);
+}
+

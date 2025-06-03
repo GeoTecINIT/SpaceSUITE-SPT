@@ -4,11 +4,11 @@
         <img [src]="userPortfolio?.personalInformation?.image ?? 'assets/images/avatar_image.png'" class="w-full">
     </div>
     <strong class="text-xl">{{userPortfolio?.personalInformation?.fullName}}</strong>
-    <div class="text-sm">{{userPortfolio?.personalInformation?.shortDescription}}</div>
+    <div class="text-sm text-center">{{userPortfolio?.personalInformation?.shortDescription}}</div>
     <div class="flex flew-wrap gap-2 mt-2 mb-3">
-        <p-button icon="pi pi-envelope" [rounded]="true" [text]="true" class="contact-button"
+        <p-button icon="pi pi-envelope" [rounded]="true" [text]="true" class="contact-button" [disabled]="!userPortfolio?.personalInformation?.email"
             (click)="copyToClipboard(userPortfolio?.personalInformation?.email!, 'contact email')" pTooltip="{{userPortfolio?.personalInformation?.email}}" tooltipPosition="bottom"></p-button>
-        <p-button icon="pi pi-phone" [rounded]="true" [text]="true" class="contact-button"
+        <p-button icon="pi pi-phone" [rounded]="true" [text]="true" class="contact-button" [disabled]="!userPortfolio?.personalInformation?.phone"
             (click)="copyToClipboard(userPortfolio?.personalInformation?.phone!, 'phone number')" pTooltip="{{userPortfolio?.personalInformation?.phone}}" tooltipPosition="bottom"></p-button>
     </div>
     <strong>About me</strong>

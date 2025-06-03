@@ -78,6 +78,19 @@
                             </p-floatlabel>
                             <p *ngIf="errorMap.get('phone')" style="color: var(--danger-color);" class="m-0 p-0 text-xs font-italic">{{errorMap.get('phone')}}</p>
                         </div>
+
+                        <div>
+                            <p-floatlabel variant="on" class="custom-floatlabel">
+                                <p-select inputId="org" [options]="languageList" [(ngModel)]="portfolio.personalInformation.nativeLanguage" class="w-full custom-select"
+                                    [checkmark]="true" tooltipPosition="right" showDelay="200" hideDelay="200"
+                                    pTooltip="The organization under which the resource is to be registered"/>
+                                <label for="org">Native Language</label>
+                            </p-floatlabel>
+                        </div>
+
+                        <language-select></language-select>
+
+                        <text-chips [(chips)]="portfolio.interests" [fieldName]="'Interests'" [icon]="'pi pi-palette'"></text-chips>
                     </div>
                     <div class="flex justify-content-between mt-3">
                         <p-button class="custom-secondary-button" label="Return to Homepage" severity="secondary" icon="pi pi-arrow-left" (onClick)="returnToHomepage()" />
