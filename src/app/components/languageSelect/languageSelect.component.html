@@ -4,18 +4,16 @@
         <div class="flex flex-column sm:flex-row flex-wrap gap-3 mt-3">
             <div class="flex-1">
                 <p-floatlabel variant="on" class="custom-floatlabel">
-                    <p-select inputId="org" [options]="languageList" [(ngModel)]="lang.language" class="w-full custom-select"
-                        [checkmark]="true" tooltipPosition="right" showDelay="200" hideDelay="200"
-                        pTooltip="The organization under which the resource is to be registered"/>
-                    <label for="org">Language</label>
+                    <p-select [inputId]="'languageSkill' + i" [options]="languageList" [(ngModel)]="lang.language" class="w-full custom-select" [checkmark]="true"
+                        (ngModelChange)="languagesChange.emit(languages)"/>
+                    <label [for]="'languageSkill' + i">Language</label>
                 </p-floatlabel>
             </div>
             <div class="flex-1">
                 <p-floatlabel variant="on" class="custom-floatlabel">
-                    <p-select inputId="org" [options]="levelList" [(ngModel)]="lang.level" class="w-full custom-select"
-                        [checkmark]="true" tooltipPosition="right" showDelay="200" hideDelay="200"
-                        pTooltip="The organization under which the resource is to be registered"/>
-                    <label for="org">Level</label>
+                    <p-select [inputId]="'languageSkillLevel' + i" [options]="levelList" [(ngModel)]="lang.level" class="w-full custom-select" [checkmark]="true"
+                        (ngModelChange)="languagesChange.emit(languages)"/>
+                    <label [for]="'languageSkillLevel' + i">Level</label>
                 </p-floatlabel>
             </div>
         </div>

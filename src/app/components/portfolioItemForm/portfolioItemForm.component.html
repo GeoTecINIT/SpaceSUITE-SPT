@@ -1,0 +1,114 @@
+<div class="flex flex-column gap-3">
+    <div>
+        <p-floatlabel variant="on" class="custom-floatlabel">
+            <p-iconfield>
+                <input pInputText [id]="index + 'Title'" autocomplete="off" class="w-full custom-input"
+                    [class.ng-invalid]="errorMap.get(index + 'Title') != undefined" [class.ng-dirty]="errorMap.get(index + 'Title') != undefined" 
+                    [(ngModel)]="portfolioItem.title" pTooltip="The name of the degree, job title, role, or project" 
+                    tooltipPosition="right" showDelay="200" hideDelay="200" maxlength="200"/>
+                <p-inputicon class="pi pi-user" [style]="errorMap.get(index + 'Title') != undefined ? 'color: var(--danger-color)' : ''"/>
+            </p-iconfield>
+            <label [for]="index + 'Title'">Title *</label>
+        </p-floatlabel>
+        <p *ngIf="errorMap.get(index + 'Title')" style="color: var(--danger-color);" class="m-0 p-0 text-xs font-italic">{{errorMap.get(index + 'Title')}}</p>
+    </div>
+
+    <div>
+        <p-floatlabel variant="on" class="custom-floatlabel">
+            <p-iconfield>
+                <input pInputText [id]="index + 'Org'" autocomplete="off" class="w-full custom-input" 
+                    [class.ng-invalid]="errorMap.get(index + 'Org') != undefined" [class.ng-dirty]="errorMap.get(index + 'Org') != undefined"
+                    [(ngModel)]="portfolioItem.organization" pTooltip="The company, school, or group behind the experience" 
+                    tooltipPosition="right" showDelay="200" hideDelay="200" maxlength="200"/>
+                <p-inputicon class="pi pi-graduation-cap" [style]="errorMap.get(index + 'Org') != undefined ? 'color: var(--danger-color)' : ''"/>
+            </p-iconfield>
+            <label [for]="index + 'Org'">Institution *</label>
+        </p-floatlabel>
+        <p *ngIf="errorMap.get(index + 'Org')" style="color: var(--danger-color);" class="m-0 p-0 text-xs font-italic">{{errorMap.get(index + 'Org')}}</p>
+    </div>
+
+    <div>
+        <p-floatlabel variant="on" class="w-full custom-floatlabel">
+            <p-datepicker [inputId]="index + 'startDate'" showIcon iconDisplay="input" dateFormat="dd/mm/yy" 
+                [(ngModel)]="portfolioItem.startDate" fluid class="custom-input custom-datepicker"
+                [class.ng-invalid]="errorMap.get(index + 'startDate') != undefined" [class.ng-dirty]="errorMap.get(index + 'startDate') != undefined"
+                [class.custom-datepicker-icon-error]="errorMap.get(index + 'startDate') != undefined"
+                pTooltip="The starting date of this activity or experience" 
+                tooltipPosition="right" showDelay="200" hideDelay="200"/>
+            <label [for]="index + 'startDate'">Start Date *</label>
+        </p-floatlabel>
+        <p *ngIf="errorMap.get(index + 'startDate')" style="color: var(--danger-color);" class="m-0 p-0 text-xs font-italic">{{errorMap.get(index + 'startDate')}}</p>
+    </div>
+
+    <div>
+        <p-floatlabel variant="on" class="w-full custom-floatlabel">
+            <p-datepicker [inputId]="index + 'endDate'" showIcon iconDisplay="input" dateFormat="dd/mm/yy" 
+                [(ngModel)]="portfolioItem.endDate" fluid class="custom-input custom-datepicker"
+                [class.ng-invalid]="errorMap.get(index + 'endDate') != undefined" [class.ng-dirty]="errorMap.get(index + 'endDate') != undefined"
+                [class.custom-datepicker-icon-error]="errorMap.get(index + 'endDate') != undefined"
+                pTooltip="The ending date. Leave blank if it's ongoing"
+                tooltipPosition="right" showDelay="200" hideDelay="200"/>
+            <label [for]="index + 'endDate'">End Date</label>
+        </p-floatlabel>
+        <p *ngIf="errorMap.get(index + 'endDate')" style="color: var(--danger-color);" class="m-0 p-0 text-xs font-italic">{{errorMap.get(index + 'endDate')}}</p>
+    </div>
+
+
+    <p-floatlabel variant="on" class="custom-floatlabel">
+        <textarea [id]="index + 'Description'" pTextarea [(ngModel)]="portfolioItem.description"
+                rows="4" class="w-full custom-textarea" 
+                pTooltip="A brief summary of the experience, project, or study program" 
+                tooltipPosition="right" showDelay="200" hideDelay="200" maxlength="2000"></textarea>
+        <div class="textarea-length">
+            <span>{{portfolioItem.description!.length + ' '}}</span>
+            <span>/ 2000</span>
+        </div>
+        <label [for]="index + 'Description'">Description</label>
+    </p-floatlabel>
+
+    <div>
+        <p-floatlabel variant="on" class="custom-floatlabel">
+            <p-select [inputId]="index + 'Country'" [options]="countryList" [(ngModel)]="portfolioItem.country" class="w-full custom-select" filter
+                [checkmark]="true" tooltipPosition="right" showDelay="200" hideDelay="200" pTooltip="The country where the experience or program occurred"
+                (ngModelChange)="updateCityList(portfolioItem.country!)" [virtualScroll]="true" [virtualScrollItemSize]="38"/>
+            <label [for]="index + 'Country'">Country</label>
+        </p-floatlabel>
+    </div>
+
+    <div>
+        <p-floatlabel variant="on" class="custom-floatlabel">
+            <p-select [inputId]="index + 'City'" [options]="cityList" [(ngModel)]="portfolioItem.city" class="w-full custom-select" filter
+                [checkmark]="true" tooltipPosition="right" showDelay="200" hideDelay="200" pTooltip="The city where the experience or program took place" [disabled]="cityList.length == 0"
+                [loading]="loadingCities" [virtualScroll]="true" [virtualScrollItemSize]="38"/>
+            <label [for]="index + 'City'">City</label>
+        </p-floatlabel>
+    </div>
+
+    <div>
+        <p-floatlabel variant="on" class="custom-floatlabel">
+            <p-iconfield>
+                <input pInputText [id]="index + 'Link'" autocomplete="off" class="w-full custom-input"
+                    [class.ng-invalid]="errorMap.get(index + 'Link') != undefined" [class.ng-dirty]="errorMap.get(index + 'Link') != undefined" 
+                    [(ngModel)]="portfolioItem.link" pTooltip="A URL to a portfolio item, certificate, publication, or relevant web page" 
+                    tooltipPosition="right" showDelay="200" hideDelay="200" maxlength="200"/>
+                <p-inputicon class="pi pi-link" [style]="errorMap.get(index + 'Link') != undefined ? 'color: var(--danger-color)' : ''"/>
+            </p-iconfield>
+            <label [for]="index + 'Link'">URL</label>
+        </p-floatlabel>
+        <p *ngIf="errorMap.get(index + 'Link')" style="color: var(--danger-color);" class="m-0 p-0 text-xs font-italic">{{errorMap.get(index + 'Link')}}</p>
+    </div>
+
+    <text-chips [fieldName]="'Hard Skills'" [icon]="'pi pi-chart-bar'" [(chips)]="portfolioItem.hardSkills!"
+                pTooltip="Specific technical or domain-related skills gained or used" 
+                tooltipPosition="right" showDelay="200" hideDelay="200"></text-chips>
+
+    <text-chips [fieldName]="'Soft Skills'" [icon]="'pi pi-star'" [(chips)]="portfolioItem.softSkills!"
+                pTooltip="Personal or professional skills developed" 
+                tooltipPosition="right" showDelay="200" hideDelay="200"></text-chips>
+
+    <div class="custom-border p-2" style="color: #64748b;" pTooltip="List of BoK concepts addressed in the experience, project, or study program" 
+        tooltipPosition="right" showDelay="200" hideDelay="200">
+        <bokModal [(selectedConcepts)]="portfolioItem.bokConcepts" [label]="'Covered BoK Concepts'"></bokModal>
+    </div>
+
+</div>

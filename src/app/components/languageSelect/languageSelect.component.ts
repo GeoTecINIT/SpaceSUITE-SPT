@@ -4,7 +4,7 @@ import { FloatLabelModule } from "primeng/floatlabel";
 import { SelectModule } from 'primeng/select';
 import { CEFRLevel, LanguageSkill } from "../../model/userPortfolio";
 import { FormsModule } from "@angular/forms";
-import { LanguageService } from "../../services/language.service";
+import { FormDataService } from "../../services/formData.service";
 import { ButtonModule } from "primeng/button";
 import { DividerModule } from "primeng/divider";
 
@@ -17,24 +17,26 @@ import { DividerModule } from "primeng/divider";
 })
 export class LanguageSelectComponent {
   @Input() languages: LanguageSkill[] = [];
-  @Output() otherLanguagesChange: EventEmitter<LanguageSkill[]> = new EventEmitter();
+  @Output() languagesChange: EventEmitter<LanguageSkill[]> = new EventEmitter();
 
   languageList: string[] = [];
   levelList: CEFRLevel[] = ['C2', 'C1', 'B2', 'B1', 'A2', 'A1'];
 
-  constructor(private languageService: LanguageService) {}
+  constructor(private formDataService: FormDataService) {}
 
   ngOnInit() {
-    this.languageList = this.languageService.getLanguageList();
+    this.languageList = this.formDataService.getLanguageList();
   }
 
   addLanguage() {
     const newLang = new LanguageSkill();
     newLang.language = this.languageList[0];
     this.languages.push(newLang)
+    this.languagesChange.emit(this.languages)
   }
 
   deleteLanguage() {
     this.languages.pop();
+    this.languagesChange.emit(this.languages)
   }
 }

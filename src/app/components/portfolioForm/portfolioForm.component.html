@@ -81,16 +81,21 @@
 
                         <div>
                             <p-floatlabel variant="on" class="custom-floatlabel">
-                                <p-select inputId="org" [options]="languageList" [(ngModel)]="portfolio.personalInformation.nativeLanguage" class="w-full custom-select"
+                                <p-select inputId="lang" [options]="languageList" [(ngModel)]="portfolio.personalInformation.nativeLanguage" class="w-full custom-select"
                                     [checkmark]="true" tooltipPosition="right" showDelay="200" hideDelay="200"
-                                    pTooltip="The organization under which the resource is to be registered"/>
-                                <label for="org">Native Language</label>
+                                    [class.invalid-select]="errorMap.get('lang') != undefined"
+                                    pTooltip="Your first language or the language you grew up speaking"/>
+                                <label for="lang">Native Language *</label>
                             </p-floatlabel>
+                            <p *ngIf="errorMap.get('lang')" style="color: var(--danger-color);" class="m-0 p-0 text-xs font-italic">{{errorMap.get('lang')}}</p>
                         </div>
 
-                        <language-select></language-select>
+                        <language-select tooltipPosition="right" showDelay="200" hideDelay="200" [(languages)]="portfolio.languageSkills"
+                            pTooltip="Add the languages you know and your proficiency level"></language-select>
 
-                        <text-chips [(chips)]="portfolio.interests" [fieldName]="'Interests'" [icon]="'pi pi-palette'"></text-chips>
+                        <text-chips [(chips)]="portfolio.interests" [fieldName]="'Interests'" [icon]="'pi pi-palette'"
+                            tooltipPosition="right" showDelay="200" hideDelay="200"
+                            pTooltip="Add personal or professional interests"></text-chips>
                     </div>
                     <div class="flex justify-content-between mt-3">
                         <p-button class="custom-secondary-button" label="Return to Homepage" severity="secondary" icon="pi pi-arrow-left" (onClick)="returnToHomepage()" />
@@ -100,8 +105,19 @@
             </p-step-panel>
             <p-step-panel [value]="2">
                 <ng-template #content let-activateCallback="activateCallback">
-                    <div class="flex flex-column gap-3">
-
+                    <p-accordion [value]="portfolio.educationAndTraining.length -1" class="custom-acordion">
+                        @for (education of portfolio.educationAndTraining; track $index; let i = $index) {
+                            <p-accordion-panel [value]="i">
+                                <p-accordion-header>{{ education.title == '' ? 'New Item' : education.title}}</p-accordion-header>
+                                <p-accordion-content class="pt-1">
+                                    <portfolio-item-form [portfolioItem]="education" (portfolioItemChange)="portfolio.educationAndTraining[i] = $event" [index]="'E'+i" [errorMap]="errorMap"></portfolio-item-form>
+                                </p-accordion-content>
+                            </p-accordion-panel>
+                        }
+                    </p-accordion>
+                    <div class="flex gap-3 my-5">
+                        <p-button icon="pi pi-plus" rounded class="custom-button" (onClick)="addEducationItem()"></p-button>
+                        <p-button icon="pi pi-trash" rounded class="delete-button" (onClick)="deleteEducationItem()" [disabled]="this.portfolio.educationAndTraining.length == 0"></p-button>
                     </div>
                     <div class="flex justify-content-between mt-3">
                         <p-button class="custom-secondary-button" label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(1)" />
@@ -111,8 +127,19 @@
             </p-step-panel>
             <p-step-panel [value]="3">
                 <ng-template #content let-activateCallback="activateCallback">
-                    <div class="flex flex-column gap-3">
-                        
+                    <p-accordion [value]="portfolio.workExperience.length -1" class="custom-acordion">
+                        @for (experience of portfolio.workExperience; track $index; let i = $index) {
+                            <p-accordion-panel [value]="i">
+                                <p-accordion-header>{{ experience.title == '' ? 'New Item' : experience.title}}</p-accordion-header>
+                                <p-accordion-content class="pt-1">
+                                    <portfolio-item-form [portfolioItem]="experience" (portfolioItemChange)="portfolio.workExperience[i] = $event" [index]="'W'+i" [errorMap]="errorMap"></portfolio-item-form>
+                                </p-accordion-content>
+                            </p-accordion-panel>
+                        }
+                    </p-accordion>
+                    <div class="flex gap-3 my-5">
+                        <p-button icon="pi pi-plus" rounded class="custom-button" (onClick)="addExperienceItem()"></p-button>
+                        <p-button icon="pi pi-trash" rounded class="delete-button" (onClick)="deleteExperienceItem()" [disabled]="this.portfolio.workExperience.length == 0"></p-button>
                     </div>
                     <div class="flex justify-content-between mt-3">
                         <p-button class="custom-secondary-button" label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />
@@ -122,12 +149,23 @@
             </p-step-panel>
             <p-step-panel [value]="4">
                 <ng-template #content let-activateCallback="activateCallback">
-                    <div class="flex flex-column gap-3">
-                        
+                    <p-accordion [value]="portfolio.projects.length -1" class="custom-acordion">
+                        @for (project of portfolio.projects; track $index; let i = $index) {
+                            <p-accordion-panel [value]="i">
+                                <p-accordion-header>{{ project.title == '' ? 'New Item' : project.title}}</p-accordion-header>
+                                <p-accordion-content class="pt-1">
+                                    <portfolio-item-form [portfolioItem]="project" (portfolioItemChange)="portfolio.projects[i] = $event" [index]="'P'+i" [errorMap]="errorMap"></portfolio-item-form>
+                                </p-accordion-content>
+                            </p-accordion-panel>
+                        }
+                    </p-accordion>
+                    <div class="flex gap-3 my-5">
+                        <p-button icon="pi pi-plus" rounded class="custom-button" (onClick)="addProjectItem()"></p-button>
+                        <p-button icon="pi pi-trash" rounded class="delete-button" (onClick)="deleteProjectItem()" [disabled]="this.portfolio.projects.length == 0"></p-button>
                     </div>
                     <div class="flex justify-content-between mt-3">
                         <p-button class="custom-secondary-button" label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(3)" />
-                        <p-button class="custom-button" label="Submit"/>
+                        <p-button class="custom-button" label="Submit" (onClick)="submitForm()"/>
                     </div>
                 </ng-template>
             </p-step-panel>

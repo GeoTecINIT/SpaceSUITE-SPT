@@ -33,11 +33,6 @@ export class UserInformationComponent {
     const softSkillsSet = new Set<string>();
     const bokConceptsSet= new Set<string>();
 
-    this.userPortfolio?.certifications.forEach( certification => {
-      certification.hardSkills?.forEach( value => hardSkillsSet.add(value));
-      certification.softSkills?.forEach( value => softSkillsSet.add(value));
-      certification.bokConcepts?.forEach( value => bokConceptsSet.add(value));
-    })
     this.userPortfolio?.educationAndTraining.forEach( education => {
       education.hardSkills?.forEach( value => hardSkillsSet.add(value));
       education.softSkills?.forEach( value => softSkillsSet.add(value));
