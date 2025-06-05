@@ -28,17 +28,23 @@ export class FirebaseService {
 
   public getUserPortfolio(): Observable<UserPortfolio> {
     const docRef = doc(this.portfolioCollection, this.userId);
-    return docData(docRef) as Observable<UserPortfolio>;
+    const portfolioObservable = docData(docRef) as Observable<UserPortfolio>;
+    return portfolioObservable.pipe(map( portfolio => {
+      const formatedPortfolio = portfolio;
+      formatedPortfolio.educationAndTraining.forEach( (item, index) => {
+        formatedPortfolio.educationAndTraining[index].bokConcepts = this.formatFirestoreConcepts(item.bokConcepts)
+      });
+      formatedPortfolio.workExperience.forEach( (item, index) => {
+        formatedPortfolio.workExperience[index].bokConcepts = this.formatFirestoreConcepts(item.bokConcepts)
+      });
+      formatedPortfolio.projects.forEach( (item, index) => {
+        formatedPortfolio.projects[index].bokConcepts = this.formatFirestoreConcepts(item.bokConcepts)
+      });
+      return formatedPortfolio;
+    }))
   }
 
   public submitPortfolio(newPortfolio: UserPortfolio): Observable<void> {
-    newPortfolio.personalInformation.nativeLanguage = this.formDataService.getIsoCode(newPortfolio.personalInformation.nativeLanguage!).toUpperCase();
-    newPortfolio.languageSkills =  newPortfolio.languageSkills.map(skill =>{
-      let formatedLanguage = new LanguageSkill();
-      formatedLanguage.language = this.formDataService.getIsoCode(skill.language!).toUpperCase();
-      formatedLanguage.level = skill.level;
-      return formatedLanguage;
-    });
     const experienceObservables = this.formatBokConcepts(newPortfolio.educationAndTraining);
     const workObservables = this.formatBokConcepts(newPortfolio.workExperience);
     const projectObservables = this.formatBokConcepts(newPortfolio.projects);
@@ -60,6 +66,12 @@ export class FirebaseService {
         return from(setDoc(newDocRef, newPortfolio.toPlain()));
       })
     )
+  }
+
+  private formatFirestoreConcepts(concepts: string[]){
+    const regex = /\[(.*?)\]/;
+    return concepts.map(concept => concept.match(regex)?.[1])
+    .filter(Boolean) as string[];
   }
 
   private formatBokConcepts(portfolioItems: PortfolioItem[]): Observable<string[][]> {
