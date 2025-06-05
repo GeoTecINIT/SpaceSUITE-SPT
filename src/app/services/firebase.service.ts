@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { Auth, authState } from "@angular/fire/auth";
-import { collection, CollectionReference, doc, Firestore, serverTimestamp, setDoc } from "@angular/fire/firestore";
+import { collection, CollectionReference, doc, docData, Firestore, serverTimestamp, setDoc } from "@angular/fire/firestore";
 import { forkJoin, from, map, Observable, of, Subject, switchMap, take } from "rxjs";
 import { LanguageSkill, PortfolioItem, UserPortfolio } from "../model/userPortfolio";
 import { FormDataService } from "./formData.service";
@@ -24,6 +24,11 @@ export class FirebaseService {
       this.userId = user?.uid ?? '';
       this.logged$.next(user != null);
     });
+  }
+
+  public getUserPortfolio(): Observable<UserPortfolio> {
+    const docRef = doc(this.portfolioCollection, this.userId);
+    return docData(docRef) as Observable<UserPortfolio>;
   }
 
   public submitPortfolio(newPortfolio: UserPortfolio): Observable<void> {
