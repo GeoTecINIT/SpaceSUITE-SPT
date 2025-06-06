@@ -96,7 +96,7 @@ export class PortfolioFormComponent {
     this.errorMap = this.formDataService.validate(this.portfolio);
     const allValid: boolean = Array.from(this.errorMap.values()).every(value => value === undefined);
     if (allValid) {
-      this.firebaseService.submitPortfolio(this.portfolio, this.inputPortfolio != undefined).pipe(
+      this.firebaseService.submitPortfolio(this.portfolio, this.inputPortfolio).pipe(
         take(1),
         catchError( (error) => {
           console.log(error)

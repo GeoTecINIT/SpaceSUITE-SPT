@@ -24,7 +24,6 @@ export class ExperienceTimelineComponent {
   private resizeObserver!: ResizeObserver;
   smallScreen: boolean = false;
 
-  
   constructor(private cdRef: ChangeDetectorRef) {}
 
   ngOnInit() {

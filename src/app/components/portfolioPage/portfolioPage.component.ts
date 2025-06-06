@@ -7,7 +7,7 @@ import { ExperienceTimelineComponent } from "../experienceTimeline/experienceTim
 import { ButtonModule } from 'primeng/button';
 import { FirebaseService } from '../../services/firebase.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
@@ -33,7 +33,7 @@ export class PortfolioPageComponent {
         this.router.navigate(['']);
       }
     });
-    this.portfolioSubscription = this.firebaseService.getUserPortfolio().subscribe( portfolio => {
+    this.portfolioSubscription = this.firebaseService.getUserPortfolio().pipe(take(1)).subscribe( portfolio => {
         if (!portfolio) this.router.navigate(['']);
         else this.userPortfolio = portfolio;
       }

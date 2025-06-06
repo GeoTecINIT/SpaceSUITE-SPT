@@ -57,7 +57,7 @@ export class FirebaseService {
     return from(deleteDoc(docRef));
   }
 
-  public submitPortfolio(portfolio: UserPortfolio, update: boolean = false): Observable<void> {
+  public submitPortfolio(portfolio: UserPortfolio, oldPortfolio?: UserPortfolio): Observable<void> {
     const newPortfolio = new UserPortfolio(portfolio);
     const experienceObservables = this.formatBokConcepts(newPortfolio.educationAndTraining);
     const workObservables = this.formatBokConcepts(newPortfolio.workExperience);
@@ -77,7 +77,9 @@ export class FirebaseService {
         const timestamp = serverTimestamp();
         newPortfolio.updatedAt = timestamp;
         newPortfolio._id = this.userId;
-        //if (update) return from(updateDoc(newDocRef, newPortfolio.toFirestore()));
+        if (oldPortfolio) {
+          //return from(updateDoc(newDocRef, newPortfolio.toFirestore()));
+        }
         return from(setDoc(newDocRef, newPortfolio.toFirestore()));
       })
     )
