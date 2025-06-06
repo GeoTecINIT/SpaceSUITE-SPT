@@ -29,10 +29,15 @@ export class ExperienceTimelineComponent {
 
   ngOnInit() {
     this.showDetail = this.events.map( () => false);
+    this.events.sort((a, b) => {
+      const aDate = new Date(a.startDate);
+      const bDate = new Date(b.startDate);
+      return bDate.getTime() - aDate.getTime()
+    });
   }
 
-  formatDate(startDate: string, endDate: string) {
-    return startDate + (endDate ? ' to ' + endDate : '')
+  formatDate(startDate: Date, endDate: Date) {
+    return startDate.toLocaleDateString() + (endDate ? ' to ' + endDate.toLocaleDateString() : '')
   }
 
   stringToTag(values: string[], variant?: Variant): Tag[] {

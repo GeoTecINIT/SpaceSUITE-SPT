@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { concatMap, map, of, take } from 'rxjs';
 import { FirebaseService } from '../services/firebase.service';
 
-export const PortfolioGuard: CanActivateFn = () => {
+export const CreateGuard: CanActivateFn = () => {
   const firebaseService = inject(FirebaseService);
   const router = inject(Router);
 
@@ -16,10 +16,10 @@ export const PortfolioGuard: CanActivateFn = () => {
     take(1),
     map(portfolio => {
       if (portfolio) {
-        return true;
-      } else {
-        router.navigate(['new']);
+        router.navigate(['portfolio']);
         return false;
+      } else {
+        return true;
       }
     })
   );

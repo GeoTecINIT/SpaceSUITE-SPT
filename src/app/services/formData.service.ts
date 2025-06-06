@@ -1,7 +1,8 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, Observable } from "rxjs";
-import { UserPortfolio } from "../model/userPortfolio";
+import { Country, UserPortfolio } from "../model/userPortfolio";
+import { environment } from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root',
@@ -97,19 +98,21 @@ export class FormDataService {
     return Object.keys(this.languages);
   }
   
-  public getCountries(): Observable<string[]> {
-    return this.http.get('/assets/countries+cities.json').pipe(
+  public getCountries(): Observable<Country[]> {
+    var headers = new HttpHeaders({'X-CSCAPI-KEY': environment.CSC_API_KEY});
+    return this.http.get('https://api.countrystatecity.in/v1/countries', { headers: headers}).pipe(
       map( results => {
-        if (Array.isArray(results)) return results.map(country => country.name)
+        if (Array.isArray(results)) return results.map(country => new Country({name: country.name, iso2: country.iso2}))
         return [];
       })
     );
   }
 
   public getCities(name: string): Observable<string[]> {
-    return this.http.get('/assets/countries+cities.json').pipe(
+    var headers = new HttpHeaders({'X-CSCAPI-KEY': environment.CSC_API_KEY});
+    return this.http.get(`https://api.countrystatecity.in/v1/countries/${name}/cities`, { headers: headers}).pipe(
       map( results => {
-        if (Array.isArray(results)) return results.find(c => c.name === name)?.cities || [];
+        if (Array.isArray(results)) return results.map(city => city.name)
         return [];
       })
     );

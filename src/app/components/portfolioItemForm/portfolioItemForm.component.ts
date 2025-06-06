@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import { PortfolioItem } from '../../model/userPortfolio';
+import { Country, PortfolioItem } from '../../model/userPortfolio';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from "primeng/inputtext";
 import { FloatLabelModule } from "primeng/floatlabel";
@@ -30,24 +30,28 @@ export class PortfolioItemFormComponent {
   @Output() portfolioItemChange: EventEmitter<PortfolioItem> = new EventEmitter();
   @Input() errorMap: Map<string, string | undefined> = new Map();
   @Input() index: string = 'E1';
-  countryList: string[] = [];
+  countryList: Country[] = [];
   cityList: string[] = [];
   loadingCities: boolean = false;
+  loadingCountries: boolean = true;
 
   constructor(private formDataService: FormDataService){}
 
   ngOnInit() {
-    this.formDataService.getCountries().pipe(take(1)).subscribe(
-      countries => this.countryList = countries
+    this.formDataService.getCountries().pipe(take(1)).subscribe( countries => {
+        this.countryList = countries;
+        this.loadingCountries = false;
+      }
     )
+    if (this.portfolioItem.country) this.updateCityList(this.portfolioItem.country);
   }
 
-  updateCityList(country: string) {
+  updateCityList(country: Country) {
     this.cityList = [];
     this.loadingCities = true;
-    this.formDataService.getCities(country).pipe(take(1)).subscribe(
-      countries => {
-        this.cityList = countries;
+    this.formDataService.getCities(country.iso2).pipe(take(1)).subscribe(
+      cities => {
+        this.cityList = cities;
         this.loadingCities = false;
       }
     )

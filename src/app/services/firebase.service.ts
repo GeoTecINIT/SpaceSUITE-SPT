@@ -1,10 +1,11 @@
 import { inject, Injectable } from "@angular/core";
 import { Auth, authState } from "@angular/fire/auth";
-import { collection, CollectionReference, doc, docData, Firestore, serverTimestamp, setDoc } from "@angular/fire/firestore";
-import { forkJoin, from, map, Observable, of, Subject, switchMap, take } from "rxjs";
+import { collection, CollectionReference, deleteDoc, doc, docData, Firestore, serverTimestamp, setDoc, updateDoc } from "@angular/fire/firestore";
+import { forkJoin, from, map, Observable, of, ReplaySubject, Subject, switchMap, take } from "rxjs";
 import { LanguageSkill, PortfolioItem, UserPortfolio } from "../model/userPortfolio";
 import { FormDataService } from "./formData.service";
 import { BokInformationService } from "@eo4geo/ngx-bok-visualization";
+import { R } from "@angular/core/event_dispatcher.d-pVP0-wST";
 
 @Injectable({
     providedIn: 'root',
@@ -14,7 +15,7 @@ export class FirebaseService {
   private db: Firestore;
   private portfolioCollection: CollectionReference;
   userId: string = '';
-  logged$: Subject<boolean> = new Subject();
+  logged$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   constructor(private formDataService: FormDataService, private bokInfoService: BokInformationService) {
     this.auth = inject(Auth);
@@ -26,25 +27,38 @@ export class FirebaseService {
     });
   }
 
-  public getUserPortfolio(): Observable<UserPortfolio> {
+  public getUserPortfolio(): Observable<UserPortfolio | undefined> {
     const docRef = doc(this.portfolioCollection, this.userId);
     const portfolioObservable = docData(docRef) as Observable<UserPortfolio>;
     return portfolioObservable.pipe(map( portfolio => {
+      if (!portfolio) return undefined;
       const formatedPortfolio = portfolio;
       formatedPortfolio.educationAndTraining.forEach( (item, index) => {
         formatedPortfolio.educationAndTraining[index].bokConcepts = this.formatFirestoreConcepts(item.bokConcepts)
+        if (item.startDate) formatedPortfolio.educationAndTraining[index].startDate = item.startDate.toDate();
+        if (item.endDate) formatedPortfolio.educationAndTraining[index].endDate = item.endDate.toDate();
       });
       formatedPortfolio.workExperience.forEach( (item, index) => {
         formatedPortfolio.workExperience[index].bokConcepts = this.formatFirestoreConcepts(item.bokConcepts)
+        if (item.startDate) formatedPortfolio.workExperience[index].startDate = item.startDate.toDate();
+        if (item.endDate) formatedPortfolio.workExperience[index].endDate = item.endDate.toDate();
       });
       formatedPortfolio.projects.forEach( (item, index) => {
         formatedPortfolio.projects[index].bokConcepts = this.formatFirestoreConcepts(item.bokConcepts)
+        if (item.startDate) formatedPortfolio.projects[index].startDate = item.startDate.toDate();
+        if (item.endDate) formatedPortfolio.projects[index].endDate = item.endDate.toDate();
       });
       return formatedPortfolio;
     }))
   }
 
-  public submitPortfolio(newPortfolio: UserPortfolio): Observable<void> {
+  public deletePortfolio(): Observable<void> {
+    const docRef = doc(this.portfolioCollection, this.userId);
+    return from(deleteDoc(docRef));
+  }
+
+  public submitPortfolio(portfolio: UserPortfolio, update: boolean = false): Observable<void> {
+    const newPortfolio = new UserPortfolio(portfolio);
     const experienceObservables = this.formatBokConcepts(newPortfolio.educationAndTraining);
     const workObservables = this.formatBokConcepts(newPortfolio.workExperience);
     const projectObservables = this.formatBokConcepts(newPortfolio.projects);
@@ -63,7 +77,8 @@ export class FirebaseService {
         const timestamp = serverTimestamp();
         newPortfolio.updatedAt = timestamp;
         newPortfolio._id = this.userId;
-        return from(setDoc(newDocRef, newPortfolio.toPlain()));
+        //if (update) return from(updateDoc(newDocRef, newPortfolio.toFirestore()));
+        return from(setDoc(newDocRef, newPortfolio.toFirestore()));
       })
     )
   }
@@ -89,4 +104,5 @@ export class FirebaseService {
       )
     : of([]);
   }
+
 }

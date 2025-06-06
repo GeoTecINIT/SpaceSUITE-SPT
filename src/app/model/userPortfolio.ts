@@ -1,49 +1,34 @@
 export class UserPortfolio {
   _id: string = '';
-  personalInformation: PersonalInformation;
-  workExperience: PortfolioItem[];
-  educationAndTraining: PortfolioItem[];
-  languageSkills: LanguageSkill[];
-  projects: PortfolioItem[];
-  interests: string[];
+  personalInformation: PersonalInformation = new PersonalInformation();
+  workExperience: PortfolioItem[] = [];
+  educationAndTraining: PortfolioItem[] = [];
+  languageSkills: LanguageSkill[] = [];
+  projects: PortfolioItem[] = [];
+  interests: string[] = [];
   updatedAt: any;
 
   constructor(data?: Partial<UserPortfolio>) {
-    this._id = data?._id || '';
-
-    this.personalInformation = data?.personalInformation
-      ? Object.assign(new PersonalInformation(), data.personalInformation)
-      : new PersonalInformation();
-
-    this.workExperience = data?.workExperience?.map(
-      item => Object.assign(new PortfolioItem(), item)
-    ) || [];
-
-    this.educationAndTraining = data?.educationAndTraining?.map(
-      item => Object.assign(new PortfolioItem(), item)
-    ) || [];
-
-    this.languageSkills = data?.languageSkills?.map(
-      item => Object.assign(new LanguageSkill(), item)
-    ) || [];
-
-    this.projects = data?.projects?.map(
-      item => Object.assign(new PortfolioItem(), item)
-    ) || [];
-
-    this.interests = data?.interests || [];
-
-    this.updatedAt = data?.updatedAt || undefined;
+    if (!data) return;
+    this._id = data._id || '';
+    this.personalInformation = new PersonalInformation(data.personalInformation);
+    this.workExperience = data.workExperience?.map(item => new PortfolioItem(item)) || [];
+    this.educationAndTraining = data.educationAndTraining?.map(item => new PortfolioItem(item)) || [];
+    this.languageSkills = data.languageSkills?.map(item => new LanguageSkill(item)) || [];
+    this.projects = data.projects?.map(item => new PortfolioItem(item)) || [];
+    this.interests = data.interests || [];
+    this.updatedAt = data.updatedAt || null;
   }
-
-  toPlain() {
+  toFirestore(): any {
     return {
-      personalInformation: this.personalInformation.toPlain(),
-      workExperience: this.workExperience.map(item => item.toPlain()),
-      educationAndTraining: this.educationAndTraining.map(item => item.toPlain()),
-      languageSkills: this.languageSkills.map(item => item.toPlain()),
-      projects: this.projects.map(item => item.toPlain()),
-      interests: this.interests
+      personalInformation: this.personalInformation.toFirestore(),
+      workExperience: this.workExperience.map(value => value.toFirestore()),
+      educationAndTraining: this.educationAndTraining.map(value => value.toFirestore()),
+      languageSkills: this.languageSkills.map(value => value.toFirestore()),
+      projects: this.projects.map(value => value.toFirestore()),
+      interests: this.interests,
+      updatedAt: this.updatedAt,
+      _id: this._id
     };
   }
 }
@@ -55,9 +40,13 @@ export class PersonalInformation {
   shortDescription: string = '';
   profileSummary: string = '';
   nativeLanguage?: string;
-  image?: string;
+  image: string = '';
 
-  toPlain() {
+  constructor(data?: Partial<PersonalInformation>) {
+    Object.assign(this, data);
+  }
+
+  toFirestore(): any {
     return {
       fullName: this.fullName,
       email: this.email,
@@ -65,38 +54,45 @@ export class PersonalInformation {
       shortDescription: this.shortDescription,
       profileSummary: this.profileSummary,
       nativeLanguage: this.nativeLanguage || null,
-      image: this.image || null
-    };
+      image: this.image
+    }
   }
 }
 
 export class PortfolioItem {
   title: string = '';
-  description?: string = '';
+  description: string = '';
   startDate: any;
   endDate?: any;
-  city?: string; 
-  country?: string;
+  city?: string;
+  country?: Country;
   hardSkills: string[] = [];
   softSkills: string[] = [];
   bokConcepts: string[] = [];
   organization: string = '';
-  link?: string = '';
+  link: string = '';
 
-  toPlain() {
+  constructor(data?: Partial<PortfolioItem>) {
+    Object.assign(this, data);
+    if (data?.country) {
+      this.country = new Country(data.country);
+    }
+  }
+
+  toFirestore(): any {
     return {
       title: this.title,
-      description: this.description || null,
+      description: this.description,
       startDate: this.startDate,
       endDate: this.endDate || null,
       city: this.city || null,
-      country: this.country || null,
+      country: this.country?.toFirestore() || null,
       hardSkills: this.hardSkills,
       softSkills: this.softSkills,
       bokConcepts: this.bokConcepts,
       organization: this.organization,
-      link: this.link || null
-    };
+      link: this.link
+    }
   }
 }
 
@@ -104,12 +100,32 @@ export class LanguageSkill {
   language: string = '';
   level: CEFRLevel = 'A1';
 
-  toPlain() {
+  constructor(data?: Partial<LanguageSkill>) {
+    Object.assign(this, data);
+  }
+
+  toFirestore(): any {
     return {
       language: this.language,
       level: this.level
-    };
+    }
   }
 }
 
 export type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+
+export class Country {
+  name: string = '';
+  iso2: string = '';
+
+  constructor(data?: Partial<Country> | Country) {
+    Object.assign(this, data);
+  }
+
+  toFirestore(): any {
+    return {
+      name: this.name,
+      iso2: this.iso2
+    }
+  }
+}

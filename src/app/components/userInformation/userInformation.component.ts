@@ -51,12 +51,15 @@ export class UserInformationComponent {
     this.bokConcepts = this.utilsService.stringToTag(Array.from(bokConceptsSet).sort(), 'bok');
     this.hardSkills = this.utilsService.stringToTag(Array.from(hardSkillsSet));
     this.softSkills = this.utilsService.stringToTag(Array.from(softSkillsSet), 'secondary');
-    this.languages = this.utilsService.stringToTag((this.userPortfolio?.languageSkills ?? []).map(value => `${value.language}: ${value.level}`));
-    this.interests = this.utilsService.stringToTag((this.userPortfolio?.interests ?? []), 'secondary')
+    if (this.userPortfolio?.personalInformation.nativeLanguage) {
+      this.languages.push(new Tag(this.userPortfolio?.personalInformation.nativeLanguage + ': Native'));
+    }
+    this.languages = this.languages.concat(this.utilsService.stringToTag((this.userPortfolio?.languageSkills ?? []).map(value => `${value.language}: ${value.level}`)));
+    this.interests = this.utilsService.stringToTag((this.userPortfolio?.interests ?? []), 'secondary');
   }
 
   copyToClipboard(value: string, field: string) {
-    navigator.clipboard.writeText(value);
+    navigator.clipboard.writeText('+' + value);
     this.messageService.add({ 
       severity: 'info', 
       summary: 'Info', 

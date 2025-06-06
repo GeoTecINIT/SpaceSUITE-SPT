@@ -20,7 +20,7 @@ import { ToastModule } from 'primeng/toast';
   providers: [MessageService]
 })
 export class PortfolioPageComponent {
-  public userPortfolio: UserPortfolio = new UserPortfolio();
+  public userPortfolio?: UserPortfolio;
 
   private loggedSubscription?: Subscription;
   private portfolioSubscription?: Subscription;
@@ -34,7 +34,7 @@ export class PortfolioPageComponent {
       }
     });
     this.portfolioSubscription = this.firebaseService.getUserPortfolio().subscribe( portfolio => {
-        if (!portfolio) this.router.navigate(['new']);
+        if (!portfolio) this.router.navigate(['']);
         else this.userPortfolio = portfolio;
       }
     );
@@ -75,7 +75,12 @@ export class PortfolioPageComponent {
   }
 
   editPortfolio() {
-    this.router.navigate(['new']);
+    this.router.navigate(['edit']);
+  }
+
+  deletePortfolio() {
+    this.firebaseService.deletePortfolio();
+    this.router.navigate(['']);
   }
 
 }

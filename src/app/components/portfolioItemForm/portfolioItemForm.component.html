@@ -68,9 +68,9 @@
 
     <div>
         <p-floatlabel variant="on" class="custom-floatlabel">
-            <p-select [inputId]="index + 'Country'" [options]="countryList" [(ngModel)]="portfolioItem.country" class="w-full custom-select" filter
+            <p-select [inputId]="index + 'Country'" [options]="countryList" [optionLabel]="'name'" [(ngModel)]="portfolioItem.country" class="w-full custom-select" filter
                 [checkmark]="true" tooltipPosition="right" showDelay="200" hideDelay="200" pTooltip="The country where the experience or program occurred"
-                (ngModelChange)="updateCityList(portfolioItem.country!)" [virtualScroll]="true" [virtualScrollItemSize]="38"/>
+                (ngModelChange)="updateCityList(portfolioItem.country!)" [virtualScroll]="true" [virtualScrollItemSize]="38" [loading]="loadingCountries" [disabled]="loadingCountries"/>
             <label [for]="index + 'Country'">Country</label>
         </p-floatlabel>
     </div>

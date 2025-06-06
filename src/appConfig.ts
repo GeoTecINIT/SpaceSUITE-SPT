@@ -15,11 +15,14 @@ import { PortfolioPageComponent } from './app/components/portfolioPage/portfolio
 import { HomePageComponent } from './app/components/homePage/homePage.component';
 import { PortfolioFormComponent } from './app/components/portfolioForm/portfolioForm.component';
 import { PortfolioGuard } from './app/guards/portfolio.guard';
+import { EditPageComponent } from './app/components/editPage/editPage.component';
+import { CreateGuard } from './app/guards/create.guard';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
-    { path: 'portfolio', component: PortfolioPageComponent, canActivate: [AuthGuard, PortfolioGuard]},
-    { path: 'new', component: PortfolioFormComponent, canActivate: [AuthGuard]},
+    { path: 'portfolio', component: PortfolioPageComponent, canActivate: [PortfolioGuard]},
+    { path: 'new', component: PortfolioFormComponent, canActivate: [CreateGuard]},
+    { path: 'edit', component: EditPageComponent, canActivate: [PortfolioGuard]},
     { path: 'profile', component: UserPageComponent, canActivate: [AuthGuard]},
     { path: 'organizations', component: OrganizationPageComponent, canActivate: [AuthGuard]},
     { path: '**', component: NotFoundPageComponent}
