@@ -125,8 +125,8 @@ export class HomePageComponent {
         switch (mode){
           case 'delete':
             this.messageService.add({ 
-              severity: 'error', 
-              summary: 'Deleted', 
+              severity: 'info', 
+              summary: 'Info', 
               detail: `Portfolio successfully deleted!`,
               life: 3000, 
               closable: true 
