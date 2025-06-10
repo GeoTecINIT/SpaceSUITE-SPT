@@ -4,15 +4,18 @@ import { ButtonModule } from "primeng/button";
 import { Timeline } from 'primeng/timeline';
 import { CardModule } from 'primeng/card';
 import { SkillTagComponent } from "../skillTags/skillTags.component";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { FirebaseService } from "../../services/firebase.service";
+import { MessageService } from "primeng/api";
+import { ToastModule } from "primeng/toast";
 
 @Component({
   standalone: true,
   selector: 'home-page',
   templateUrl: './homePage.component.html',
   styleUrls: ['./homePage.component.css'],
-  imports: [CommonModule, ButtonModule, Timeline, CardModule, SkillTagComponent],
+  imports: [CommonModule, ButtonModule, Timeline, CardModule, SkillTagComponent, ToastModule],
+  providers: [MessageService]
 })
 export class HomePageComponent {
   @ViewChild('timeline') containerDiv!: ElementRef;
@@ -97,7 +100,7 @@ export class HomePageComponent {
     }
   ]
 
-  constructor(private cdRef: ChangeDetectorRef, private router: Router, private firebase: FirebaseService) {}
+  constructor(private cdRef: ChangeDetectorRef, private router: Router, private firebase: FirebaseService, private messageService: MessageService, private route: ActivatedRoute) {}
 
   ngAfterViewInit(): void {
     this.resizeObserver = new ResizeObserver(entries => {
@@ -114,6 +117,24 @@ export class HomePageComponent {
     if (this.containerDiv?.nativeElement) {
       this.resizeObserver.observe(this.containerDiv.nativeElement);
     }
+
+    this.route.queryParams.subscribe(params => {
+      const submited: boolean = params['submited'];
+      const mode: string = params['mode'];
+      if (submited){
+        switch (mode){
+          case 'delete':
+            this.messageService.add({ 
+              severity: 'error', 
+              summary: 'Deleted', 
+              detail: `Portfolio successfully deleted!`,
+              life: 3000, 
+              closable: true 
+            }); 
+            break
+        }
+      }
+    });
   }
   
   ngOnDestroy(): void {

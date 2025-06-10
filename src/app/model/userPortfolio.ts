@@ -1,6 +1,12 @@
-export class UserPortfolio {
+export class UserPortfolio implements FirebaseObject {
   _id: string = '';
-  personalInformation: PersonalInformation = new PersonalInformation();
+  fullName: string = '';
+  email: string = '';
+  phone: string = '';
+  shortDescription: string = '';
+  profileSummary: string = '';
+  nativeLanguage?: string;
+  image: string = '';
   workExperience: PortfolioItem[] = [];
   educationAndTraining: PortfolioItem[] = [];
   languageSkills: LanguageSkill[] = [];
@@ -11,7 +17,13 @@ export class UserPortfolio {
   constructor(data?: Partial<UserPortfolio>) {
     if (!data) return;
     this._id = data._id || '';
-    this.personalInformation = new PersonalInformation(data.personalInformation);
+    this.fullName = data.fullName || '';
+    this.email = data.email || '';
+    this.phone = data.phone || '';
+    this.shortDescription = data.shortDescription || '';
+    this.profileSummary = data.profileSummary || '';
+    this.nativeLanguage = data.nativeLanguage;
+    this.image = data.image || '';
     this.workExperience = data.workExperience?.map(item => new PortfolioItem(item)) || [];
     this.educationAndTraining = data.educationAndTraining?.map(item => new PortfolioItem(item)) || [];
     this.languageSkills = data.languageSkills?.map(item => new LanguageSkill(item)) || [];
@@ -19,47 +31,25 @@ export class UserPortfolio {
     this.interests = data.interests || [];
     this.updatedAt = data.updatedAt || null;
   }
-  toFirestore(): any {
+
+  toFirebase() {
     return {
-      personalInformation: this.personalInformation.toFirestore(),
-      workExperience: this.workExperience.map(value => value.toFirestore()),
-      educationAndTraining: this.educationAndTraining.map(value => value.toFirestore()),
-      languageSkills: this.languageSkills.map(value => value.toFirestore()),
-      projects: this.projects.map(value => value.toFirestore()),
-      interests: this.interests,
-      updatedAt: this.updatedAt,
-      _id: this._id
-    };
-  }
-}
-
-export class PersonalInformation {
-  fullName: string = '';
-  email: string = '';
-  phone: string = '';
-  shortDescription: string = '';
-  profileSummary: string = '';
-  nativeLanguage?: string;
-  image: string = '';
-
-  constructor(data?: Partial<PersonalInformation>) {
-    Object.assign(this, data);
-  }
-
-  toFirestore(): any {
-    return {
+      _id: this._id,
       fullName: this.fullName,
       email: this.email,
       phone: this.phone,
       shortDescription: this.shortDescription,
       profileSummary: this.profileSummary,
       nativeLanguage: this.nativeLanguage || null,
-      image: this.image
+      image: this.image,
+      interests: this.interests,
+      updatedAt: this.updatedAt
     }
   }
 }
 
-export class PortfolioItem {
+export class PortfolioItem implements FirebaseObject {
+  _id: string = '';
   title: string = '';
   description: string = '';
   startDate: any;
@@ -79,14 +69,18 @@ export class PortfolioItem {
     }
   }
 
-  toFirestore(): any {
+  toFirebase() {
     return {
+      _id: this._id,
       title: this.title,
       description: this.description,
       startDate: this.startDate,
       endDate: this.endDate || null,
       city: this.city || null,
-      country: this.country?.toFirestore() || null,
+      country: this.country ? {
+        name: this.country?.name || null,
+        iso2: this.country?.iso2 || null
+      } : null,
       hardSkills: this.hardSkills,
       softSkills: this.softSkills,
       bokConcepts: this.bokConcepts,
@@ -96,7 +90,8 @@ export class PortfolioItem {
   }
 }
 
-export class LanguageSkill {
+export class LanguageSkill implements FirebaseObject {
+  _id: string = '';
   language: string = '';
   level: CEFRLevel = 'A1';
 
@@ -104,8 +99,9 @@ export class LanguageSkill {
     Object.assign(this, data);
   }
 
-  toFirestore(): any {
+  toFirebase() {
     return {
+      _id: this._id,
       language: this.language,
       level: this.level
     }
@@ -121,11 +117,9 @@ export class Country {
   constructor(data?: Partial<Country> | Country) {
     Object.assign(this, data);
   }
+}
 
-  toFirestore(): any {
-    return {
-      name: this.name,
-      iso2: this.iso2
-    }
-  }
+export interface FirebaseObject {
+  _id: string;
+  toFirebase(): Object;
 }

@@ -17,7 +17,7 @@
                                 <p-iconfield>
                                     <input pInputText id="fullName" autocomplete="off" class="w-full custom-input" 
                                         [class.ng-invalid]="errorMap.get('fullName') != undefined" [class.ng-dirty]="errorMap.get('fullName') != undefined" 
-                                        [(ngModel)]="portfolio.personalInformation.fullName" pTooltip="Full name, including given name and family name" 
+                                        [(ngModel)]="portfolio.fullName" pTooltip="Full name, including given name and family name" 
                                         tooltipPosition="right" showDelay="200" hideDelay="200" maxlength="200"/>
                                     <p-inputicon class="pi pi-user" [style]="errorMap.get('fullName') != undefined ? 'color: var(--danger-color)' : ''" />
                                 </p-iconfield>
@@ -27,24 +27,24 @@
                         </div>
 
                         <p-floatlabel variant="on" class="custom-floatlabel">
-                            <textarea id="description" pTextarea [(ngModel)]="portfolio.personalInformation.shortDescription"
+                            <textarea id="description" pTextarea [(ngModel)]="portfolio.shortDescription"
                                     rows="2" class="w-full custom-textarea" 
                                     pTooltip="Give a brief overview of who you are or what you do" 
                                     tooltipPosition="right" showDelay="200" hideDelay="200" maxlength="100"></textarea>
                             <div class="textarea-length">
-                                <span>{{portfolio.personalInformation.shortDescription.length + ' '}}</span>
+                                <span>{{portfolio.shortDescription.length + ' '}}</span>
                                 <span>/ 100</span>
                             </div>
                             <label for="description">Short Description</label>
                         </p-floatlabel>
 
                         <p-floatlabel variant="on" class="custom-floatlabel">
-                            <textarea id="aboutMe" pTextarea [(ngModel)]="portfolio.personalInformation.profileSummary"
+                            <textarea id="aboutMe" pTextarea [(ngModel)]="portfolio.profileSummary"
                                     rows="4" class="w-full custom-textarea" 
                                     pTooltip="Share more about your background, interests or experience" 
                                     tooltipPosition="right" showDelay="200" hideDelay="200" maxlength="2000"></textarea>
                             <div class="textarea-length">
-                                <span>{{portfolio.personalInformation.profileSummary.length + ' '}}</span>
+                                <span>{{portfolio.profileSummary.length + ' '}}</span>
                                 <span>/ 2000</span>
                             </div>
                             <label for="aboutMe">About Me</label>
@@ -55,7 +55,7 @@
                                 <p-iconfield>
                                     <input pInputText id="email" autocomplete="off" class="w-full custom-input" 
                                         [class.ng-invalid]="errorMap.get('email') != undefined" [class.ng-dirty]="errorMap.get('email') != undefined" 
-                                        [(ngModel)]="portfolio.personalInformation.email" pTooltip="Enter a valid email address where we can contact you" 
+                                        [(ngModel)]="portfolio.email" pTooltip="Enter a valid email address where we can contact you" 
                                         tooltipPosition="right" showDelay="200" hideDelay="200" maxlength="200"/>
                                     <p-inputicon class="pi pi-envelope" [style]="errorMap.get('email') != undefined ? 'color: var(--danger-color)' : ''" />
                                 </p-iconfield>
@@ -68,7 +68,7 @@
                             <p-floatlabel variant="on" class="w-full custom-floatlabel">
                                 <p-iconfield>
                                     <p-inputnumber id="phone" [min]="0" [useGrouping]="false" maxlength="16" [prefix]="'+'"
-                                        class="custom-input" [(ngModel)]="portfolio.personalInformation.phone" fluid
+                                        class="custom-input" [(ngModel)]="portfolio.phone" fluid
                                         [class.ng-invalid]="errorMap.get('phone') != undefined" [class.ng-dirty]="errorMap.get('phone') != undefined"
                                         pTooltip="Enter your mobile or landline number, including country code" 
                                         tooltipPosition="right" showDelay="200" hideDelay="200"/>
@@ -81,7 +81,7 @@
 
                         <div>
                             <p-floatlabel variant="on" class="custom-floatlabel">
-                                <p-select inputId="lang" [options]="languageList" [(ngModel)]="portfolio.personalInformation.nativeLanguage" class="w-full custom-select"
+                                <p-select inputId="lang" [options]="languageList" [(ngModel)]="portfolio.nativeLanguage" class="w-full custom-select"
                                     [checkmark]="true" tooltipPosition="right" showDelay="200" hideDelay="200"
                                     [class.invalid-select]="errorMap.get('lang') != undefined"
                                     pTooltip="Your first language or the language you grew up speaking"/>

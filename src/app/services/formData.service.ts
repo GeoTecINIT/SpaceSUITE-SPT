@@ -130,10 +130,10 @@ export class FormDataService {
     };
   
     // General Information fields
-    setError('fullName', !portfolio.personalInformation.fullName.trim(), 'Name is required.');
-    setError('email', portfolio.personalInformation.email.trim() != '' && !emailRegex.test(portfolio.personalInformation.email), 'Invalid email format.');
-    setError('phone', portfolio.personalInformation.phone != '' && !phoneRegex.test(portfolio.personalInformation.phone), 'Invalid phone number.');
-    setError('lang', !portfolio.personalInformation.nativeLanguage, 'Native Language is required.');
+    setError('fullName', !portfolio.fullName.trim(), 'Name is required.');
+    setError('email', portfolio.email.trim() != '' && !emailRegex.test(portfolio.email), 'Invalid email format.');
+    setError('phone', portfolio.phone != '' && !phoneRegex.test(portfolio.phone), 'Invalid phone number.');
+    setError('lang', !portfolio.nativeLanguage, 'Native Language is required.');
 
     // Education fields
     portfolio.educationAndTraining.forEach((item, index) => {

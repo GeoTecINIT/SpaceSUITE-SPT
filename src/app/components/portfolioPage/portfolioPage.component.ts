@@ -7,7 +7,7 @@ import { ExperienceTimelineComponent } from "../experienceTimeline/experienceTim
 import { ButtonModule } from 'primeng/button';
 import { FirebaseService } from '../../services/firebase.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, take } from 'rxjs';
+import { pipe, Subscription, take } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
@@ -79,8 +79,9 @@ export class PortfolioPageComponent {
   }
 
   deletePortfolio() {
-    this.firebaseService.deletePortfolio();
-    this.router.navigate(['']);
+    this.firebaseService.deletePortfolio().pipe(take(1)).subscribe( () => {
+      this.router.navigate([''], { queryParams: { submited: true, mode: 'delete'}});
+    });
   }
 
 }

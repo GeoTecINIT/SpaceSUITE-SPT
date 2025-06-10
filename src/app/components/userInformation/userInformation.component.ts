@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import {Component, Input} from '@angular/core';
-import { LanguageSkill, UserPortfolio } from '../../model/userPortfolio';
+import { UserPortfolio } from '../../model/userPortfolio';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast'
 import { SkillTagComponent } from "../skillTags/skillTags.component";
-import { Tag, Variant } from '../../model/tag';
+import { Tag } from '../../model/tag';
 import { MessageService } from 'primeng/api';
 import { UtilsService } from '../../services/utils.service';
 
@@ -51,8 +51,8 @@ export class UserInformationComponent {
     this.bokConcepts = this.utilsService.stringToTag(Array.from(bokConceptsSet).sort(), 'bok');
     this.hardSkills = this.utilsService.stringToTag(Array.from(hardSkillsSet));
     this.softSkills = this.utilsService.stringToTag(Array.from(softSkillsSet), 'secondary');
-    if (this.userPortfolio?.personalInformation.nativeLanguage) {
-      this.languages.push(new Tag(this.userPortfolio?.personalInformation.nativeLanguage + ': Native'));
+    if (this.userPortfolio?.nativeLanguage) {
+      this.languages.push(new Tag(this.userPortfolio?.nativeLanguage + ': Native'));
     }
     this.languages = this.languages.concat(this.utilsService.stringToTag((this.userPortfolio?.languageSkills ?? []).map(value => `${value.language}: ${value.level}`)));
     this.interests = this.utilsService.stringToTag((this.userPortfolio?.interests ?? []), 'secondary');
@@ -63,7 +63,7 @@ export class UserInformationComponent {
     this.messageService.add({ 
       severity: 'info', 
       summary: 'Info', 
-      detail: `You copied ${this.userPortfolio?.personalInformation.fullName} ${field} to clipboard!`,
+      detail: `You copied ${this.userPortfolio?.fullName} ${field} to clipboard!`,
       life: 3000, 
       closable: true 
     });

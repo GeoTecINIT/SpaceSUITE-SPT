@@ -1,11 +1,10 @@
 import { inject, Injectable } from "@angular/core";
 import { Auth, authState } from "@angular/fire/auth";
-import { collection, CollectionReference, deleteDoc, doc, docData, Firestore, serverTimestamp, setDoc, updateDoc } from "@angular/fire/firestore";
-import { forkJoin, from, map, Observable, of, ReplaySubject, Subject, switchMap, take } from "rxjs";
-import { LanguageSkill, PortfolioItem, UserPortfolio } from "../model/userPortfolio";
+import { collection, collectionData, CollectionReference, deleteDoc, doc, docData, DocumentReference, Firestore, getDocs, serverTimestamp, setDoc, updateDoc } from "@angular/fire/firestore";
+import { concatMap, forkJoin, from, map, Observable, of, ReplaySubject, Subject, switchMap, take } from "rxjs";
+import { FirebaseObject, LanguageSkill, PortfolioItem, UserPortfolio } from "../model/userPortfolio";
 import { FormDataService } from "./formData.service";
 import { BokInformationService } from "@eo4geo/ngx-bok-visualization";
-import { R } from "@angular/core/event_dispatcher.d-pVP0-wST";
 
 @Injectable({
     providedIn: 'root',
@@ -14,6 +13,7 @@ export class FirebaseService {
   private auth: Auth;
   private db: Firestore;
   private portfolioCollection: CollectionReference;
+
   userId: string = '';
   logged$: ReplaySubject<boolean> = new ReplaySubject(1);
 
@@ -30,31 +30,63 @@ export class FirebaseService {
   public getUserPortfolio(): Observable<UserPortfolio | undefined> {
     const docRef = doc(this.portfolioCollection, this.userId);
     const portfolioObservable = docData(docRef) as Observable<UserPortfolio>;
-    return portfolioObservable.pipe(map( portfolio => {
-      if (!portfolio) return undefined;
-      const formatedPortfolio = portfolio;
-      formatedPortfolio.educationAndTraining.forEach( (item, index) => {
-        formatedPortfolio.educationAndTraining[index].bokConcepts = this.formatFirestoreConcepts(item.bokConcepts)
-        if (item.startDate) formatedPortfolio.educationAndTraining[index].startDate = item.startDate.toDate();
-        if (item.endDate) formatedPortfolio.educationAndTraining[index].endDate = item.endDate.toDate();
-      });
-      formatedPortfolio.workExperience.forEach( (item, index) => {
-        formatedPortfolio.workExperience[index].bokConcepts = this.formatFirestoreConcepts(item.bokConcepts)
-        if (item.startDate) formatedPortfolio.workExperience[index].startDate = item.startDate.toDate();
-        if (item.endDate) formatedPortfolio.workExperience[index].endDate = item.endDate.toDate();
-      });
-      formatedPortfolio.projects.forEach( (item, index) => {
-        formatedPortfolio.projects[index].bokConcepts = this.formatFirestoreConcepts(item.bokConcepts)
-        if (item.startDate) formatedPortfolio.projects[index].startDate = item.startDate.toDate();
-        if (item.endDate) formatedPortfolio.projects[index].endDate = item.endDate.toDate();
-      });
-      return formatedPortfolio;
-    }))
+
+    return portfolioObservable.pipe(
+      concatMap(portfolio => {
+        if (!portfolio) return of(undefined);
+
+        const experienceCollection = collection(docRef, 'workExperience');
+        const projectsCollection = collection(docRef, 'projects');
+        const educationCollection = collection(docRef, 'educationAndTraining');
+        const languageCollection = collection(docRef, 'languageSkills');
+
+        const workExperience = collectionData(experienceCollection, {}) as Observable<PortfolioItem[]>;
+        const projects = collectionData(projectsCollection) as Observable<PortfolioItem[]>;
+        const educationAndTraining = collectionData(educationCollection) as Observable<PortfolioItem[]>;
+        const languageSkills = collectionData(languageCollection) as Observable<LanguageSkill[]>;
+
+        return forkJoin({
+          workExperience: workExperience.pipe(take(1)),
+          projects: projects.pipe(take(1)),
+          educationAndTraining: educationAndTraining.pipe(take(1)),
+          languageSkills: languageSkills.pipe(take(1)),
+        }).pipe(
+          map(({ workExperience, projects, educationAndTraining, languageSkills }) => {
+            portfolio.workExperience = this.formatPortfolioItems(workExperience);
+            portfolio.projects = this.formatPortfolioItems(projects);
+            portfolio.educationAndTraining = this.formatPortfolioItems(educationAndTraining);
+            portfolio.languageSkills = languageSkills;
+            return portfolio;
+          })
+        );
+      })
+    );
+  }
+
+  private formatPortfolioItems(items: PortfolioItem[]): PortfolioItem[] {
+    return items.map( item => {
+            item.bokConcepts = this.formatFirestoreConcepts(item.bokConcepts)
+            if (item.startDate) item.startDate = item.startDate.toDate();
+            if (item.endDate) item.endDate = item.endDate.toDate();
+            return item
+          });
   }
 
   public deletePortfolio(): Observable<void> {
+    const subcollections = ['workExperience', 'projects', 'educationAndTraining', 'languageSkills'];
     const docRef = doc(this.portfolioCollection, this.userId);
-    return from(deleteDoc(docRef));
+    const deleteOps$ = subcollections.map(subcollectionName => {
+      const colRef = collection(docRef, subcollectionName);
+      return from(getDocs(colRef)).pipe(
+        concatMap(querySnapshot => {
+          const deletions = querySnapshot.docs.map(docSnap =>
+            from(deleteDoc(docSnap.ref))
+          );
+          return deletions.length > 0 ? forkJoin(deletions) : from([undefined]);
+        })
+      );
+    });
+    return forkJoin(deleteOps$).pipe(map(() => undefined), concatMap( () => from(deleteDoc(docRef))));
   }
 
   public submitPortfolio(portfolio: UserPortfolio, oldPortfolio?: UserPortfolio): Observable<void> {
@@ -78,11 +110,51 @@ export class FirebaseService {
         newPortfolio.updatedAt = timestamp;
         newPortfolio._id = this.userId;
         if (oldPortfolio) {
-          //return from(updateDoc(newDocRef, newPortfolio.toFirestore()));
+          return this.updatePortfolio(newDocRef, newPortfolio);
         }
-        return from(setDoc(newDocRef, newPortfolio.toFirestore()));
+        return this.createPortfolio(newDocRef, newPortfolio);
       })
     )
+  }
+
+  private createPortfolio(docRef: DocumentReference, portfolio: UserPortfolio): Observable<void> {
+    const plainPortfolio = portfolio.toFirebase();
+    return from(setDoc(docRef, plainPortfolio)).pipe(concatMap( () => {
+      const experienceCollection = collection(docRef, 'workExperience');
+      const projectsCollection = collection(docRef, 'projects');
+      const educationAndTrainingCollection = collection(docRef, 'educationAndTraining');
+      const languageSkillsCollection = collection(docRef, 'languageSkills');
+      const experienceOps = portfolio.workExperience.map( experience => {
+        return this.addDocumentToCollection(experienceCollection, experience)
+      });
+      const projectOps = portfolio.projects.map( project => {
+        return this.addDocumentToCollection(projectsCollection, project)
+      });
+      const educationOps = portfolio.educationAndTraining.map( education => {
+        return this.addDocumentToCollection(educationAndTrainingCollection, education)
+      });
+      const languageOps = portfolio.languageSkills.map( language => {
+        return this.addDocumentToCollection(languageSkillsCollection, language)
+      });
+      const allOps = [
+        ...experienceOps,
+        ...projectOps,
+        ...educationOps,
+        ...languageOps
+      ];
+      return forkJoin(allOps).pipe(map(() => undefined));
+    }));
+  }
+
+  private addDocumentToCollection(collection: CollectionReference, item: FirebaseObject): Observable<void> {
+    const docRef = doc(collection);
+    item._id = docRef.id;
+    const plainItem = item.toFirebase();
+    return from(setDoc(docRef, plainItem));
+  }
+
+  private updatePortfolio(docRef: DocumentReference, portfolio: UserPortfolio): Observable<void> {
+    return of();
   }
 
   private formatFirestoreConcepts(concepts: string[]){
