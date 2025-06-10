@@ -17,7 +17,7 @@ export class FirebaseService {
   userId: string = '';
   logged$: ReplaySubject<boolean> = new ReplaySubject(1);
 
-  constructor(private formDataService: FormDataService, private bokInfoService: BokInformationService) {
+  constructor(private bokInfoService: BokInformationService) {
     this.auth = inject(Auth);
     this.db = inject(Firestore);
     this.portfolioCollection = collection(this.db, 'Portfolios');
@@ -124,18 +124,12 @@ export class FirebaseService {
       const projectsCollection = collection(docRef, 'projects');
       const educationAndTrainingCollection = collection(docRef, 'educationAndTraining');
       const languageSkillsCollection = collection(docRef, 'languageSkills');
-      const experienceOps = portfolio.workExperience.map( experience => {
-        return this.addDocumentToCollection(experienceCollection, experience)
-      });
-      const projectOps = portfolio.projects.map( project => {
-        return this.addDocumentToCollection(projectsCollection, project)
-      });
-      const educationOps = portfolio.educationAndTraining.map( education => {
-        return this.addDocumentToCollection(educationAndTrainingCollection, education)
-      });
-      const languageOps = portfolio.languageSkills.map( language => {
-        return this.addDocumentToCollection(languageSkillsCollection, language)
-      });
+
+      const experienceOps = this.addDocumentToCollection(experienceCollection, portfolio.workExperience);
+      const projectOps = this.addDocumentToCollection(projectsCollection, portfolio.projects);
+      const educationOps = this.addDocumentToCollection(educationAndTrainingCollection, portfolio.educationAndTraining);
+      const languageOps = this.addDocumentToCollection(languageSkillsCollection, portfolio.languageSkills);
+
       const allOps = [
         ...experienceOps,
         ...projectOps,
@@ -146,11 +140,13 @@ export class FirebaseService {
     }));
   }
 
-  private addDocumentToCollection(collection: CollectionReference, item: FirebaseObject): Observable<void> {
-    const docRef = doc(collection);
-    item._id = docRef.id;
-    const plainItem = item.toFirebase();
-    return from(setDoc(docRef, plainItem));
+  private addDocumentToCollection(collection: CollectionReference, items: FirebaseObject[]): Observable<void>[] {
+    return items.map( item => {
+      const docRef = doc(collection);
+      item._id = docRef.id;
+      const plainItem = item.toFirebase();
+      return from(setDoc(docRef, plainItem));
+    })
   }
 
   private updatePortfolio(docRef: DocumentReference, portfolio: UserPortfolio): Observable<void> {
