@@ -6,7 +6,6 @@ export class UserPortfolio implements FirebaseObject {
   shortDescription: string = '';
   profileSummary: string = '';
   nativeLanguage?: string;
-  image: string = '';
   workExperience: PortfolioItem[] = [];
   educationAndTraining: PortfolioItem[] = [];
   languageSkills: LanguageSkill[] = [];
@@ -22,7 +21,6 @@ export class UserPortfolio implements FirebaseObject {
     this.shortDescription = data.shortDescription || '';
     this.profileSummary = data.profileSummary || '';
     this.nativeLanguage = data.nativeLanguage;
-    this.image = data.image || '';
     this.workExperience = data.workExperience?.map(item => new PortfolioItem(item)) || [];
     this.educationAndTraining = data.educationAndTraining?.map(item => new PortfolioItem(item)) || [];
     this.languageSkills = data.languageSkills?.map(item => new LanguageSkill(item)) || [];
@@ -39,7 +37,6 @@ export class UserPortfolio implements FirebaseObject {
       shortDescription: this.shortDescription,
       profileSummary: this.profileSummary,
       nativeLanguage: this.nativeLanguage || null,
-      image: this.image,
       updatedAt: this.updatedAt
     }
   }

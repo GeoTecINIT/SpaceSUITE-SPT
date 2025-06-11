@@ -8,13 +8,16 @@ import { SkillTagComponent } from "../skillTags/skillTags.component";
 import { Tag } from '../../model/tag';
 import { MessageService } from 'primeng/api';
 import { UtilsService } from '../../services/utils.service';
+import { UpdateImageModalComponent } from "../updateImageModal/updateImageModal.component";
+import { FirebaseService } from '../../services/firebase.service';
+import { take } from 'rxjs';
 
 @Component({
   standalone: true,
   selector: 'user-information',
   templateUrl: './userInformation.component.html',
   styleUrls: ['./userInformation.component.css'],
-  imports: [CommonModule, ButtonModule, SkillTagComponent, TooltipModule, ToastModule],
+  imports: [CommonModule, ButtonModule, SkillTagComponent, TooltipModule, ToastModule, UpdateImageModalComponent],
   providers: [MessageService]
 })
 export class UserInformationComponent {
@@ -25,9 +28,14 @@ export class UserInformationComponent {
   softSkills: Tag[] = [];
   languages: Tag[] = [];
 
-  constructor(private messageService: MessageService, private utilsService: UtilsService) {}
+  showModal: boolean = false;
+  userImage: string = '';
+
+  constructor(private messageService: MessageService, private utilsService: UtilsService, private firebaseService: FirebaseService) {}
 
   ngOnInit() {
+    this.firebaseService.getUserImage().pipe(take(1)).subscribe(url => this.userImage = url);
+
     const hardSkillsSet = new Set<string>();
     const softSkillsSet = new Set<string>();
     const bokConceptsSet= new Set<string>();
@@ -65,5 +73,10 @@ export class UserInformationComponent {
       life: 3000, 
       closable: true 
     });
+  }
+
+  updateUserImage(url: string) {
+    this.userImage = url;
+    console.log(this.userImage);
   }
 }

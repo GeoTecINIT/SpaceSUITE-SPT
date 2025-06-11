@@ -1,0 +1,28 @@
+.custom-fileupload {
+    --p-fileupload-color: var(--primary-color);
+    --p-fileupload-header-color: var(--primary-color);
+    --p-button-text-danger-color: var(--danger-color);
+    --p-fileupload-border-color: #cbd5e1;
+}
+
+:host ::ng-deep button {
+  min-width: 0rem !important;
+}
+
+.image-container {
+    position: relative;
+    overflow: hidden;
+    max-height: 12rem;
+    height: 12rem;
+    max-width: 12rem;
+    max-width: 12rem;
+    border-radius: 50%;
+    border-width: 3px;
+    border-style: solid;
+    border-color: var(--primary-color);
+}
+
+.image-container img {
+    width: 100%;
+    display: block;
+}

@@ -1,9 +1,10 @@
 import { inject, Injectable } from "@angular/core";
 import { Auth, authState } from "@angular/fire/auth";
 import { collection, collectionData, CollectionReference, deleteDoc, doc, docData, DocumentReference, Firestore, getDocs, serverTimestamp, setDoc } from "@angular/fire/firestore";
-import { concatMap, forkJoin, from, map, Observable, of, ReplaySubject, switchMap, take } from "rxjs";
+import { catchError, concatMap, defaultIfEmpty, forkJoin, from, map, Observable, of, ReplaySubject, switchMap, take } from "rxjs";
 import { FirebaseObject, LanguageSkill, PortfolioItem, UserPortfolio } from "../model/userPortfolio";
 import { BokInformationService } from "@eo4geo/ngx-bok-visualization";
+import { getDownloadURL, ref, uploadBytes, Storage } from "@angular/fire/storage";
 
 @Injectable({
     providedIn: 'root',
@@ -11,6 +12,7 @@ import { BokInformationService } from "@eo4geo/ngx-bok-visualization";
 export class FirebaseService {
   private auth: Auth;
   private db: Firestore;
+  private storage: Storage;
   private portfolioCollection: CollectionReference;
 
   userId: string = '';
@@ -19,6 +21,7 @@ export class FirebaseService {
   constructor(private bokInfoService: BokInformationService) {
     this.auth = inject(Auth);
     this.db = inject(Firestore);
+    this.storage = inject(Storage)
     this.portfolioCollection = collection(this.db, 'Portfolios');
     authState(this.auth).subscribe(user => {
       this.userId = user?.uid ?? '';
@@ -135,7 +138,7 @@ export class FirebaseService {
         ...educationOps,
         ...languageOps
       ];
-      return forkJoin(allOps).pipe(map(() => undefined));
+      return forkJoin(allOps).pipe(defaultIfEmpty(undefined), map(() => undefined));
     }));
   }
 
@@ -172,6 +175,20 @@ export class FirebaseService {
         ) 
       )
     : of([]);
+  }
+
+  public updateUserImage(image: File) {
+    const path = `Portfolio_Images/${this.userId}`;
+    const storageRef = ref(this.storage, path);
+    return from(uploadBytes(storageRef, image)).pipe(
+      concatMap(() => getDownloadURL(storageRef))
+    );
+  }
+
+  public getUserImage(): Observable<string> {
+    const path = `Portfolio_Images/${this.userId}`;
+    const storageRef = ref(this.storage, path);
+    return from(getDownloadURL(storageRef)).pipe(catchError( () => of('')));
   }
 
 }

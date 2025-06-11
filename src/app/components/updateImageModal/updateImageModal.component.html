@@ -1,0 +1,27 @@
+<p-dialog header="Update Image" [draggable]="false" [modal]="true" [(visible)]="visible" [style]="{width: '35rem', 'max-height': '45rem', color: 'var(--primary-color)'}" (onHide)="closeModal()">
+    <div>
+        <p-fileupload #fileUpload maxFileSize="1000000" mode="advanced" accept="image/*" customUpload="true" auto
+            class="custom-button custom-secondary-button custom-fileupload" (uploadHandler)="onFileSelected($event); fileUpload.clear();"
+            pTooltip="Image to be displayed in the Training Catalog with this resource" 
+            tooltipPosition="right" showDelay="200" hideDelay="200">
+            <ng-template #header let-chooseCallback="chooseCallback">
+                <div class="flex flex-wrap gap-2">
+                    <p-button size="small" label="Choose Image" icon="pi pi-plus" (onClick)="fileUpload.choose()" />
+                    <p-button severity="secondary" size="small" icon="pi pi-times" (onClick)="onFileDeleted()" />
+                </div>
+            </ng-template>
+            <ng-template *ngIf="uploadedImage" #content>
+                <p-divider class="my-2"></p-divider>
+                <div class="flex flex-column gap-2 align-items-center">
+                    <div>Current Image</div>
+                    <a class="image-container mb-4 flex justify-content-center align-items-center" target="_self">
+                        <img [src]="uploadedImageB64">
+                    </a>
+                </div>
+            </ng-template>
+        </p-fileupload>
+    </div>
+    <div class="mt-3 flex justify-content-center">
+        <p-button class="custom-button" size="small" label="Upload Image" icon="pi pi-upload" (onClick)="updateImage()" [disabled]="!uploadedImage" [loading]="loading"/>
+    </div>
+</p-dialog>
