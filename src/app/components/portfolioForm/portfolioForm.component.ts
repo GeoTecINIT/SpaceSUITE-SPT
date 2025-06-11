@@ -40,6 +40,8 @@ export class PortfolioFormComponent {
   errorMap: Map<string, string | undefined> = new Map();
   languageList: string[] = [];
 
+  loading: boolean = false;
+
   constructor(private firebaseService: FirebaseService, private router: Router, private messageService: MessageService, private formDataService: FormDataService){
     this.loggedSubscription = this.firebaseService.logged$.asObservable().subscribe( logged => {
       if (!logged) {
@@ -54,7 +56,8 @@ export class PortfolioFormComponent {
   }
 
   returnToHomepage() {
-    this.router.navigate(['']);
+    if (this.inputPortfolio) this.router.navigate(['portfolio']);
+    else this.router.navigate(['']);
   }
 
   ngOnDestroy() {
@@ -92,13 +95,14 @@ export class PortfolioFormComponent {
   }
 
   submitForm() {
+    this.loading = true;
     this.errorMap = this.formDataService.validate(this.portfolio);
     const allValid: boolean = Array.from(this.errorMap.values()).every(value => value === undefined);
     if (allValid) {
       this.firebaseService.submitPortfolio(this.portfolio, this.inputPortfolio).pipe(
         take(1),
-        catchError( (error) => {
-          console.log(error)
+        catchError( () => {
+          this.loading = false;
           this.messageService.add({ 
             severity: 'error', 
             summary: 'Error', 
@@ -109,6 +113,7 @@ export class PortfolioFormComponent {
           return of(null)
         })
       ).subscribe(() => {
+        this.loading = false;
         this.router.navigate(
             ['portfolio'], 
             { 
@@ -121,6 +126,7 @@ export class PortfolioFormComponent {
       });
     }
     else {
+      this.loading = false;
       this.messageService.add({ 
         severity: 'error', 
         summary: 'Error', 

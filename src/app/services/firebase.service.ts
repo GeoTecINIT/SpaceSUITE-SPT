@@ -4,7 +4,7 @@ import { collection, collectionData, CollectionReference, deleteDoc, doc, docDat
 import { catchError, concatMap, defaultIfEmpty, forkJoin, from, map, Observable, of, ReplaySubject, switchMap, take } from "rxjs";
 import { FirebaseObject, LanguageSkill, PortfolioItem, UserPortfolio } from "../model/userPortfolio";
 import { BokInformationService } from "@eo4geo/ngx-bok-visualization";
-import { getDownloadURL, ref, uploadBytes, Storage } from "@angular/fire/storage";
+import { getDownloadURL, ref, uploadBytes, Storage, deleteObject } from "@angular/fire/storage";
 
 @Injectable({
     providedIn: 'root',
@@ -189,6 +189,12 @@ export class FirebaseService {
     const path = `Portfolio_Images/${this.userId}`;
     const storageRef = ref(this.storage, path);
     return from(getDownloadURL(storageRef)).pipe(catchError( () => of('')));
+  }
+
+  public deleteUserImage() {
+    const path = `Portfolio_Images/${this.userId}`;
+    const storageRef = ref(this.storage, path);
+    return from(deleteObject(storageRef));
   }
 
 }

@@ -21,7 +21,7 @@ export class UpdateImageModalComponent {
   @Output() onImageUpdate = new EventEmitter<string>();
 
   uploadedImage: File | undefined;
-  uploadedImageB64: string | undefined;
+  uploadedImageB64: string = '';
 
   loading: boolean = false;
 
@@ -35,13 +35,13 @@ export class UpdateImageModalComponent {
       const reader = new FileReader();
       reader.readAsDataURL(file); 
       reader.onload = (_event) => { 
-          this.uploadedImageB64 = reader.result?.toString() ?? undefined; 
+          this.uploadedImageB64 = reader.result?.toString() ?? ''; 
       }
     }
   }
 
   onFileDeleted() {
-    this.uploadedImageB64 = undefined;
+    this.uploadedImageB64 = '';
     this.uploadedImage = undefined;
   }
 
@@ -51,13 +51,25 @@ export class UpdateImageModalComponent {
 
   updateImage() {
     this.loading = true;
-    this.firebaseService.updateUserImage(this.uploadedImage!).pipe(
+    if (this.uploadedImage) {
+      this.firebaseService.updateUserImage(this.uploadedImage).pipe(
         tap( url => {
             this.loading = false;
             this.onImageUpdate.emit(url);
             this.visibleChange.emit(false);
         }),
         take(1)
-    ).subscribe();
+      ).subscribe();
+    }
+    else {
+      this.firebaseService.deleteUserImage().pipe(
+        tap( () => {
+            this.loading = false;
+            this.onImageUpdate.emit('');
+            this.visibleChange.emit(false);
+        }),
+        take(1)
+      ).subscribe();
+    }
   }
 }

@@ -5,23 +5,23 @@
             pTooltip="Image to be displayed in the Training Catalog with this resource" 
             tooltipPosition="right" showDelay="200" hideDelay="200">
             <ng-template #header let-chooseCallback="chooseCallback">
-                <div class="flex flex-wrap gap-2">
-                    <p-button size="small" label="Choose Image" icon="pi pi-plus" (onClick)="fileUpload.choose()" />
-                    <p-button severity="secondary" size="small" icon="pi pi-times" (onClick)="onFileDeleted()" />
+                <div class="flex flex-wrap gap-2 align-items-center">
+                    <p-button size="small" label="Choose File" icon="pi pi-plus" (onClick)="fileUpload.choose()" />
+                    <p-button severity="secondary" size="small" label="Clear File" icon="pi pi-times" [disabled]="!uploadedImage" (onClick)="onFileDeleted()" />
                 </div>
             </ng-template>
-            <ng-template *ngIf="uploadedImage" #content>
+            <ng-template #content>
                 <p-divider class="my-2"></p-divider>
                 <div class="flex flex-column gap-2 align-items-center">
                     <div>Current Image</div>
                     <a class="image-container mb-4 flex justify-content-center align-items-center" target="_self">
-                        <img [src]="uploadedImageB64">
+                        <img [src]="uploadedImageB64 != '' ? uploadedImageB64 : 'assets/images/avatar_image.png'">
                     </a>
                 </div>
             </ng-template>
         </p-fileupload>
     </div>
     <div class="mt-3 flex justify-content-center">
-        <p-button class="custom-button" size="small" label="Upload Image" icon="pi pi-upload" (onClick)="updateImage()" [disabled]="!uploadedImage" [loading]="loading"/>
+        <p-button class="custom-button" size="small" label="Update" icon="pi pi-upload" (onClick)="updateImage()" [loading]="loading"/>
     </div>
 </p-dialog>
