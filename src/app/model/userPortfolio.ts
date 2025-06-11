@@ -11,7 +11,6 @@ export class UserPortfolio implements FirebaseObject {
   educationAndTraining: PortfolioItem[] = [];
   languageSkills: LanguageSkill[] = [];
   projects: PortfolioItem[] = [];
-  interests: string[] = [];
   updatedAt: any;
 
   constructor(data?: Partial<UserPortfolio>) {
@@ -28,7 +27,6 @@ export class UserPortfolio implements FirebaseObject {
     this.educationAndTraining = data.educationAndTraining?.map(item => new PortfolioItem(item)) || [];
     this.languageSkills = data.languageSkills?.map(item => new LanguageSkill(item)) || [];
     this.projects = data.projects?.map(item => new PortfolioItem(item)) || [];
-    this.interests = data.interests || [];
     this.updatedAt = data.updatedAt || null;
   }
 
@@ -42,7 +40,6 @@ export class UserPortfolio implements FirebaseObject {
       profileSummary: this.profileSummary,
       nativeLanguage: this.nativeLanguage || null,
       image: this.image,
-      interests: this.interests,
       updatedAt: this.updatedAt
     }
   }

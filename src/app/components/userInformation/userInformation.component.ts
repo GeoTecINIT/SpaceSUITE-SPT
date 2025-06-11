@@ -24,7 +24,6 @@ export class UserInformationComponent {
   hardSkills: Tag[] = [];
   softSkills: Tag[] = [];
   languages: Tag[] = [];
-  interests: Tag[] = [];
 
   constructor(private messageService: MessageService, private utilsService: UtilsService) {}
 
@@ -55,7 +54,6 @@ export class UserInformationComponent {
       this.languages.push(new Tag(this.userPortfolio?.nativeLanguage + ': Native'));
     }
     this.languages = this.languages.concat(this.utilsService.stringToTag((this.userPortfolio?.languageSkills ?? []).map(value => `${value.language}: ${value.level}`)));
-    this.interests = this.utilsService.stringToTag((this.userPortfolio?.interests ?? []), 'secondary');
   }
 
   copyToClipboard(value: string, field: string) {

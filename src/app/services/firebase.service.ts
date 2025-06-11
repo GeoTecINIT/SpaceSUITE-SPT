@@ -1,9 +1,8 @@
 import { inject, Injectable } from "@angular/core";
 import { Auth, authState } from "@angular/fire/auth";
-import { collection, collectionData, CollectionReference, deleteDoc, doc, docData, DocumentReference, Firestore, getDocs, serverTimestamp, setDoc, updateDoc } from "@angular/fire/firestore";
-import { concatMap, forkJoin, from, map, Observable, of, ReplaySubject, Subject, switchMap, take } from "rxjs";
+import { collection, collectionData, CollectionReference, deleteDoc, doc, docData, DocumentReference, Firestore, getDocs, serverTimestamp, setDoc } from "@angular/fire/firestore";
+import { concatMap, forkJoin, from, map, Observable, of, ReplaySubject, switchMap, take } from "rxjs";
 import { FirebaseObject, LanguageSkill, PortfolioItem, UserPortfolio } from "../model/userPortfolio";
-import { FormDataService } from "./formData.service";
 import { BokInformationService } from "@eo4geo/ngx-bok-visualization";
 
 @Injectable({

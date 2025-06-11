@@ -103,6 +103,20 @@ export class HomePageComponent {
   constructor(private cdRef: ChangeDetectorRef, private router: Router, private firebase: FirebaseService, private messageService: MessageService, private route: ActivatedRoute) {}
 
   ngAfterViewInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const submited: boolean = params['submited'];
+      const mode: string = params['mode'];
+      if (submited && mode == 'delete'){
+        this.messageService.add({ 
+          severity: 'info', 
+          summary: 'Info', 
+          detail: `Portfolio successfully deleted!`,
+          life: 3000, 
+          closable: true 
+        }); 
+      }
+    });
+
     this.resizeObserver = new ResizeObserver(entries => {
       for (let entry of entries) {
         const width = entry.contentRect.width;
@@ -117,24 +131,6 @@ export class HomePageComponent {
     if (this.containerDiv?.nativeElement) {
       this.resizeObserver.observe(this.containerDiv.nativeElement);
     }
-
-    this.route.queryParams.subscribe(params => {
-      const submited: boolean = params['submited'];
-      const mode: string = params['mode'];
-      if (submited){
-        switch (mode){
-          case 'delete':
-            this.messageService.add({ 
-              severity: 'info', 
-              summary: 'Info', 
-              detail: `Portfolio successfully deleted!`,
-              life: 3000, 
-              closable: true 
-            }); 
-            break
-        }
-      }
-    });
   }
   
   ngOnDestroy(): void {

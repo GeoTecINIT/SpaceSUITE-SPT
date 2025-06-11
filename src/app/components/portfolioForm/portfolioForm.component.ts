@@ -16,7 +16,6 @@ import { Router } from '@angular/router';
 import { catchError, of, Subscription, take } from 'rxjs';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { TextChipsComponent } from '../textChips/textChips.component';
 import { LanguageSelectComponent } from "../languageSelect/languageSelect.component";
 import { SelectModule } from 'primeng/select';
 import { AccordionModule } from 'primeng/accordion';
@@ -29,7 +28,7 @@ import { PortfolioItemFormComponent } from "../portfolioItemForm/portfolioItemFo
   templateUrl: './portfolioForm.component.html',
   styleUrls: ['./portfolioForm.component.css'],
   imports: [InputTextModule, FloatLabelModule, FormsModule, InputIconModule, IconFieldModule, TextareaModule, CommonModule, SelectModule, AccordionModule,
-    StepperModule, ButtonModule, TooltipModule, ToastModule, InputNumberModule, TextChipsComponent, LanguageSelectComponent, PortfolioItemFormComponent],
+    StepperModule, ButtonModule, TooltipModule, ToastModule, InputNumberModule, LanguageSelectComponent, PortfolioItemFormComponent],
   providers: [MessageService]
 })
 export class PortfolioFormComponent {
