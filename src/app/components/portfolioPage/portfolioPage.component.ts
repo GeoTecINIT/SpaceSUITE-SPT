@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { UserInformationComponent } from "../userInformation/userInformation.component";
 import { UserPortfolio } from '../../model/userPortfolio';
 import { DividerModule } from 'primeng/divider';
@@ -10,13 +10,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { pipe, Subscription, take } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   standalone: true,
   selector: 'portfolio-page',
   templateUrl: './portfolioPage.component.html',
   styleUrls: ['./portfolioPage.component.css'],
-  imports: [CommonModule, UserInformationComponent, DividerModule, ExperienceTimelineComponent, ButtonModule, ToastModule],
+  imports: [CommonModule, UserInformationComponent, DividerModule, ExperienceTimelineComponent, ButtonModule, ToastModule, ProgressSpinnerModule],
   providers: [MessageService]
 })
 export class PortfolioPageComponent {
@@ -24,6 +25,8 @@ export class PortfolioPageComponent {
 
   private loggedSubscription?: Subscription;
   private portfolioSubscription?: Subscription;
+
+  loading = false;
 
   constructor(private firebaseService: FirebaseService, private router: Router, private route: ActivatedRoute, private messageService: MessageService){}
 
@@ -35,9 +38,15 @@ export class PortfolioPageComponent {
     });
     this.portfolioSubscription = this.firebaseService.getUserPortfolio().pipe(take(1)).subscribe( portfolio => {
         if (!portfolio) this.router.navigate(['']);
-        else this.userPortfolio = portfolio;
+        else {
+          this.userPortfolio = portfolio;
+          this.loading = false;
+        }
       }
     );
+    setTimeout(() => {
+      if (!this.userPortfolio) this.loading = true;
+    }, 500)
   }
 
   ngAfterViewInit() {

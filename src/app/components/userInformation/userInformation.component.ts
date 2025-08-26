@@ -4,6 +4,7 @@ import { UserPortfolio } from '../../model/userPortfolio';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast'
+import { SkeletonModule } from 'primeng/skeleton';
 import { SkillTagComponent } from "../skillTags/skillTags.component";
 import { Tag } from '../../model/tag';
 import { MessageService } from 'primeng/api';
@@ -17,7 +18,7 @@ import { take } from 'rxjs';
   selector: 'user-information',
   templateUrl: './userInformation.component.html',
   styleUrls: ['./userInformation.component.css'],
-  imports: [CommonModule, ButtonModule, SkillTagComponent, TooltipModule, ToastModule, UpdateImageModalComponent],
+  imports: [CommonModule, ButtonModule, SkillTagComponent, TooltipModule, ToastModule, UpdateImageModalComponent, SkeletonModule],
   providers: [MessageService]
 })
 export class UserInformationComponent {
@@ -29,7 +30,7 @@ export class UserInformationComponent {
   languages: Tag[] = [];
 
   showModal: boolean = false;
-  userImage: string = '';
+  userImage: string | undefined = undefined;
 
   constructor(private messageService: MessageService, private utilsService: UtilsService, private firebaseService: FirebaseService) {}
 

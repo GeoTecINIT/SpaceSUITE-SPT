@@ -37,6 +37,9 @@
     height: 12rem;
     max-width: 12rem;
     max-width: 12rem;
+}
+
+.image-container-boder {
     border-radius: 50%;
     border-width: 3px;
     border-style: solid;
@@ -44,7 +47,7 @@
 }
 
 .image-container img {
-    width: 100%;
+    width: 12rem;
     display: block;
 }
 

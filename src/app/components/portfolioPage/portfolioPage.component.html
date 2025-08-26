@@ -1,5 +1,5 @@
 <p-toast class="custom-toast" position="bottom-right"/>
-<div *ngIf="userPortfolio; else loading" class="flex flex-column xl:flex-row gap-4 m-2">
+<div *ngIf="userPortfolio else spinner" class="flex flex-column xl:flex-row gap-4 m-2">
     <div class="flex flex-column xl:flex-row align-items-center">
         <user-information class="w-full xl:max-w-28rem mb-auto" style="max-width: 35rem;" [userPortfolio]="userPortfolio"></user-information>
         <p-divider layout="vertical" class="hidden xl:flex"/>
@@ -20,4 +20,8 @@
     </div>
 </div>
 
-<ng-template #loading>Loading...</ng-template>
+<ng-template #spinner>
+    <div *ngIf="loading" class="flex justify-content-center align-items-center" style="min-height: 60vh;">
+        <p-progress-spinner ariaLabel="loading" />
+    </div>
+</ng-template>
