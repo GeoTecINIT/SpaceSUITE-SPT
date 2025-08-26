@@ -78,6 +78,5 @@ export class UserInformationComponent {
 
   updateUserImage(url: string) {
     this.userImage = url;
-    console.log(this.userImage);
   }
 }

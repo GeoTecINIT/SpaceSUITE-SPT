@@ -144,7 +144,6 @@ export class FirebaseService {
 
   private addDocumentsToCollection(collection: CollectionReference, items: FirebaseObject[]): Observable<void>[] {
     return items.map( item => {
-      console.log(item)
       const docRef = doc(collection);
       item._id = docRef.id;
       const plainItem = item.toFirebase();
