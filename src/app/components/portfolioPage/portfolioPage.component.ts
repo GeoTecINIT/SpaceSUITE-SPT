@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { UserInformationComponent } from "../userInformation/userInformation.component";
-import { UserPortfolio } from '../../model/userPortfolio';
+import { PortfolioItem, UserPortfolio } from '../../model/userPortfolio';
 import { DividerModule } from 'primeng/divider';
 import { ExperienceTimelineComponent } from "../experienceTimeline/experienceTimeline.component";
 import { ButtonModule } from 'primeng/button';
@@ -23,6 +23,13 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 export class PortfolioPageComponent {
   public userPortfolio?: UserPortfolio;
 
+  experienceItems: PortfolioItem[] = []
+  projectsItems: PortfolioItem[] = []
+  educationItems: PortfolioItem[] = []
+
+  reverseProjects: boolean = false;
+  reverseEducation: boolean = false;
+
   private loggedSubscription?: Subscription;
   private portfolioSubscription?: Subscription;
 
@@ -40,6 +47,14 @@ export class PortfolioPageComponent {
         if (!portfolio) this.router.navigate(['']);
         else {
           this.userPortfolio = portfolio;
+          
+          this.experienceItems.push(...this.userPortfolio.workExperience)
+          this.projectsItems.push(...this.userPortfolio.projects)
+          this.educationItems.push(...this.userPortfolio.educationAndTraining)
+
+          this.reverseProjects = this.experienceItems.length % 2 != 0
+          this.reverseEducation = (this.experienceItems.length + this.projectsItems.length) % 2 != 0
+
           this.loading = false;
         }
       }

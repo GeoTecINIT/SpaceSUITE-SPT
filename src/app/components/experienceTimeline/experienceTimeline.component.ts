@@ -17,6 +17,7 @@ export class ExperienceTimelineComponent {
   @Input() title: string = ''
   @Input() icon: string = ''
   @Input() events: PortfolioItem[] = []
+  @Input() reverse: boolean = false
 
   showDetail: boolean[] = [];
 
@@ -33,6 +34,7 @@ export class ExperienceTimelineComponent {
       const bDate = new Date(b.startDate);
       return bDate.getTime() - aDate.getTime()
     });
+    if (this.reverse) this.events = [this.events[0], ...this.events]
   }
 
   formatDate(startDate: Date, endDate: Date) {
@@ -57,6 +59,12 @@ export class ExperienceTimelineComponent {
 
     if (this.containerDiv?.nativeElement) {
       this.resizeObserver.observe(this.containerDiv.nativeElement);
+    }
+
+    if (this.reverse && this.containerDiv?.nativeElement) {
+      const firstItem: HTMLElement | null =
+        this.containerDiv?.nativeElement.querySelector('.p-timeline-event');
+      if (firstItem) firstItem.style.display = 'none';
     }
   }
   

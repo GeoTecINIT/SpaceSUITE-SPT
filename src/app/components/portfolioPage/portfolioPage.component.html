@@ -7,9 +7,9 @@
     </div>
     <div class="flex flex-1 flex-column xl:flex-row my-4 gap-2">
         <div class="flex flex-1 flex-column align-items-center gap-6">
-            <experience-timeline *ngIf="userPortfolio.workExperience.length > 0" [events]="userPortfolio.workExperience" title="Experience" icon="pi pi-briefcase" class="w-full"></experience-timeline>
-            <experience-timeline *ngIf="userPortfolio.projects.length > 0" [events]="userPortfolio.projects" title="Projects" icon="pi pi-wrench" class="w-full"></experience-timeline>
-            <experience-timeline *ngIf="userPortfolio.educationAndTraining.length > 0" [events]="userPortfolio.educationAndTraining" title="Education" icon="pi pi-graduation-cap" class="w-full"></experience-timeline>
+            <experience-timeline *ngIf="experienceItems.length > 0" [events]="experienceItems" title="Experience" icon="pi pi-briefcase" class="w-full"></experience-timeline>
+            <experience-timeline *ngIf="projectsItems.length > 0" [events]="projectsItems" [reverse]="reverseProjects" title="Projects" icon="pi pi-wrench" class="w-full"></experience-timeline>
+            <experience-timeline *ngIf="educationItems.length > 0" [events]="educationItems" [reverse]="reverseEducation" title="Education" icon="pi pi-graduation-cap" class="w-full"></experience-timeline>
         </div>
         <div class="flex flex-wrap xl:flex-column justify-content-center xl:justify-content-start xl:align-items-center gap-2 px-4 mr-2 pt-4 xl:pt-0">
             <p-button class="custom-button" size="small" icon="pi pi-file" label="Document" [disabled]="true"></p-button>
