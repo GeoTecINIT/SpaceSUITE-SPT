@@ -30,7 +30,6 @@ export class PortfolioPageComponent {
   reverseProjects: boolean = false;
   reverseEducation: boolean = false;
 
-  private loggedSubscription?: Subscription;
   private portfolioSubscription?: Subscription;
 
   loading = false;
@@ -38,11 +37,6 @@ export class PortfolioPageComponent {
   constructor(private firebaseService: FirebaseService, private router: Router, private route: ActivatedRoute, private messageService: MessageService){}
 
   ngOnInit() {
-    this.loggedSubscription = this.firebaseService.logged$.asObservable().subscribe( logged => {
-      if (!logged) {
-        this.router.navigate(['']);
-      }
-    });
     this.portfolioSubscription = this.firebaseService.getUserPortfolio().pipe(take(1)).subscribe( portfolio => {
         if (!portfolio) this.router.navigate(['']);
         else {
@@ -94,7 +88,6 @@ export class PortfolioPageComponent {
   }
 
   ngOnDestroy() {
-    this.loggedSubscription?.unsubscribe();
     this.portfolioSubscription?.unsubscribe();
   }
 

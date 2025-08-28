@@ -5,7 +5,9 @@ import { ButtonModule } from 'primeng/button';
 import { CommonModule } from "@angular/common";
 import { DividerModule } from "primeng/divider";
 import { FirebaseService } from "../../services/firebase.service";
-import { concatMap, of, take, tap } from "rxjs";
+import { catchError, of, take, tap } from "rxjs";
+import { ToastModule } from "primeng/toast";
+import { MessageService } from "primeng/api";
 
 
 @Component({
@@ -13,7 +15,7 @@ import { concatMap, of, take, tap } from "rxjs";
   selector: 'update-image-modal',
   templateUrl: './updateImageModal.component.html',
   styleUrls: ['./updateImageModal.component.css'],
-  imports: [DialogModule, FileUploadModule, ButtonModule, CommonModule, DividerModule],
+  imports: [DialogModule, FileUploadModule, ButtonModule, CommonModule, DividerModule, ToastModule],
 })
 export class UpdateImageModalComponent {
   @Input() visible = false;
@@ -25,7 +27,7 @@ export class UpdateImageModalComponent {
 
   loading: boolean = false;
 
-  constructor(private firebaseService: FirebaseService) {}
+  constructor(private firebaseService: FirebaseService, private messageService: MessageService) {}
 
   onFileSelected(input: FileUploadHandlerEvent) {
     if (input.files.length == 1) {
@@ -58,7 +60,18 @@ export class UpdateImageModalComponent {
             this.onImageUpdate.emit(url);
             this.visibleChange.emit(false);
         }),
-        take(1)
+        take(1),
+        catchError(_ => {
+          this.loading = false;
+          this.messageService.add({ 
+            severity: 'error', 
+            summary: 'Error', 
+            detail: 'Something went wrong. Try again later or contact the administrator.', 
+            life: 3000, 
+            closable: true 
+          });
+          return of()
+        })
       ).subscribe();
     }
     else {
@@ -68,7 +81,20 @@ export class UpdateImageModalComponent {
             this.onImageUpdate.emit('');
             this.visibleChange.emit(false);
         }),
-        take(1)
+        take(1),
+        catchError( error => {
+          this.loading = false;
+          if (error.code != 'storage/object-not-found') {
+            this.messageService.add({ 
+              severity: 'error', 
+              summary: 'Error', 
+              detail: 'Something went wrong. Try again later or contact the administrator.', 
+              life: 3000, 
+              closable: true 
+            });
+          } else this.visibleChange.emit(false);
+          return of()
+        })
       ).subscribe();
     }
   }

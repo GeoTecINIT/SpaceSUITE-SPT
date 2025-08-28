@@ -20,15 +20,15 @@
                     </div>
                     <div *ngIf="showDetail[events.indexOf(event)] && event.hardSkills.length > 0" class="mt-2">
                         <div class="mb-2 text-sm"><strong>Hard Skills</strong></div>
-                        <skill-tags [tags]="stringToTag(event.hardSkills)" [direction]="((events.indexOf(event) % 2 != 0) && !smallScreen) ? 'reverse' : 'original'"></skill-tags>
+                        <skill-tags [tags]="stringToTag(event.hardSkills)" [direction]="((!reverse == (events.indexOf(event) % 2 != 0)) && !smallScreen) ? 'reverse' : 'original'"></skill-tags>
                     </div>
                     <div *ngIf="showDetail[events.indexOf(event)] && event.softSkills.length > 0" class="mt-2">
                         <div class="mb-2 text-sm"><strong>Soft Skills</strong></div>
-                        <skill-tags [tags]="stringToTag(event.softSkills, 'secondary')" [direction]="((events.indexOf(event) % 2 != 0) && !smallScreen) ? 'reverse' : 'original'"></skill-tags>
+                        <skill-tags [tags]="stringToTag(event.softSkills, 'secondary')" [direction]="((!reverse == (events.indexOf(event) % 2 != 0)) && !smallScreen) ? 'reverse' : 'original'"></skill-tags>
                     </div>
                     <div *ngIf="showDetail[events.indexOf(event)] && event.bokConcepts.length > 0" class="mt-2">
                         <div class="mb-2 text-sm"><strong>BoK Concepts</strong></div>
-                        <skill-tags [tags]="stringToTag(event.bokConcepts, 'bok')" [direction]="((events.indexOf(event) % 2 != 0) && !smallScreen) ? 'reverse' : 'original'"></skill-tags>
+                        <skill-tags [tags]="stringToTag(event.bokConcepts, 'bok')" [direction]="((!reverse == (events.indexOf(event) % 2 != 0)) && !smallScreen) ? 'reverse' : 'original'"></skill-tags>
                     </div>
                     <a *ngIf="event.description || event.link || event.hardSkills.length > 0 || event.softSkills.length > 0 || event.bokConcepts.length > 0" class="text-sm mt-2" style="cursor: pointer;" 
                         (click)="showDetail[events.indexOf(event)] = !showDetail[events.indexOf(event)]">

@@ -4,7 +4,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { provideHttpClient } from '@angular/common/http';
-import { provideRouter, Routes } from '@angular/router';
+import { provideRouter, Routes, withRouterConfig } from '@angular/router';
 import { AuthGuard, NotFoundPageComponent, OrganizationPageComponent, UserPageComponent } from '@eo4geo/ngx-bok-utils';
 import { environment } from './environments/environment';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
@@ -20,17 +20,20 @@ import { CreateGuard } from './app/guards/create.guard';
 
 const routes: Routes = [
     { path: '', component: HomePageComponent},
-    { path: 'portfolio', component: PortfolioPageComponent, canActivate: [PortfolioGuard]},
-    { path: 'new', component: PortfolioFormComponent, canActivate: [CreateGuard]},
-    { path: 'edit', component: EditPageComponent, canActivate: [PortfolioGuard]},
-    { path: 'profile', component: UserPageComponent, canActivate: [AuthGuard]},
-    { path: 'organizations', component: OrganizationPageComponent, canActivate: [AuthGuard]},
+    { path: 'portfolio', component: PortfolioPageComponent, canActivate: [PortfolioGuard], runGuardsAndResolvers: 'always'},
+    { path: 'new', component: PortfolioFormComponent, canActivate: [CreateGuard], runGuardsAndResolvers: 'always'},
+    { path: 'edit', component: EditPageComponent, canActivate: [PortfolioGuard], runGuardsAndResolvers: 'always'},
+    { path: 'profile', component: UserPageComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
+    { path: 'organizations', component: OrganizationPageComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
+    { path: 'test', component: PortfolioPageComponent, runGuardsAndResolvers: 'always'},
     { path: '**', component: NotFoundPageComponent}
 ];
 
 export const appConfig: ApplicationConfig = {
     providers: [
-        provideRouter(routes),
+        provideRouter(routes, withRouterConfig({
+            onSameUrlNavigation: 'reload'
+        })),
         provideHttpClient(),
         provideFirebaseApp(() => initializeApp(environment.FIREBASE)),
         provideAuth(() => getAuth()),

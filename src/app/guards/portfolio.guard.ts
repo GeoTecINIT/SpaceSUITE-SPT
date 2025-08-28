@@ -2,25 +2,25 @@ import {  CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { concatMap, map, of, take } from 'rxjs';
 import { FirebaseService } from '../services/firebase.service';
+import { AuthService } from '@eo4geo/ngx-bok-utils';
 
 export const PortfolioGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
   const firebaseService = inject(FirebaseService);
   const router = inject(Router);
-
-  return firebaseService.logged$.asObservable().pipe(
+  return authService.getUserState().pipe(
     take(1),
-    concatMap(logged => {
-      if (logged) return firebaseService.getUserPortfolio()
-      return of(undefined)
+    concatMap(state => {
+      if (state?.logged) return firebaseService.getUserPortfolio()
+      return of(null)
     }),
     take(1),
     map(portfolio => {
       if (portfolio) {
         return true;
-      } else {
-        router.navigate(['new']);
-        return false;
-      }
+      } else if (portfolio == undefined) {
+        return router.createUrlTree(['new']);
+      } else return router.createUrlTree(['']);
     })
   );
 };

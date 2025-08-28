@@ -33,7 +33,6 @@ import { PortfolioItemFormComponent } from "../portfolioItemForm/portfolioItemFo
 })
 export class PortfolioFormComponent {
 
-  private loggedSubscription!: Subscription;
   @Input() pageName: string = '';
   @Input() inputPortfolio?: UserPortfolio;
   portfolio: UserPortfolio = new UserPortfolio();
@@ -42,13 +41,7 @@ export class PortfolioFormComponent {
 
   loading: boolean = false;
 
-  constructor(private firebaseService: FirebaseService, private router: Router, private messageService: MessageService, private formDataService: FormDataService){
-    this.loggedSubscription = this.firebaseService.logged$.asObservable().subscribe( logged => {
-      if (!logged) {
-        this.returnToHomepage();
-      }
-    })
-  }
+  constructor(private firebaseService: FirebaseService, private router: Router, private messageService: MessageService, private formDataService: FormDataService){}
 
   ngOnInit() {
     this.languageList = this.formDataService.getLanguageList();
@@ -58,10 +51,6 @@ export class PortfolioFormComponent {
   returnToHomepage() {
     if (this.inputPortfolio) this.router.navigate(['portfolio']);
     else this.router.navigate(['']);
-  }
-
-  ngOnDestroy() {
-    this.loggedSubscription?.unsubscribe();
   }
 
   addEducationItem() {

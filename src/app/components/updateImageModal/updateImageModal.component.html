@@ -1,3 +1,4 @@
+<p-toast class="custom-toast" position="bottom-right"/>
 <p-dialog header="Update Image" [draggable]="false" [modal]="true" [(visible)]="visible" [style]="{width: '35rem', 'max-height': '45rem', color: 'var(--primary-color)'}" (onHide)="closeModal()">
     <div>
         <p-fileupload #fileUpload maxFileSize="10485760" mode="advanced" accept="image/*" customUpload="true" auto
@@ -13,7 +14,7 @@
             <ng-template #content>
                 <p-divider class="my-2"></p-divider>
                 <div class="flex flex-column gap-2 align-items-center">
-                    <div>Current Image</div>
+                    <div>New Image</div>
                     <a class="image-container mb-4 flex justify-content-center align-items-center" target="_self">
                         <img [src]="uploadedImageB64 != '' ? uploadedImageB64 : 'assets/images/avatar_image.png'">
                     </a>

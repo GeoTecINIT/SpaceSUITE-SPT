@@ -18,4 +18,4 @@
     </p-timeline>
 </div>
 <p-button class="custom-button flex justify-content-center mb-5" label="My Portfolio" 
-        [disabled]="!isLogged()" icon="pi pi-bookmark" (onClick)="goToPortfolio()"></p-button>
+        [disabled]="!(isLogged() | async)" icon="pi pi-bookmark" (onClick)="goToPortfolio()"></p-button>

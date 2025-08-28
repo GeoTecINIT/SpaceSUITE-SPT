@@ -1,32 +1,26 @@
 import { inject, Injectable } from "@angular/core";
-import { Auth, authState } from "@angular/fire/auth";
 import { collection, collectionData, CollectionReference, deleteDoc, doc, docData, DocumentReference, Firestore, getDocs, serverTimestamp, setDoc, updateDoc } from "@angular/fire/firestore";
 import { catchError, concatMap, defaultIfEmpty, forkJoin, from, map, Observable, of, ReplaySubject, switchMap, take } from "rxjs";
 import { FirebaseObject, LanguageSkill, PortfolioItem, UserPortfolio } from "../model/userPortfolio";
 import { BokInformationService } from "@eo4geo/ngx-bok-visualization";
 import { getDownloadURL, ref, uploadBytes, Storage, deleteObject } from "@angular/fire/storage";
+import { AuthService } from "@eo4geo/ngx-bok-utils";
 
 @Injectable({
     providedIn: 'root',
 })
 export class FirebaseService {
-  private auth: Auth;
   private db: Firestore;
   private storage: Storage;
   private portfolioCollection: CollectionReference;
 
-  userId: string = '';
-  logged$: ReplaySubject<boolean> = new ReplaySubject(1);
+  private userId: string = '';
 
-  constructor(private bokInfoService: BokInformationService) {
-    this.auth = inject(Auth);
+  constructor(private bokInfoService: BokInformationService, private authService: AuthService) {
     this.db = inject(Firestore);
     this.storage = inject(Storage)
     this.portfolioCollection = collection(this.db, 'Portfolios');
-    authState(this.auth).subscribe(user => {
-      this.userId = user?.uid ?? '';
-      this.logged$.next(user != null);
-    });
+    this.authService.getUserState().subscribe(state => this.userId=state?.uid || '');
   }
 
   public getUserPortfolio(): Observable<UserPortfolio | undefined> {

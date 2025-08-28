@@ -8,6 +8,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { FirebaseService } from "../../services/firebase.service";
 import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
+import { AuthService } from "@eo4geo/ngx-bok-utils";
+import { map, Observable } from "rxjs";
 
 @Component({
   standalone: true,
@@ -100,7 +102,8 @@ export class HomePageComponent {
     }
   ]
 
-  constructor(private cdRef: ChangeDetectorRef, private router: Router, private firebase: FirebaseService, private messageService: MessageService, private route: ActivatedRoute) {}
+  constructor(private cdRef: ChangeDetectorRef, private router: Router, private firebase: FirebaseService, private authService: AuthService,
+              private messageService: MessageService, private route: ActivatedRoute) {}
 
   ngAfterViewInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -143,7 +146,9 @@ export class HomePageComponent {
     this.router.navigate(['portfolio'])
   }
 
-  isLogged(): boolean {
-    return this.firebase.userId != '';
+  isLogged(): Observable<boolean> {
+    return this.authService.getUserState().pipe(
+      map( state => state?.logged != undefined ? state.logged : false)
+    )
   }
 }
