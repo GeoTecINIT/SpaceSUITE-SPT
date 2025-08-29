@@ -12,7 +12,7 @@
                     <div class="font-italic">{{formatDate(event.startDate, event.endDate)}}</div>
                 </ng-template>
                 <div *ngIf="event.organization"><i class="pi pi-building-columns mr-2"></i>{{event.organization}}</div>
-                <div *ngIf="event.city && event.country"><i class="pi pi-map-marker mr-2"></i>{{event.city}}, {{event.country.name}}</div>
+                <div *ngIf="event.country"><i class="pi pi-map-marker mr-2"></i>{{event.city ? event.city + ', ' : ''}}{{event.country.name}}</div>
                 <div class="flex flex-column gap-1">
                     <div *ngIf="showDetail[events.indexOf(event)]" class="mt-1">
                         <div *ngIf="event.description" class="text-sm">{{event.description}}</div>

@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { map, Observable } from "rxjs";
+import { map, Observable, of, tap } from "rxjs";
 import { Country, UserPortfolio } from "../model/userPortfolio";
 import { environment } from "../../environments/environment";
 
@@ -78,6 +78,9 @@ export class FormDataService {
     Samoan: "sm"
   };
 
+  private countries: Country[] = [];
+  private cities: Map<string, string[]> = new Map<string, string[]>();
+
   constructor(private http: HttpClient) {}
     
   public getIsoCode(value: string): string {
@@ -99,22 +102,27 @@ export class FormDataService {
   }
   
   public getCountries(): Observable<Country[]> {
+    if (this.countries.length != 0) return of(this.countries);
     var headers = new HttpHeaders({'X-CSCAPI-KEY': environment.CSC_API_KEY});
     return this.http.get('https://api.countrystatecity.in/v1/countries', { headers: headers}).pipe(
       map( results => {
         if (Array.isArray(results)) return results.map(country => new Country({name: country.name, iso2: country.iso2}))
         return [];
-      })
+      }),
+      tap( results => this.countries = results )
     );
   }
 
   public getCities(name: string): Observable<string[]> {
+    const localCities = this.cities.get(name);
+    if (localCities != undefined) return of(localCities)
     var headers = new HttpHeaders({'X-CSCAPI-KEY': environment.CSC_API_KEY});
     return this.http.get(`https://api.countrystatecity.in/v1/countries/${name}/cities`, { headers: headers}).pipe(
       map( results => {
         if (Array.isArray(results)) return results.map(city => city.name)
         return [];
-      })
+      }),
+      tap( results => this.cities.set(name, results) )
     );
   }
 

@@ -206,7 +206,9 @@ export class FirebaseService {
       oldPortfolio.workExperience
         .filter(oldExp => exp._id === oldExp._id)
         .map(oldExp => {
-          const updateObject = this.createUpdateObject(exp, oldExp, '', ['updatedAt', 'startDate', 'endDate'], false);
+          const plainExp = exp.toFirebase();
+          const plainOldExp = oldExp.toFirebase();
+          const updateObject = this.createUpdateObject(plainExp, plainOldExp, '', ['updatedAt', 'startDate', 'endDate'], false);
           updateObject['_id'] = exp._id
           return updateObject
         })
@@ -215,7 +217,9 @@ export class FirebaseService {
       oldPortfolio.educationAndTraining
         .filter(oldExp => exp._id === oldExp._id)
         .map(oldExp => {
-          const updateObject = this.createUpdateObject(exp, oldExp, '', ['updatedAt', 'startDate', 'endDate'], false);
+          const plainExp = exp.toFirebase();
+          const plainOldExp = oldExp.toFirebase();
+          const updateObject = this.createUpdateObject(plainExp, plainOldExp, '', ['updatedAt', 'startDate', 'endDate'], false)
           updateObject['_id'] = exp._id
           return updateObject
         })
@@ -224,7 +228,9 @@ export class FirebaseService {
       oldPortfolio.projects
         .filter(oldExp => exp._id === oldExp._id)
         .map(oldExp => {
-          const updateObject = this.createUpdateObject(exp, oldExp, '', ['updatedAt', 'startDate', 'endDate'], false);
+          const plainExp = exp.toFirebase();
+          const plainOldExp = oldExp.toFirebase();
+          const updateObject = this.createUpdateObject(plainExp, plainOldExp, '', ['updatedAt', 'startDate', 'endDate'], false)
           updateObject['_id'] = exp._id
           return updateObject
         })
@@ -233,7 +239,9 @@ export class FirebaseService {
       oldPortfolio.languageSkills
         .filter(oldExp => exp._id === oldExp._id)
         .map(oldExp => {
-          const updateObject = this.createUpdateObject(exp, oldExp, '', ['updatedAt', 'startDate', 'endDate'], false);
+          const plainExp = exp.toFirebase();
+          const plainOldExp = oldExp.toFirebase();
+          const updateObject = this.createUpdateObject(plainExp, plainOldExp, '', ['updatedAt', 'startDate', 'endDate'], false)
           updateObject['_id'] = exp._id
           return updateObject
         })
@@ -304,22 +312,29 @@ export class FirebaseService {
 
   private createUpdateObject<T extends object>(newObject: T, oldObject: T, prefix: string = '', specialObjects: string[] = [], ignoreArrays: boolean = true): any {
     const updateObject: { [key: string]: any } = {}
-    for (const key of Object.keys(newObject) as Array<keyof T>) {
-      const newValue = newObject[key];
-      const oldValue = oldObject[key];
-      const fullKey = `${prefix}${key as string}`;
-      if ((ignoreArrays && Array.isArray(newValue)) || this.compareElements(newValue, oldValue)) continue
-      if (typeof newValue == 'object') {
-        if (specialObjects.includes(key as string) || Array.isArray(newValue)) updateObject[fullKey] = newValue;
-        else {
-          const subObject = this.createUpdateObject(newValue as object, oldValue as object, key as string + '.', specialObjects);
-          for (const subKey of Object.keys(subObject)) {
-            const fullSubKey = `${prefix}${subKey as string}`;
-            updateObject[fullSubKey] = subObject[subKey];
+    if (newObject != null) {
+      for (const key of Object.keys(newObject) as Array<keyof T>) {
+        const newValue = newObject[key];
+        const oldValue = oldObject != null ? oldObject[key] : null;
+        const fullKey = `${prefix}${key as string}`;
+        if ((ignoreArrays && Array.isArray(newValue)) || this.compareElements(newValue, oldValue)) continue
+        if (typeof newValue == 'object') {
+          if (specialObjects.includes(key as string) || Array.isArray(newValue)) updateObject[fullKey] = newValue;
+          else {
+            const subObject = this.createUpdateObject(newValue as object, oldValue as object, key as string + '.', specialObjects);
+            for (const subKey of Object.keys(subObject)) {
+              const fullSubKey = `${prefix}${subKey as string}`;
+              updateObject[fullSubKey] = subObject[subKey];
+            }
           }
         }
+        else updateObject[fullKey] = newValue;
       }
-      else updateObject[fullKey] = newValue;
+    }
+    else {
+      if (prefix != '') {
+        updateObject[prefix.slice(0, -1)] = null;
+      }
     }
     return updateObject;
   }
