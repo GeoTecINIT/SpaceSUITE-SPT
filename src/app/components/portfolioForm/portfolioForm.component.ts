@@ -13,7 +13,7 @@ import { StepperModule } from 'primeng/stepper';
 import { TooltipModule } from "primeng/tooltip";
 import { FirebaseService } from '../../services/firebase.service';
 import { Router } from '@angular/router';
-import { catchError, of, Subscription, take } from 'rxjs';
+import { catchError, of, take } from 'rxjs';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { LanguageSelectComponent } from "../languageSelect/languageSelect.component";

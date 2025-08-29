@@ -73,6 +73,7 @@ export class FirebaseService {
 
   public deletePortfolio(): Observable<void> {
     return this.userId.asObservable().pipe(
+      take(1),
       concatMap(uid => {
         const subcollections = ['workExperience', 'projects', 'educationAndTraining', 'languageSkills'];
         const docRef = doc(this.portfolioCollection, uid);
@@ -97,7 +98,7 @@ export class FirebaseService {
     const experienceObservables = this.formatBokConcepts(newPortfolio.educationAndTraining);
     const workObservables = this.formatBokConcepts(newPortfolio.workExperience);
     const projectObservables = this.formatBokConcepts(newPortfolio.projects);
-    const uidObservable = this.userId.asObservable()
+    const uidObservable = this.userId.asObservable().pipe(take(1));
     return forkJoin([experienceObservables, workObservables, projectObservables, uidObservable]).pipe(
       switchMap( results => {
         results[0].forEach((concepts, index) => {
@@ -347,6 +348,7 @@ export class FirebaseService {
 
   public updateUserImage(image: File) {
     return this.userId.asObservable().pipe(
+      take(1),
       concatMap(uid => {
         const path = `Portfolio_Images/${uid}`;
         const storageRef = ref(this.storage, path);
@@ -359,6 +361,7 @@ export class FirebaseService {
 
   public getUserImage(): Observable<string> {
     return this.userId.asObservable().pipe(
+      take(1),
       concatMap(uid => {
         const path = `Portfolio_Images/${uid}`;
         const storageRef = ref(this.storage, path);
@@ -369,6 +372,7 @@ export class FirebaseService {
 
   public deleteUserImage() {
     return this.userId.asObservable().pipe(
+      take(1),
       concatMap(uid => {
         const path = `Portfolio_Images/${uid}`;
         const storageRef = ref(this.storage, path);
