@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { collection, collectionData, CollectionReference, deleteDoc, doc, docData, DocumentReference, Firestore, getDocs, serverTimestamp, setDoc, updateDoc } from "@angular/fire/firestore";
-import { catchError, concatMap, defaultIfEmpty, forkJoin, from, map, Observable, of, ReplaySubject, switchMap, take } from "rxjs";
+import { catchError, concatMap, defaultIfEmpty, filter, forkJoin, from, map, Observable, of, ReplaySubject, switchMap, take } from "rxjs";
 import { FirebaseObject, LanguageSkill, PortfolioItem, UserPortfolio } from "../model/userPortfolio";
 import { BokInformationService } from "@eo4geo/ngx-bok-visualization";
 import { getDownloadURL, ref, uploadBytes, Storage, deleteObject } from "@angular/fire/storage";
@@ -14,21 +14,24 @@ export class FirebaseService {
   private storage: Storage;
   private portfolioCollection: CollectionReference;
 
-  private userId: string = '';
+  private userId: ReplaySubject<string> = new ReplaySubject<string>(1);
 
   constructor(private bokInfoService: BokInformationService, private authService: AuthService) {
     this.db = inject(Firestore);
     this.storage = inject(Storage)
     this.portfolioCollection = collection(this.db, 'Portfolios');
-    this.authService.getUserState().subscribe(state => this.userId=state?.uid || '');
+    this.authService.getUserState().pipe(filter(state => state != undefined)).subscribe(state => this.userId.next(state.uid));
   }
 
   public getUserPortfolio(): Observable<UserPortfolio | undefined> {
-    const docRef = doc(this.portfolioCollection, this.userId);
-    const portfolioObservable = docData(docRef) as Observable<UserPortfolio>;
-
-    return portfolioObservable.pipe(
-      concatMap(portfolio => {
+    return this.userId.asObservable().pipe(
+      concatMap(uid => {
+        const docRef = doc(this.portfolioCollection, uid);
+        return docData(docRef).pipe(
+          map(portfolio => ({ portfolio: portfolio as UserPortfolio, docRef }))
+        );
+      }),
+      concatMap(({ portfolio, docRef }) => {
         if (!portfolio) return of(undefined);
 
         const experienceCollection = collection(docRef, 'workExperience');
@@ -69,20 +72,24 @@ export class FirebaseService {
   }
 
   public deletePortfolio(): Observable<void> {
-    const subcollections = ['workExperience', 'projects', 'educationAndTraining', 'languageSkills'];
-    const docRef = doc(this.portfolioCollection, this.userId);
-    const deleteOps$ = subcollections.map(subcollectionName => {
-      const colRef = collection(docRef, subcollectionName);
-      return from(getDocs(colRef)).pipe(
-        concatMap(querySnapshot => {
-          const deletions = querySnapshot.docs.map(docSnap =>
-            from(deleteDoc(docSnap.ref))
+    return this.userId.asObservable().pipe(
+      concatMap(uid => {
+        const subcollections = ['workExperience', 'projects', 'educationAndTraining', 'languageSkills'];
+        const docRef = doc(this.portfolioCollection, uid);
+        const deleteOps$ = subcollections.map(subcollectionName => {
+          const colRef = collection(docRef, subcollectionName);
+          return from(getDocs(colRef)).pipe(
+            concatMap(querySnapshot => {
+              const deletions = querySnapshot.docs.map(docSnap =>
+                from(deleteDoc(docSnap.ref))
+              );
+              return deletions.length > 0 ? forkJoin(deletions) : from([undefined]);
+            })
           );
-          return deletions.length > 0 ? forkJoin(deletions) : from([undefined]);
-        })
-      );
-    });
-    return forkJoin(deleteOps$).pipe(map(() => undefined), concatMap( () => from(deleteDoc(docRef))));
+        });
+        return forkJoin(deleteOps$).pipe(map(() => undefined), concatMap( () => from(deleteDoc(docRef))));
+      })
+    );
   }
 
   public submitPortfolio(portfolio: UserPortfolio, oldPortfolio?: UserPortfolio): Observable<void> {
@@ -90,7 +97,8 @@ export class FirebaseService {
     const experienceObservables = this.formatBokConcepts(newPortfolio.educationAndTraining);
     const workObservables = this.formatBokConcepts(newPortfolio.workExperience);
     const projectObservables = this.formatBokConcepts(newPortfolio.projects);
-    return forkJoin([experienceObservables, workObservables, projectObservables]).pipe(
+    const uidObservable = this.userId.asObservable()
+    return forkJoin([experienceObservables, workObservables, projectObservables, uidObservable]).pipe(
       switchMap( results => {
         results[0].forEach((concepts, index) => {
           newPortfolio.educationAndTraining[index].bokConcepts = concepts;
@@ -101,10 +109,10 @@ export class FirebaseService {
         results[2].forEach((concepts, index) => {
           newPortfolio.projects[index].bokConcepts = concepts;
         })
-        const newDocRef = doc(this.portfolioCollection, this.userId);
+        const newDocRef = doc(this.portfolioCollection, results[3]);
         const timestamp = serverTimestamp();
         newPortfolio.updatedAt = timestamp;
-        newPortfolio._id = this.userId;
+        newPortfolio._id = results[3];
         if (oldPortfolio) {
           return this.updatePortfolio(newDocRef, newPortfolio, oldPortfolio);
         }
@@ -338,23 +346,35 @@ export class FirebaseService {
   }
 
   public updateUserImage(image: File) {
-    const path = `Portfolio_Images/${this.userId}`;
-    const storageRef = ref(this.storage, path);
-    return from(uploadBytes(storageRef, image)).pipe(
-      concatMap(() => getDownloadURL(storageRef))
+    return this.userId.asObservable().pipe(
+      concatMap(uid => {
+        const path = `Portfolio_Images/${uid}`;
+        const storageRef = ref(this.storage, path);
+        return from(uploadBytes(storageRef, image)).pipe(
+          concatMap(() => getDownloadURL(storageRef))
+        );
+      })
     );
   }
 
   public getUserImage(): Observable<string> {
-    const path = `Portfolio_Images/${this.userId}`;
-    const storageRef = ref(this.storage, path);
-    return from(getDownloadURL(storageRef)).pipe(catchError( () => of('')));
+    return this.userId.asObservable().pipe(
+      concatMap(uid => {
+        const path = `Portfolio_Images/${uid}`;
+        const storageRef = ref(this.storage, path);
+        return from(getDownloadURL(storageRef)).pipe(catchError( () => of('')));
+      })
+    );
   }
 
   public deleteUserImage() {
-    const path = `Portfolio_Images/${this.userId}`;
-    const storageRef = ref(this.storage, path);
-    return from(deleteObject(storageRef));
+    return this.userId.asObservable().pipe(
+      concatMap(uid => {
+        const path = `Portfolio_Images/${uid}`;
+        const storageRef = ref(this.storage, path);
+        return from(deleteObject(storageRef));
+      })
+    );
   }
 
 }

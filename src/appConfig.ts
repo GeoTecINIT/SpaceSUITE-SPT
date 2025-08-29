@@ -25,7 +25,6 @@ const routes: Routes = [
     { path: 'edit', component: EditPageComponent, canActivate: [PortfolioGuard], runGuardsAndResolvers: 'always'},
     { path: 'profile', component: UserPageComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
     { path: 'organizations', component: OrganizationPageComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
-    { path: 'test', component: PortfolioPageComponent, runGuardsAndResolvers: 'always'},
     { path: '**', component: NotFoundPageComponent}
 ];
 
