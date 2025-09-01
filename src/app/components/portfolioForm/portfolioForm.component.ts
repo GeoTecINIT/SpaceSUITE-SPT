@@ -15,12 +15,14 @@ import { FirebaseService } from '../../services/firebase.service';
 import { Router } from '@angular/router';
 import { catchError, of, take } from 'rxjs';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { LanguageSelectComponent } from "../languageSelect/languageSelect.component";
 import { SelectModule } from 'primeng/select';
 import { AccordionModule } from 'primeng/accordion';
 import { FormDataService } from '../../services/formData.service';
 import { PortfolioItemFormComponent } from "../portfolioItemForm/portfolioItemForm.component";
+import { ExitWithoutSavingService } from '@eo4geo/ngx-bok-utils';
+import { ConfirmDialog } from "primeng/confirmdialog";
 
 @Component({
   standalone: true,
@@ -28,8 +30,8 @@ import { PortfolioItemFormComponent } from "../portfolioItemForm/portfolioItemFo
   templateUrl: './portfolioForm.component.html',
   styleUrls: ['./portfolioForm.component.css'],
   imports: [InputTextModule, FloatLabelModule, FormsModule, InputIconModule, IconFieldModule, TextareaModule, CommonModule, SelectModule, AccordionModule,
-    StepperModule, ButtonModule, TooltipModule, ToastModule, InputNumberModule, LanguageSelectComponent, PortfolioItemFormComponent],
-  providers: [MessageService]
+    StepperModule, ButtonModule, TooltipModule, ToastModule, InputNumberModule, LanguageSelectComponent, PortfolioItemFormComponent, ConfirmDialog],
+  providers: [MessageService, ConfirmationService]
 })
 export class PortfolioFormComponent {
 
@@ -41,11 +43,15 @@ export class PortfolioFormComponent {
 
   loading: boolean = false;
 
-  constructor(private firebaseService: FirebaseService, private router: Router, private messageService: MessageService, private formDataService: FormDataService){}
+  constructor(private firebaseService: FirebaseService, private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService,
+              private exitWithoutSavingService: ExitWithoutSavingService, private formDataService: FormDataService){}
 
   ngOnInit() {
     this.languageList = this.formDataService.getLanguageList();
     if (this.inputPortfolio) this.portfolio = new UserPortfolio(this.inputPortfolio)
+    this.exitWithoutSavingService.showModalSubject.subscribe(value => {
+      if (value) this.confirmExitWithoutSaving()
+    })
   }
 
   returnToHomepage() {
@@ -124,5 +130,23 @@ export class PortfolioFormComponent {
         closable: true 
       });
     }
+  }
+
+  confirmExitWithoutSaving() {
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to exit without saving?',
+      header: 'Exit Without Saving',
+      icon: 'pi pi-info-circle',
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+      },
+      acceptButtonProps: {
+        label: 'Exit',
+        severity: 'primary',
+      },
+      accept: () => this.exitWithoutSavingService.exitSubject.next(true),
+      reject: () => this.exitWithoutSavingService.exitSubject.next(false),
+    });
   }
 }

@@ -5,7 +5,7 @@ import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { provideHttpClient } from '@angular/common/http';
 import { provideRouter, Routes, withRouterConfig } from '@angular/router';
-import { AuthGuard, NotFoundPageComponent, OrganizationPageComponent, UserPageComponent } from '@eo4geo/ngx-bok-utils';
+import { AuthGuard, exitWithoutSavingGuard, NotFoundPageComponent, OrganizationPageComponent, UserPageComponent } from '@eo4geo/ngx-bok-utils';
 import { environment } from './environments/environment';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
@@ -21,8 +21,8 @@ import { CreateGuard } from './app/guards/create.guard';
 const routes: Routes = [
     { path: '', component: HomePageComponent},
     { path: 'portfolio', component: PortfolioPageComponent, canActivate: [PortfolioGuard], runGuardsAndResolvers: 'always'},
-    { path: 'new', component: PortfolioFormComponent, canActivate: [CreateGuard], runGuardsAndResolvers: 'always'},
-    { path: 'edit', component: EditPageComponent, canActivate: [PortfolioGuard], runGuardsAndResolvers: 'always'},
+    { path: 'new', component: PortfolioFormComponent, canActivate: [CreateGuard], canDeactivate: [exitWithoutSavingGuard], runGuardsAndResolvers: 'always'},
+    { path: 'edit', component: EditPageComponent, canActivate: [PortfolioGuard], canDeactivate: [exitWithoutSavingGuard], runGuardsAndResolvers: 'always'},
     { path: 'profile', component: UserPageComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
     { path: 'organizations', component: OrganizationPageComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
     { path: '**', component: NotFoundPageComponent}
