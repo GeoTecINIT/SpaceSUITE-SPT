@@ -37,15 +37,20 @@ export class AppComponent {
           url: 'https://eo4geo-cdt.web.app',
         },
         {
-          label: 'BoK Annotation Tool',
-          icon: 'pi pi-pencil',
-          url: 'https://eo4geo-bat.web.app',
+          label: 'Training Catalogue Tool',
+          icon: 'pi pi-graduation-cap',
+          url: 'https://spacesuite-project-tct.web.app/',
         },
         {
           label: 'Skill Portfolio Tool',
           icon: 'pi pi-user',
           style: {'--p-tieredmenu-item-color': 'var(--hover-color)'},
           iconStyle: {'color': 'var(--hover-color)'}
+        },
+        {
+          label: 'BoK Annotation Tool',
+          icon: 'pi pi-pencil',
+          url: 'https://eo4geo-bat.web.app',
         },
         {
           label: 'BoK Matching Tool',
