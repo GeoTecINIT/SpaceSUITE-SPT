@@ -96,7 +96,7 @@
                     </div>
                     <div class="flex justify-content-between mt-3">
                         <p-button class="custom-secondary-button" label="Return" severity="secondary" icon="pi pi-arrow-left" (onClick)="returnToHomepage()" />
-                        <p-button class="custom-button" label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(2)" />
+                        <p-button class="custom-button" label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="goToNextStep(activateCallback, 2)" />
                     </div>
                 </ng-template>
             </p-step-panel>
@@ -117,8 +117,8 @@
                         <p-button icon="pi pi-trash" rounded class="delete-button" (onClick)="deleteEducationItem()" [disabled]="this.portfolio.educationAndTraining.length == 0"></p-button>
                     </div>
                     <div class="flex justify-content-between mt-3">
-                        <p-button class="custom-secondary-button" label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(1)" />
-                        <p-button class="custom-button" label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(3)" />
+                        <p-button class="custom-secondary-button" label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="goToNextStep(activateCallback, 1)" />
+                        <p-button class="custom-button" label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="goToNextStep(activateCallback, 3)" />
                     </div>
                 </ng-template>
             </p-step-panel>
@@ -139,8 +139,8 @@
                         <p-button icon="pi pi-trash" rounded class="delete-button" (onClick)="deleteExperienceItem()" [disabled]="this.portfolio.workExperience.length == 0"></p-button>
                     </div>
                     <div class="flex justify-content-between mt-3">
-                        <p-button class="custom-secondary-button" label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />
-                        <p-button class="custom-button" label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(4)" />
+                        <p-button class="custom-secondary-button" label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="goToNextStep(activateCallback, 2)" />
+                        <p-button class="custom-button" label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="goToNextStep(activateCallback, 4)" />
                     </div>
                 </ng-template>
             </p-step-panel>
@@ -161,7 +161,7 @@
                         <p-button icon="pi pi-trash" rounded class="delete-button" (onClick)="deleteProjectItem()" [disabled]="this.portfolio.projects.length == 0"></p-button>
                     </div>
                     <div class="flex justify-content-between mt-3">
-                        <p-button class="custom-secondary-button" label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(3)" />
+                        <p-button class="custom-secondary-button" label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="goToNextStep(activateCallback, 3)" />
                         <p-button class="custom-button" label="Submit" (onClick)="submitForm()"/>
                     </div>
                 </ng-template>

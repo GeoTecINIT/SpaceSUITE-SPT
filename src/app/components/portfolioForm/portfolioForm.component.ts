@@ -133,6 +133,13 @@ export class PortfolioFormComponent {
     }
   }
 
+  goToNextStep(callback: (nextStepValue: number) => void, index: number) {
+    callback(index);
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
+  }
+
   confirmExitWithoutSaving() {
     this.confirmationService.confirm({
       message: 'Are you sure that you want to exit without saving?',
