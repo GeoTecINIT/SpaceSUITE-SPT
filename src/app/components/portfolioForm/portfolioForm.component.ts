@@ -91,7 +91,7 @@ export class PortfolioFormComponent {
 
   submitForm() {
     this.loading = true;
-    this.exitWithoutSavingService.bypassGuard.next(false);
+    this.exitWithoutSavingService.bypassGuard.next(true);
     this.errorMap = this.formDataService.validate(this.portfolio);
     const allValid: boolean = Array.from(this.errorMap.values()).every(value => value === undefined);
     if (allValid) {
