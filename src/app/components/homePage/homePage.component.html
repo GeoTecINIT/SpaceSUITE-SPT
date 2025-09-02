@@ -8,14 +8,14 @@
             </span>
         </ng-template>
         <ng-template #content let-event>
-            <p-card [header]="event.title" [subheader]="event.subtitle">
+            <p-card [header]="event.title" [subheader]="event.subtitle" class="block fadein animation-duration-1000">
                 <div *ngFor="let description of event.description" class="text-sm mb-2">{{description}}</div>
             </p-card>
         </ng-template>
         <ng-template #opposite let-event>
-            <skill-tags class="block my-4" [tags]="event.skills" direction="center"></skill-tags>
+            <skill-tags class="block my-4 fadein animation-duration-1000" [tags]="event.skills" direction="center"></skill-tags>
         </ng-template>
     </p-timeline>
 </div>
-<p-button class="custom-button flex justify-content-center mb-5" label="My Portfolio" 
-        [disabled]="!(isLogged() | async)" icon="pi pi-bookmark" (onClick)="goToPortfolio()"></p-button>
+<p-button class="custom-button flex justify-content-center mb-5" label="My Portfolio"
+    [disabled]="!(isLogged | async)" icon="pi pi-bookmark" (onClick)="goToPortfolio()"></p-button>

@@ -9,7 +9,8 @@ import { FirebaseService } from "../../services/firebase.service";
 import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
 import { AuthService } from "@eo4geo/ngx-bok-utils";
-import { map, Observable } from "rxjs";
+import { BehaviorSubject, map, Observable, Subscription, take } from "rxjs";
+import { PortfolioItem, UserPortfolio } from "../../model/userPortfolio";
 
 @Component({
   standalone: true,
@@ -102,8 +103,17 @@ export class HomePageComponent {
     }
   ]
 
+  userStateSubscription$!: Subscription;
+  isLogged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);  
+
   constructor(private cdRef: ChangeDetectorRef, private router: Router, private firebase: FirebaseService, private authService: AuthService,
               private messageService: MessageService, private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    this.userStateSubscription$ = this.authService.getUserState().pipe(
+      map( state => state?.logged != undefined ? state.logged : false)
+    ).subscribe( value => this.isLogged.next(value));
+  }
 
   ngAfterViewInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -140,15 +150,10 @@ export class HomePageComponent {
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
     }
+    this.userStateSubscription$.unsubscribe();
   }
 
   goToPortfolio() {
     this.router.navigate(['portfolio'])
-  }
-
-  isLogged(): Observable<boolean> {
-    return this.authService.getUserState().pipe(
-      map( state => state?.logged != undefined ? state.logged : false)
-    )
   }
 }
