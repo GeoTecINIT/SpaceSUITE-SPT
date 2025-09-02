@@ -20,9 +20,9 @@ import { BokModalComponent } from "../bokModal/bokModal.component";
   standalone: true,
   selector: 'portfolio-item-form',
   templateUrl: './portfolioItemForm.component.html',
-  styleUrls: ['./portfolioItemForm.component.css'],
+  styleUrls: ['../portfolioForm/portfolioForm.component.css'],
   imports: [InputTextModule, FloatLabelModule, FormsModule, InputIconModule, IconFieldModule, TextareaModule, CommonModule, SelectModule,
-    ButtonModule, DatePickerModule, TooltipModule, TextChipsComponent, BokModalComponent]
+    ButtonModule, DatePickerModule, TooltipModule, TextChipsComponent, BokModalComponent],
 })
 export class PortfolioItemFormComponent {
 

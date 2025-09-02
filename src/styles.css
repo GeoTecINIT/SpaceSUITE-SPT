@@ -59,4 +59,36 @@ body {
 
 ::ng-deep .p-toast-close-button .p-button-label {
     font-size: 0;
-} 
+}
+
+.custom-select {
+    --p-select-hover-border-color: var(--hover-color);
+    --p-select-focus-border-color: var(--hover-color);
+}
+
+.invalid-select {
+    --p-select-border-color: var(--danger-color);
+    --p-select-dropdown-color: var(--danger-color);
+}
+
+.custom-floatlabel {
+    --p-floatlabel-focus-color: var(--hover-color);
+}
+
+.custom-border {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(18, 18, 23, 0.05) 0px 1px 2px 0px;
+    transition: border-color 0.2s;
+}
+
+.custom-border:hover {
+    border-color: var(--hover-color);
+}
+
+.custom-input {
+    --p-inputtext-focus-border-color: var(--hover-color);
+    --p-inputtext-hover-border-color: var(--hover-color);
+    --p-inputtext-invalid-placeholder-color: var(--danger-color);
+    --p-inputtext-invalid-border-color: var(--danger-color);
+}
