@@ -7,18 +7,19 @@ import { ExperienceTimelineComponent } from "../experienceTimeline/experienceTim
 import { ButtonModule } from 'primeng/button';
 import { FirebaseService } from '../../services/firebase.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { pipe, Subscription, take } from 'rxjs';
-import { MessageService } from 'primeng/api';
+import { Subscription, take } from 'rxjs';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   standalone: true,
   selector: 'portfolio-page',
   templateUrl: './portfolioPage.component.html',
   styleUrls: ['./portfolioPage.component.css'],
-  imports: [CommonModule, UserInformationComponent, DividerModule, ExperienceTimelineComponent, ButtonModule, ToastModule, ProgressSpinnerModule],
-  providers: [MessageService]
+  imports: [CommonModule, UserInformationComponent, DividerModule, ExperienceTimelineComponent, ButtonModule, ToastModule, ProgressSpinnerModule, ConfirmDialogModule],
+  providers: [MessageService, ConfirmationService]
 })
 export class PortfolioPageComponent {
   public userPortfolio?: UserPortfolio;
@@ -34,7 +35,8 @@ export class PortfolioPageComponent {
 
   loading = false;
 
-  constructor(private firebaseService: FirebaseService, private router: Router, private route: ActivatedRoute, private messageService: MessageService){}
+  constructor(private firebaseService: FirebaseService, private router: Router, private route: ActivatedRoute, 
+              private messageService: MessageService, private confirmationService: ConfirmationService){}
 
   ngOnInit() {
     this.portfolioSubscription = this.firebaseService.getUserPortfolio().pipe(take(1)).subscribe( portfolio => {
@@ -95,9 +97,33 @@ export class PortfolioPageComponent {
     this.router.navigate(['edit']);
   }
 
-  deletePortfolio() {
+  private deletePortfolio() {
     this.firebaseService.deletePortfolio().pipe(take(1)).subscribe( () => {
       this.router.navigate([''], { queryParams: { submited: true, mode: 'delete'}});
+    });
+  }
+
+  deleteModal(event: Event) {
+    this.confirmationService.confirm({
+        target: event.target as EventTarget,
+        message: 'Do you want to delete your portfolio?',
+        header: 'Delete Material',
+        icon: 'pi pi-info-circle',
+        rejectLabel: 'Cancel',
+        rejectButtonProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+        },
+        acceptButtonProps: {
+            label: 'Delete',
+            severity: 'primary',
+        },
+
+        accept: () => {
+          this.deletePortfolio();
+        },
+        reject: () => {
+        },
     });
   }
 

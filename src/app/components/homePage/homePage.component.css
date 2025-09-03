@@ -53,3 +53,7 @@ a:hover {
     margin-right: 2rem !important;
   }
 }
+
+.animation-duration-800 {
+  animation-duration: 800ms;
+}

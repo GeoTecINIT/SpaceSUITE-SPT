@@ -1,5 +1,5 @@
 <p-toast class="custom-toast" position="bottom-right"/>
-<h1 class="flex justify-content-center mt-5">Your Skills, Your Story</h1>
+<h1 class="flex justify-content-center mt-5 fadeinup animation-duration-800">Your Skills, Your Story</h1>
 <div #timeline class="my-5 custom-margin lg:mx-6">
     <p-timeline [value]="timelineContent" [align]="smallScreen ? 'left' : 'alternate'" [class]="smallScreen ? 'custom-timeline aligned-timeline' : 'custom-timeline'">
         <ng-template #marker let-event>
@@ -8,14 +8,14 @@
             </span>
         </ng-template>
         <ng-template #content let-event>
-            <p-card [header]="event.title" [subheader]="event.subtitle" class="block fadein animation-duration-1000">
+            <p-card [header]="event.title" [subheader]="event.subtitle" class="block fadein animation-duration-800">
                 <div *ngFor="let description of event.description" class="text-sm mb-2">{{description}}</div>
             </p-card>
         </ng-template>
         <ng-template #opposite let-event>
-            <skill-tags class="block my-4 fadein animation-duration-1000" [tags]="event.skills" direction="center"></skill-tags>
+            <skill-tags [class]="event != timelineContent[1] ? 'block my-4 fadeinleft animation-duration-800' : 'block my-4 fadeinright animation-duration-800'" [tags]="event.skills" direction="center"></skill-tags>
         </ng-template>
     </p-timeline>
 </div>
-<p-button class="custom-button flex justify-content-center mb-5" label="My Portfolio"
+<p-button class="custom-button flex justify-content-center mb-5 fadeindown animation-duration-800" label="My Portfolio"
     [disabled]="!(isLogged | async)" icon="pi pi-bookmark" (onClick)="goToPortfolio()"></p-button>
