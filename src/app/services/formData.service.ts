@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, Observable, of, tap } from "rxjs";
-import { Country, UserPortfolio } from "../model/userPortfolio";
+import { Country, LanguageSkill, UserPortfolio } from "../model/userPortfolio";
 import { environment } from "../../environments/environment";
 
 @Injectable({
@@ -142,6 +142,13 @@ export class FormDataService {
     setError('email', portfolio.email.trim() != '' && !emailRegex.test(portfolio.email), 'Invalid email format.');
     setError('phone', portfolio.phone != '' && !phoneRegex.test(portfolio.phone), 'Invalid phone number.');
     setError('lang', !portfolio.nativeLanguage, 'Native Language is required.');
+    if (portfolio.languageSkills.some( value => value.language === portfolio.nativeLanguage)) {
+      errors.set('langSkills', 'The native language cannot be added as a Language Skill.');
+    }
+    const langSet: Set<string> = new Set<string>(portfolio.languageSkills.map(value => value.language))
+    if (portfolio.languageSkills.length != langSet.size) {
+            errors.set('langSkills', 'A language cannot be added more than once.');
+    }
 
     // Education fields
     portfolio.educationAndTraining.forEach((item, index) => {

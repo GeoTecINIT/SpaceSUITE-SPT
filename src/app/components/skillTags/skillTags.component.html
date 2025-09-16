@@ -1,10 +1,8 @@
 <div [class]="getStyleClass()">
     <ng-content *ngFor="let tag of tags">
-        <p-tag *ngIf="tag.variant != 'bok'" [class]="tag.variant == 'secondary' ? 'secondary-tag' : 'primary-tag'" [rounded]="true">{{tag.label}}</p-tag>
+        <p-tag *ngIf="tag.variant != 'bok'" [class]="tag.variant == 'secondary' ? 'secondary-tag' : 'primary-tag'" [rounded]="true" [value]="tag.label"/>
         <div *ngIf="tag.variant == 'bok'" [pTooltip]="(getBoKTooltip(tag.label) | async) ?? undefined" tooltipPosition="top" [tooltipStyleClass]="(getTooltipClass(tag.label) | async) ?? undefined">
-            <p-tag class="bok-tag" [style.backgroundColor]="getBokColor(tag.label) | async" [rounded]="true" (click)="onClickConcept(tag.label)">
-                {{tag.label}}
-            </p-tag>
+            <p-tag class="bok-tag" [style.backgroundColor]="getBokColor(tag.label) | async" [rounded]="true" (click)="onClickConcept(tag.label)" [value]="tag.label"/>
         </div>
     </ng-content>
 </div>

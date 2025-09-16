@@ -19,6 +19,8 @@ export class LanguageSelectComponent {
   @Input() languages: LanguageSkill[] = [];
   @Output() languagesChange: EventEmitter<LanguageSkill[]> = new EventEmitter();
 
+  @Input() errorMap: Map<string, string | undefined> = new Map();
+
   languageList: string[] = [];
   levelList: CEFRLevel[] = ['C2', 'C1', 'B2', 'B1', 'A2', 'A1'];
 
@@ -35,8 +37,8 @@ export class LanguageSelectComponent {
     this.languagesChange.emit(this.languages)
   }
 
-  deleteLanguage() {
-    this.languages.pop();
+  deleteLanguage(index: number) {
+    this.languages.splice(index, 1);
     this.languagesChange.emit(this.languages)
   }
 }

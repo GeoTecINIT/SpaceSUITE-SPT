@@ -43,9 +43,17 @@ export class SkillTagComponent {
   }
 
   getStyleClass() {
-    if (this.direction == 'center') return 'flex flex-wrap gap-3 align-items-center justify-content-center'
-    return this.direction == 'reverse' ? 'flex flex-wrap gap-2 flex-row-reverse' : 'flex flex-wrap gap-2'
+    switch(this.direction){
+      case 'original':
+        return 'flex flex-wrap gap-2';
+      case 'center':
+        return 'flex flex-wrap gap-2 align-items-center justify-content-center';
+      case 'reverse':
+        return 'flex flex-wrap gap-2 flex-row-reverse';
+      case 'homepage':
+        return 'flex flex-wrap gap-3 align-items-center justify-content-center';
+    }
   }
 }
 
-export type Direction = 'original' | 'center' | 'reverse';
+export type Direction = 'original' | 'center' | 'reverse' | 'homepage';

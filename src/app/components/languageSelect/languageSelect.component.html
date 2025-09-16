@@ -1,5 +1,5 @@
-<div class="p-2 custom-border">
-    <div class="ml-1" style="color: #64748b;">Language Skills</div>
+<div [class]="errorMap.get('langSkills') != undefined ? 'p-2 invalid-custom-border' : 'p-2 custom-border'">
+    <div class="ml-1" [style]="errorMap.get('langSkills') != undefined ? 'color: var(--danger-color);' : 'color: #64748b;'">Language Skills</div>
     <div *ngFor="let lang of languages; let  i = index">
         <div class="flex flex-column sm:flex-row flex-wrap gap-3 mt-3">
             <div class="flex-1">
@@ -12,15 +12,16 @@
             <div class="flex-1">
                 <p-floatlabel variant="on" class="custom-floatlabel">
                     <p-select [inputId]="'languageSkillLevel' + i" [options]="levelList" [(ngModel)]="lang.level" class="w-full custom-select" [checkmark]="true"
-                        (ngModelChange)="languagesChange.emit(languages)"/>
+                        (ngModelChange)="languagesChange.emit(languages)" />
                     <label [for]="'languageSkillLevel' + i">Level</label>
                 </p-floatlabel>
             </div>
+            <p-button icon="pi pi-trash" rounded class="delete-button" (onClick)="deleteLanguage(i)"></p-button>
         </div>
         <p-divider *ngIf="i != this.languages.length - 1"></p-divider>
     </div>
     <div class="flex gap-3 mt-3">
         <p-button icon="pi pi-plus" rounded class="custom-button" (onClick)="addLanguage()"></p-button>
-        <p-button icon="pi pi-trash" rounded class="delete-button" (onClick)="deleteLanguage()" [disabled]="this.languages.length == 0"></p-button>
     </div>
 </div>
+<p *ngIf="errorMap.get('langSkills')" style="color: var(--danger-color);" class="m-0 p-0 text-xs font-italic">{{errorMap.get('langSkills')}}</p>

@@ -89,7 +89,7 @@
             <p-iconfield>
                 <input pInputText [id]="index + 'Link'" autocomplete="off" class="w-full custom-input"
                     [class.ng-invalid]="errorMap.get(index + 'Link') != undefined" [class.ng-dirty]="errorMap.get(index + 'Link') != undefined" 
-                    [(ngModel)]="portfolioItem.link" pTooltip="A URL to a portfolio item, certificate, publication, or relevant web page" 
+                    [(ngModel)]="portfolioItem.link" pTooltip="A URL relevant to this item, such as a link to the institution’s website or another related resource" 
                     tooltipPosition="right" showDelay="200" hideDelay="200" maxlength="200"/>
                 <p-inputicon class="pi pi-link" [style]="errorMap.get(index + 'Link') != undefined ? 'color: var(--danger-color)' : ''"/>
             </p-iconfield>

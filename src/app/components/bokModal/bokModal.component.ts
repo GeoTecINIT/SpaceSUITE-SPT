@@ -6,6 +6,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ChipModule } from 'primeng/chip';
 import { TooltipModule } from 'primeng/tooltip';
 import { UtilsService } from '../../services/utils.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   standalone: true,
@@ -33,7 +34,7 @@ export class BokModalComponent {
   private componentRef: ComponentRef<BokComponent> | null = null;
 
   constructor(private readonly bokInfo: BokInformationService, private readonly utilsService: UtilsService, 
-              private cdr: ChangeDetectorRef){}
+              private cdr: ChangeDetectorRef, private messageService: MessageService){}
 
   ngOnInit() {
     this.selectedConcepts.forEach( concept => {
@@ -85,6 +86,22 @@ export class BokModalComponent {
         tooltip => this.selectedConceptsTooltip.set(concept, tooltip)
       );
       this.selectedConceptsChange.emit(this.selectedConcepts);
+      this.messageService.add({ 
+        severity: 'info', 
+        summary: 'Info', 
+        detail: 'Concept "' + concept +'" annotated!', 
+        life: 3000, 
+        closable: true 
+      });
+    }
+    else {
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Error', 
+        detail: 'Concept "' + concept +'" is already annotated!', 
+        life: 3000, 
+        closable: true 
+      });
     }
   }
 

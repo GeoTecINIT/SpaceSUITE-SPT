@@ -14,12 +14,12 @@
     <strong>About me</strong>
     <div class="text-sm text-justify mt-2 mb-3">{{userPortfolio?.profileSummary}}</div>
     <strong>BoK Concepts</strong>
-    <skill-tags class="mt-2 mb-3 w-full" style="padding-top: 0.2rem;" [tags]="bokConcepts"></skill-tags>
+    <skill-tags class="mt-2 mb-3 w-full" style="padding-top: 0.2rem;" [tags]="bokConcepts" direction="center"></skill-tags>
     <strong>Hard Skills</strong>
-    <skill-tags class="mt-2 mb-3 w-full" style="padding-top: 0.2rem;" [tags]="hardSkills"></skill-tags>
+    <skill-tags class="mt-2 mb-3 w-full" style="padding-top: 0.2rem;" [tags]="hardSkills" direction="center"></skill-tags>
     <strong>Soft Skills</strong>
-    <skill-tags class="mt-2 mb-3 w-full" style="padding-top: 0.2rem;" [tags]="softSkills"></skill-tags>
+    <skill-tags class="mt-2 mb-3 w-full" style="padding-top: 0.2rem;" [tags]="softSkills" direction="center"></skill-tags>
     <strong>Languages</strong>
-    <skill-tags class="mt-2 mb-3 w-full" style="padding-top: 0.2rem;" [tags]="languages"></skill-tags>
+    <skill-tags class="mt-2 mb-3 w-full" style="padding-top: 0.2rem;" [tags]="languages" direction="center"></skill-tags>
 </div>
 <update-image-modal [(visible)]="showModal" (onImageUpdate)="updateUserImage($event)"></update-image-modal>

@@ -62,31 +62,49 @@ export class PortfolioFormComponent {
   addEducationItem() {
     const newItem = new PortfolioItem();
     newItem.startDate = new Date(Date.now());
-    this.portfolio.educationAndTraining.push(newItem)
+    this.portfolio.educationAndTraining.push(newItem);
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
   }
 
-  deleteEducationItem(){
-    this.portfolio.educationAndTraining.pop();
+  deleteEducationItem(index: number){
+    this.portfolio.educationAndTraining.splice(index, 1);
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
   }
 
   addExperienceItem() {
     const newItem = new PortfolioItem();
     newItem.startDate = new Date(Date.now());
-    this.portfolio.workExperience.push(newItem)
+    this.portfolio.workExperience.push(newItem);
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
   }
 
-  deleteExperienceItem(){
-    this.portfolio.workExperience.pop();
+  deleteExperienceItem(index: number){
+    this.portfolio.workExperience.splice(index, 1);
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
   }
 
   addProjectItem() {
     const newItem = new PortfolioItem();
     newItem.startDate = new Date(Date.now());
-    this.portfolio.projects.push(newItem)
+    this.portfolio.projects.push(newItem);
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
   }
 
-  deleteProjectItem(){
-    this.portfolio.projects.pop();
+  deleteProjectItem(index: number){
+    this.portfolio.projects.splice(index, 1);
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
   }
 
   submitForm() {
