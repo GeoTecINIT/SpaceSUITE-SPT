@@ -17,9 +17,10 @@ import { PortfolioFormComponent } from './app/components/portfolioForm/portfolio
 import { PortfolioGuard } from './app/guards/portfolio.guard';
 import { EditPageComponent } from './app/components/editPage/editPage.component';
 import { CreateGuard } from './app/guards/create.guard';
+import { HomepageGuard } from './app/guards/homepage.guard';
 
 const routes: Routes = [
-    { path: '', component: HomePageComponent},
+    { path: '', component: HomePageComponent, canActivate: [HomepageGuard]},
     { path: 'portfolio', component: PortfolioPageComponent, canActivate: [PortfolioGuard], runGuardsAndResolvers: 'always'},
     { path: 'new', component: PortfolioFormComponent, canActivate: [CreateGuard], canDeactivate: [exitWithoutSavingGuard], runGuardsAndResolvers: 'always'},
     { path: 'edit', component: EditPageComponent, canActivate: [PortfolioGuard], canDeactivate: [exitWithoutSavingGuard], runGuardsAndResolvers: 'always'},

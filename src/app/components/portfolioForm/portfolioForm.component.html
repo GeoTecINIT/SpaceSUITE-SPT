@@ -6,8 +6,8 @@
         <p-step-list>
             <p-step [value]="1">General Information</p-step>
             <p-step [value]="2">Education and Training</p-step>
-            <p-step [value]="3">Personal Projects</p-step>
-            <p-step [value]="4">Work Experience</p-step>
+            <p-step [value]="3">Work Experience</p-step>
+            <p-step [value]="4">Personal Projects</p-step>
         </p-step-list>
         <p-step-panels>
             <p-step-panel [value]="1">
@@ -105,11 +105,13 @@
                     <p-accordion [value]="portfolio.educationAndTraining.length -1" class="custom-acordion">
                         @for (education of portfolio.educationAndTraining; track $index; let i = $index) {
                             <p-accordion-panel [value]="i">
-                                <p-accordion-header>{{ education.title == '' ? 'New Item' : education.title}}</p-accordion-header>
+                                <p-accordion-header>
+                                    {{ education.title == '' ? 'New Item' : education.title}}
+                                </p-accordion-header>
                                 <p-accordion-content class="pt-1">
                                     <portfolio-item-form [portfolioItem]="education" (portfolioItemChange)="portfolio.educationAndTraining[i] = $event" [index]="'E'+i" [errorMap]="errorMap"></portfolio-item-form>
                                     <div class="flex">
-                                        <p-button icon="pi pi-trash" label="Delete Item" class="delete-button ml-auto mt-3" (onClick)="deleteEducationItem(i)"></p-button>
+                                        <p-button icon="pi pi-trash" [label]="'Delete ' + education.title" class="delete-button mx-auto mt-3" (onClick)="deleteEducationItem(i)"></p-button>
                                     </div>
                                 </p-accordion-content>
                             </p-accordion-panel>
@@ -126,21 +128,21 @@
             </p-step-panel>
             <p-step-panel [value]="3">
                 <ng-template #content let-activateCallback="activateCallback">
-                    <p-accordion [value]="portfolio.projects.length -1" class="custom-acordion">
-                        @for (project of portfolio.projects; track $index; let i = $index) {
+                    <p-accordion [value]="portfolio.workExperience.length -1" class="custom-acordion">
+                        @for (experience of portfolio.workExperience; track $index; let i = $index) {
                             <p-accordion-panel [value]="i">
-                                <p-accordion-header>{{ project.title == '' ? 'New Item' : project.title}}</p-accordion-header>
+                                <p-accordion-header>{{ experience.title == '' ? 'New Item' : experience.title}}</p-accordion-header>
                                 <p-accordion-content class="pt-1">
-                                    <portfolio-item-form [portfolioItem]="project" (portfolioItemChange)="portfolio.projects[i] = $event" [index]="'P'+i" [errorMap]="errorMap"></portfolio-item-form>
+                                    <portfolio-item-form [portfolioItem]="experience" (portfolioItemChange)="portfolio.workExperience[i] = $event" [index]="'W'+i" [errorMap]="errorMap"></portfolio-item-form>
                                     <div class="flex">
-                                        <p-button icon="pi pi-trash" label="Delete Item" class="delete-button ml-auto mt-3" (onClick)="deleteProjectItem(i)"></p-button>
+                                        <p-button icon="pi pi-trash" [label]="'Delete ' + experience.title" class="delete-button mx-auto mt-3" (onClick)="deleteExperienceItem(i)"></p-button>
                                     </div>
                                 </p-accordion-content>
                             </p-accordion-panel>
                         }
                     </p-accordion>
                     <div class="flex gap-3 my-5">
-                        <p-button icon="pi pi-plus" rounded class="custom-button" (onClick)="addProjectItem()"></p-button>
+                        <p-button icon="pi pi-plus" rounded class="custom-button" (onClick)="addExperienceItem()"></p-button>
                     </div>
                     <div class="flex justify-content-between mt-3">
                         <p-button class="custom-secondary-button" label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="goToNextStep(activateCallback, 2)" />
@@ -150,21 +152,21 @@
             </p-step-panel>
             <p-step-panel [value]="4">
                 <ng-template #content let-activateCallback="activateCallback">
-                    <p-accordion [value]="portfolio.workExperience.length -1" class="custom-acordion">
-                        @for (experience of portfolio.workExperience; track $index; let i = $index) {
+                    <p-accordion [value]="portfolio.projects.length -1" class="custom-acordion">
+                        @for (project of portfolio.projects; track $index; let i = $index) {
                             <p-accordion-panel [value]="i">
-                                <p-accordion-header>{{ experience.title == '' ? 'New Item' : experience.title}}</p-accordion-header>
+                                <p-accordion-header>{{ project.title == '' ? 'New Item' : project.title}}</p-accordion-header>
                                 <p-accordion-content class="pt-1">
-                                    <portfolio-item-form [portfolioItem]="experience" (portfolioItemChange)="portfolio.workExperience[i] = $event" [index]="'W'+i" [errorMap]="errorMap"></portfolio-item-form>
+                                    <portfolio-item-form [portfolioItem]="project" (portfolioItemChange)="portfolio.projects[i] = $event" [index]="'P'+i" [errorMap]="errorMap"></portfolio-item-form>
                                     <div class="flex">
-                                        <p-button icon="pi pi-trash" label="Delete Item" class="delete-button ml-auto mt-3" (onClick)="deleteExperienceItem(i)"></p-button>
+                                        <p-button icon="pi pi-trash" [label]="'Delete ' + project.title" class="delete-button mx-auto mt-3" (onClick)="deleteProjectItem(i)"></p-button>
                                     </div>
                                 </p-accordion-content>
                             </p-accordion-panel>
                         }
                     </p-accordion>
                     <div class="flex gap-3 my-5">
-                        <p-button icon="pi pi-plus" rounded class="custom-button" (onClick)="addExperienceItem()"></p-button>
+                        <p-button icon="pi pi-plus" rounded class="custom-button" (onClick)="addProjectItem()"></p-button>
                     </div>
                     <div class="flex justify-content-between mt-3">
                         <p-button class="custom-secondary-button" label="Back" severity="secondary" icon="pi pi-arrow-left" (onClick)="goToNextStep(activateCallback, 3)" />
