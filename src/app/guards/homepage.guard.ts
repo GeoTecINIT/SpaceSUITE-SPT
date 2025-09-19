@@ -1,16 +1,24 @@
 import {  CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { map, take } from 'rxjs';
+import { concatMap, map, of, take } from 'rxjs';
 import { AuthService } from '@eo4geo/ngx-bok-utils';
+import { FirebaseService } from '../services/firebase.service';
 
 export const HomepageGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
+  const firebaseService = inject(FirebaseService);
   const router = inject(Router);
   return authService.getUserState().pipe(
     take(1),
-    map(state => {
-      if (state?.logged) return router.createUrlTree(['portfolio']);
-      return true
+    concatMap(state => {
+      if (state?.logged) return firebaseService.getUserPortfolio()
+      return of(null)
+    }),
+    take(1),
+    map(portfolio => {
+      if (portfolio) {
+        return router.createUrlTree(['portfolio']);
+      } else return true;
     })
   );
 };
