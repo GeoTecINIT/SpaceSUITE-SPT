@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {Component, Input} from '@angular/core';
-import { PortfolioItem, UserPortfolio } from '../../model/userPortfolio';
+import { Country, PortfolioItem, UserPortfolio } from '../../model/userPortfolio';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from "primeng/inputtext";
 import { FloatLabelModule } from "primeng/floatlabel";
@@ -40,6 +40,8 @@ export class PortfolioFormComponent {
   portfolio: UserPortfolio = new UserPortfolio();
   errorMap: Map<string, string | undefined> = new Map();
   languageList: string[] = [];
+  countryList: Country[] = [];
+  loadingCountries: boolean = true;
 
   loading: boolean = false;
 
@@ -48,6 +50,10 @@ export class PortfolioFormComponent {
 
   ngOnInit() {
     this.languageList = this.formDataService.getLanguageList();
+    this.formDataService.getCountries().pipe(take(1)).subscribe( countries => {
+      this.countryList = countries;
+      this.loadingCountries = false;
+    });
     if (this.inputPortfolio) this.portfolio = new UserPortfolio(this.inputPortfolio)
     this.exitWithoutSavingService.showModalSubject.subscribe(value => {
       if (value) this.confirmExitWithoutSaving()

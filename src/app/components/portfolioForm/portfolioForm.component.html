@@ -66,17 +66,31 @@
                         </div>
 
                         <div>
-                            <p-floatlabel variant="on" class="w-full custom-floatlabel">
-                                <p-iconfield>
-                                    <p-inputnumber id="phone" [min]="0" [useGrouping]="false" maxlength="16" [prefix]="'+'"
-                                        class="custom-input" [(ngModel)]="portfolio.phone" fluid
-                                        [class.ng-invalid]="errorMap.get('phone') != undefined" [class.ng-dirty]="errorMap.get('phone') != undefined"
-                                        pTooltip="Enter your mobile or landline number, including country code" 
-                                        tooltipPosition="right" showDelay="200" hideDelay="200"/>
-                                    <p-inputicon class="pi pi-phone" [style]="errorMap.get('phone') != undefined ? 'color: var(--danger-color)' : ''"/>
-                                </p-iconfield>
-                                <label for="phone">Phone Number</label>
-                            </p-floatlabel>
+                            <div class="flex gap-3 flex-wrap sm:flex-nowrap">
+                                <p-floatlabel variant="on" class="w-full sm:w-auto custom-floatlabel">
+                                    <p-select inputId="phoneCode" [(ngModel)]="portfolio.phoneCountryCode" [options]="countryList" optionValue="phoneCode" showClear
+                                        filter filterBy="phoneCode,name" class="w-full sm:w-10rem custom-select" [checkmark]="true" [loading]="loadingCountries">
+                                        <ng-template let-country #item #selectedItem>
+                                            <div class="flex items-center gap-2">
+                                                <span [class]="'fi fi-' + country.iso2.toLowerCase()"></span>
+                                                <div>{{ country.phoneCode }}</div>
+                                            </div>
+                                        </ng-template>
+                                    </p-select>
+                                    <label for="phoneCode">Country Code</label>
+                                </p-floatlabel>
+                                <p-floatlabel variant="on" class="w-full custom-floatlabel">
+                                    <p-iconfield>
+                                        <p-inputnumber id="phone" allowEmpty [useGrouping]="false" maxlength="16" class="custom-input"
+                                            [(ngModel)]="portfolio.phone" fluid [class.ng-invalid]="errorMap.get('phone') != undefined" 
+                                            [class.ng-dirty]="errorMap.get('phone') != undefined"
+                                            pTooltip="Enter your mobile or landline number, including country code" 
+                                            tooltipPosition="right" showDelay="200" hideDelay="200"/>
+                                        <p-inputicon class="pi pi-phone" [style]="errorMap.get('phone') != undefined ? 'color: var(--danger-color)' : ''"/>
+                                    </p-iconfield>
+                                    <label for="phone">Phone Number</label>
+                                </p-floatlabel>
+                            </div>
                             <p *ngIf="errorMap.get('phone')" style="color: var(--danger-color);" class="m-0 p-0 text-xs font-italic">{{errorMap.get('phone')}}</p>
                         </div>
 

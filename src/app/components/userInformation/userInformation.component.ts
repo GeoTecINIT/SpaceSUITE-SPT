@@ -78,4 +78,11 @@ export class UserInformationComponent {
   updateUserImage(url: string) {
     this.userImage = url;
   }
+
+  getPhoneNumber() {
+    const countryCode = this.userPortfolio?.phoneCountryCode;
+    const phone = this.userPortfolio?.phone;
+    if (!countryCode && !phone) return '';
+    return [countryCode, phone].filter(Boolean).join(' ');
+  }
 }

@@ -48,16 +48,18 @@ export class PortfolioItemFormComponent {
 
   updateCityList(country: Country) {
     this.cityList = [];
-    this.loadingCities = true;
-    this.formDataService.getCities(country.iso2).pipe(take(1)).subscribe(
-      cities => {
-        this.cityList = cities;
-        if (this.portfolioItem.city && !this.cityList.includes(this.portfolioItem.city)) {
-          this.portfolioItem.city = undefined
+    if (country) {
+      this.loadingCities = true;
+      this.formDataService.getCities(country.iso2).pipe(take(1)).subscribe(
+        cities => {
+          this.cityList = cities;
+          if (this.portfolioItem.city && !this.cityList.includes(this.portfolioItem.city)) {
+            this.portfolioItem.city = undefined
+          }
+          this.loadingCities = false;
         }
-        this.loadingCities = false;
-      }
-    )
+      )
+    }
   }
 
 }

@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, Observable, of, tap } from "rxjs";
-import { Country, LanguageSkill, UserPortfolio } from "../model/userPortfolio";
+import { Country, UserPortfolio } from "../model/userPortfolio";
 import { environment } from "../../environments/environment";
 
 @Injectable({
@@ -106,7 +106,7 @@ export class FormDataService {
     var headers = new HttpHeaders({'X-CSCAPI-KEY': environment.CSC_API_KEY});
     return this.http.get('https://api.countrystatecity.in/v1/countries', { headers: headers}).pipe(
       map( results => {
-        if (Array.isArray(results)) return results.map(country => new Country({name: country.name, iso2: country.iso2}))
+        if (Array.isArray(results)) return results.map(country => new Country({name: country.name, iso2: country.iso2, phoneCode: '+' + country.phonecode}))
         return [];
       }),
       tap( results => this.countries = results )
@@ -129,7 +129,7 @@ export class FormDataService {
   public validate(portfolio: UserPortfolio): Map<string, string | undefined> {
     const urlRegex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+(:\d+)?(\/\S*)?$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^\+?[1-9]\d{7,14}$/;
+    const phoneRegex = /^[1-9]\d{7,14}$/;
 
     const errors: Map<string, string | undefined> = new Map();
   
@@ -140,14 +140,20 @@ export class FormDataService {
     // General Information fields
     setError('fullName', !portfolio.fullName.trim(), 'Name is required.');
     setError('email', portfolio.email.trim() != '' && !emailRegex.test(portfolio.email), 'Invalid email format.');
-    setError('phone', portfolio.phone != '' && !phoneRegex.test(portfolio.phone), 'Invalid phone number.');
+    setError('phone', portfolio.phone != undefined && !phoneRegex.test(portfolio.phone), 'Invalid phone number.');
+    if (portfolio.phone != undefined && !portfolio.phoneCountryCode) {
+      errors.set('phone', 'A phone country code must be selected.');
+    }
+    if (portfolio.phone == undefined && portfolio.phoneCountryCode) {
+      errors.set('phone', 'Please enter a phone number before selecting a country code.');
+    }
     setError('lang', !portfolio.nativeLanguage, 'Native Language is required.');
     if (portfolio.languageSkills.some( value => value.language === portfolio.nativeLanguage)) {
       errors.set('langSkills', 'The native language cannot be added as a Language Skill.');
     }
     const langSet: Set<string> = new Set<string>(portfolio.languageSkills.map(value => value.language))
     if (portfolio.languageSkills.length != langSet.size) {
-            errors.set('langSkills', 'A language cannot be added more than once.');
+      errors.set('langSkills', 'A language cannot be added more than once.');
     }
 
     // Education fields

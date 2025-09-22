@@ -2,7 +2,8 @@ export class UserPortfolio implements FirebaseObject {
   _id: string = '';
   fullName: string = '';
   email: string = '';
-  phone: string = '';
+  phoneCountryCode?: string;
+  phone?: string;
   shortDescription: string = '';
   profileSummary: string = '';
   nativeLanguage?: string;
@@ -17,7 +18,8 @@ export class UserPortfolio implements FirebaseObject {
     this._id = data._id || '';
     this.fullName = data.fullName || '';
     this.email = data.email || '';
-    this.phone = data.phone || '';
+    this.phoneCountryCode = data.phoneCountryCode;
+    this.phone = data.phone;
     this.shortDescription = data.shortDescription || '';
     this.profileSummary = data.profileSummary || '';
     this.nativeLanguage = data.nativeLanguage;
@@ -33,7 +35,8 @@ export class UserPortfolio implements FirebaseObject {
       _id: this._id,
       fullName: this.fullName,
       email: this.email,
-      phone: this.phone,
+      phoneCountryCode: this.phoneCountryCode || null,
+      phone: this.phone || null,
       shortDescription: this.shortDescription,
       profileSummary: this.profileSummary,
       nativeLanguage: this.nativeLanguage || null,
@@ -107,6 +110,7 @@ export type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 export class Country {
   name: string = '';
   iso2: string = '';
+  phoneCode: string = ''
 
   constructor(data?: Partial<Country> | Country) {
     Object.assign(this, data);
