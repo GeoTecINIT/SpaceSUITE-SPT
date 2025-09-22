@@ -158,10 +158,22 @@ export class PortfolioFormComponent {
   }
 
   goToNextStep(callback: (nextStepValue: number) => void, index: number) {
-    callback(index);
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 0);
+    this.errorMap = this.formDataService.validate(this.portfolio);
+    const allValid: boolean = Array.from(this.errorMap.values()).every(value => value === undefined);
+    if (allValid) {
+      callback(index);
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 0);
+    } else {
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Error', 
+        detail: 'There are incomplete mandatory fields. Please review the form and try again.', 
+        life: 3000, 
+        closable: true 
+      });
+    }
   }
 
   confirmExitWithoutSaving() {
