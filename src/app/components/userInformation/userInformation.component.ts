@@ -10,7 +10,8 @@ import { MessageService } from 'primeng/api';
 import { UtilsService } from '../../services/utils.service';
 import { UpdateImageModalComponent } from "../updateImageModal/updateImageModal.component";
 import { FirebaseService } from '../../services/firebase.service';
-import { take } from 'rxjs';
+import { map, Observable, of, take } from 'rxjs';
+import { FormDataService } from '../../services/formData.service';
 
 @Component({
   standalone: true,
@@ -31,7 +32,10 @@ export class UserInformationComponent {
   showModal: boolean = false;
   userImage: string | undefined = undefined;
 
-  constructor(private messageService: MessageService, private utilsService: UtilsService, private firebaseService: FirebaseService) {}
+  phoneNumber: string = ''
+  email: string = ''
+
+  constructor(private messageService: MessageService, private utilsService: UtilsService, private firebaseService: FirebaseService, private formDataService: FormDataService) {}
 
   ngOnInit() {
     this.firebaseService.getUserImage().pipe(take(1)).subscribe(url => this.userImage = url);
@@ -62,10 +66,13 @@ export class UserInformationComponent {
       this.languages.push(new Tag(this.userPortfolio?.nativeLanguage + ': Native'));
     }
     this.languages = this.languages.concat(this.utilsService.stringToTag((this.userPortfolio?.languageSkills ?? []).map(value => `${value.language}: ${value.level}`)));
+
+    this.getPhoneNumber().pipe(take(1)).subscribe(value => this.phoneNumber = value);
+    this.email = this.userPortfolio?.email || '';
   }
 
   copyToClipboard(value: string, field: string) {
-    navigator.clipboard.writeText('+' + value);
+    navigator.clipboard.writeText(value);
     this.messageService.add({ 
       severity: 'info', 
       summary: 'Info', 
@@ -79,10 +86,17 @@ export class UserInformationComponent {
     this.userImage = url;
   }
 
-  getPhoneNumber() {
-    const countryCode = this.userPortfolio?.phoneCountryCode;
-    const phone = this.userPortfolio?.phone;
-    if (!countryCode && !phone) return '';
-    return [countryCode, phone].filter(Boolean).join(' ');
+  private getPhoneNumber(): Observable<string> {
+    if (this.userPortfolio?.phoneCountryCode) {
+      return this.formDataService.getCountry(this.userPortfolio?.phoneCountryCode).pipe(
+        map(value => {
+          const countryCode = value ? value.phoneCode : '';
+          const phone = this.userPortfolio?.phone;
+          if (!countryCode && !phone) return '';
+          return [countryCode, phone].filter(Boolean).join(' ');
+        })
+      )
+    }
+    else return of(this.userPortfolio?.phone || '')
   }
 }

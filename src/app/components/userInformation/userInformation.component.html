@@ -7,9 +7,9 @@
     <div class="text-sm text-center">{{userPortfolio?.shortDescription}}</div>
     <div class="flex flew-wrap gap-2 mt-2 mb-3">
         <p-button icon="pi pi-envelope" [rounded]="true" [text]="true" class="contact-button" [disabled]="!userPortfolio?.email"
-            (click)="copyToClipboard(userPortfolio?.email!, 'contact email')" pTooltip="{{userPortfolio?.email}}" tooltipPosition="bottom"></p-button>
+            (click)="copyToClipboard(email, 'contact email')" pTooltip="{{email}}" tooltipPosition="bottom"></p-button>
         <p-button icon="pi pi-phone" [rounded]="true" [text]="true" class="contact-button" [disabled]="!userPortfolio?.phone"
-            (click)="copyToClipboard(getPhoneNumber(), 'phone number')" pTooltip="{{getPhoneNumber()}}" tooltipPosition="bottom"></p-button>
+            (click)="copyToClipboard(phoneNumber, 'phone number')" pTooltip="{{phoneNumber}}" tooltipPosition="bottom"></p-button>
     </div>
     <strong>About me</strong>
     <div class="text-sm text-justify mt-2 mb-3">{{userPortfolio?.profileSummary}}</div>

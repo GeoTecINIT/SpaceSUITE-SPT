@@ -100,13 +100,18 @@ export class FormDataService {
   public getLanguageList(): string[] {
     return Object.keys(this.languages);
   }
+
+  public getCountry(iso2: string): Observable<Country | undefined> {
+    if (this.countries.length != 0) return of(this.countries.find(value => value.iso2 == iso2));
+    return this.getCountries().pipe(map( countries => countries.find(value => value.iso2 == iso2)));
+  }
   
   public getCountries(): Observable<Country[]> {
     if (this.countries.length != 0) return of(this.countries);
     var headers = new HttpHeaders({'X-CSCAPI-KEY': environment.CSC_API_KEY});
     return this.http.get('https://api.countrystatecity.in/v1/countries', { headers: headers}).pipe(
       map( results => {
-        if (Array.isArray(results)) return results.map(country => new Country({name: country.name, iso2: country.iso2, phoneCode: '+' + country.phonecode}))
+        if (Array.isArray(results)) return results.map(country => new Country({name: country.name, iso2: country.iso2, phoneCode: '+' + country.phonecode, emoji: country.emoji}))
         return [];
       }),
       tap( results => this.countries = results )

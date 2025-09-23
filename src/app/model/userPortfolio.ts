@@ -76,7 +76,9 @@ export class PortfolioItem implements FirebaseObject {
       city: this.city || null,
       country: this.country ? {
         name: this.country?.name || null,
-        iso2: this.country?.iso2 || null
+        iso2: this.country?.iso2 || null,
+        emoji: this.country?.emoji || null,
+        phoneCode: this.country?.phoneCode || null
       } : null,
       hardSkills: this.hardSkills,
       softSkills: this.softSkills,
@@ -110,7 +112,8 @@ export type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 export class Country {
   name: string = '';
   iso2: string = '';
-  phoneCode: string = ''
+  phoneCode: string = '';
+  emoji: string = '';
 
   constructor(data?: Partial<Country> | Country) {
     Object.assign(this, data);

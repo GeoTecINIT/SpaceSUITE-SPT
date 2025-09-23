@@ -2,7 +2,6 @@ import {Component} from '@angular/core';
 import { HeaderComponent, FooterComponent } from '@eo4geo/ngx-bok-utils';
 import { MenuItem } from 'primeng/api';
 import { Router, RouterOutlet } from '@angular/router';
-import "flag-icons/css/flag-icons.min.css";
 
 @Component({
   standalone: true,
