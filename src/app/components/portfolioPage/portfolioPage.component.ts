@@ -57,7 +57,7 @@ export class PortfolioPageComponent {
     );
     setTimeout(() => {
       if (!this.userPortfolio) this.loading = true;
-    }, 500)
+    }, 500);
   }
 
   ngAfterViewInit() {
