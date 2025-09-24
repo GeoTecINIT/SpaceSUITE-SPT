@@ -70,7 +70,7 @@
         <p-floatlabel variant="on" class="custom-floatlabel">
             <p-select [inputId]="index + 'Country'" [options]="countryList" optionLabel="name" [(ngModel)]="portfolioItem.country" class="w-full custom-select" filter
                 [checkmark]="true" tooltipPosition="right" showDelay="200" hideDelay="200" pTooltip="The country where the experience or program occurred" showClear
-                (ngModelChange)="updateCityList(portfolioItem.country!)" [virtualScroll]="true" [virtualScrollItemSize]="38" [loading]="loadingCountries" [disabled]="loadingCountries"/>
+                (ngModelChange)="updateCityList(portfolioItem.country!)" [virtualScroll]="true" [virtualScrollItemSize]="40" [loading]="loadingCountries" [disabled]="loadingCountries"/>
             <label [for]="index + 'Country'">Country</label>
         </p-floatlabel>
     </div>
@@ -79,7 +79,7 @@
         <p-floatlabel variant="on" class="custom-floatlabel">
             <p-select [inputId]="index + 'City'" [options]="cityList" [(ngModel)]="portfolioItem.city" class="w-full custom-select" filter showClear
                 [checkmark]="true" tooltipPosition="right" showDelay="200" hideDelay="200" pTooltip="The city where the experience or program took place" [disabled]="cityList.length == 0"
-                [loading]="loadingCities" [virtualScroll]="true" [virtualScrollItemSize]="38"/>
+                [loading]="loadingCities" [virtualScroll]="true" [virtualScrollItemSize]="40"/>
             <label [for]="index + 'City'">City</label>
         </p-floatlabel>
     </div>
@@ -98,17 +98,20 @@
         <p *ngIf="errorMap.get(index + 'Link')" style="color: var(--danger-color);" class="m-0 p-0 text-xs font-italic">{{errorMap.get(index + 'Link')}}</p>
     </div>
 
-    <div class="custom-border p-2" style="color: #64748b;" pTooltip="List of knowledge from the GeoSpace Body of Knowledge gained or used" 
-        tooltipPosition="right" showDelay="200" hideDelay="200">
-        <bokModal [(selectedConcepts)]="portfolioItem.bokConcepts" [label]="'Knowledge'"></bokModal>
+    <treeselect-chips [(chips)]="portfolioItem.softSkills" [treeselectOptions]="transversalSkills"
+                fieldName="Transversal Skills" pTooltip="Personal or professional skills developed" 
+                tooltipPosition="right" showDelay="200" hideDelay="200"></treeselect-chips>
+
+    <div class="flex flex-column">
+        <div class="custom-border p-2" style="color: #64748b;" pTooltip="List of knowledge from the GeoSpace Body of Knowledge gained or used" 
+            tooltipPosition="right" showDelay="200" hideDelay="200">
+            <bokModal [(selectedConcepts)]="portfolioItem.bokConcepts" [label]="'Knowledge'"></bokModal>
+        </div>
+        <p-button *ngIf="!showCustomKnowledge" [rounded]="true" [text]="true" size="small" (onClick)="showCustomKnowledge = true"
+            class="text-button ml-auto mt-1 p-0 text-xs font-italic">Add custom knowledge</p-button>
     </div>
-
+    
     <text-chips [fieldName]="'Custom Knowledge'" [icon]="'pi pi-chart-bar'" [(chips)]="portfolioItem.hardSkills!"
-                pTooltip="Custom knowledge gained or used" 
+                pTooltip="Custom knowledge gained or used" *ngIf="showCustomKnowledge"
                 tooltipPosition="right" showDelay="200" hideDelay="200"></text-chips>
-
-    <text-chips [fieldName]="'Transversal Skills'" [icon]="'pi pi-star'" [(chips)]="portfolioItem.softSkills!"
-                pTooltip="Personal or professional skills developed" 
-                tooltipPosition="right" showDelay="200" hideDelay="200"></text-chips>
-
 </div>

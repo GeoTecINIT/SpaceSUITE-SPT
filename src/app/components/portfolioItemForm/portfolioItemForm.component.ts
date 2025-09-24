@@ -15,6 +15,9 @@ import { TextChipsComponent } from '../textChips/textChips.component';
 import { SelectModule } from 'primeng/select';
 import { FormDataService } from '../../services/formData.service';
 import { BokModalComponent } from "../bokModal/bokModal.component";
+import { HttpClient } from '@angular/common/http';
+import { TreeNode } from 'primeng/api';
+import { TreeselectChipsComponent } from '../treeselectChips/treeselectChips.component';
 
 @Component({
   standalone: true,
@@ -22,7 +25,7 @@ import { BokModalComponent } from "../bokModal/bokModal.component";
   templateUrl: './portfolioItemForm.component.html',
   styleUrls: ['../portfolioForm/portfolioForm.component.css'],
   imports: [InputTextModule, FloatLabelModule, FormsModule, InputIconModule, IconFieldModule, TextareaModule, CommonModule, SelectModule,
-    ButtonModule, DatePickerModule, TooltipModule, TextChipsComponent, BokModalComponent],
+    ButtonModule, DatePickerModule, TooltipModule, TextChipsComponent, BokModalComponent, TreeselectChipsComponent],
 })
 export class PortfolioItemFormComponent {
 
@@ -30,12 +33,17 @@ export class PortfolioItemFormComponent {
   @Output() portfolioItemChange: EventEmitter<PortfolioItem> = new EventEmitter();
   @Input() errorMap: Map<string, string | undefined> = new Map();
   @Input() index: string = 'E1';
+
   countryList: Country[] = [];
   cityList: string[] = [];
   loadingCities: boolean = false;
   loadingCountries: boolean = true;
 
-  constructor(private formDataService: FormDataService){}
+  transversalSkills: TreeNode<any>[] = [];
+
+  showCustomKnowledge: boolean = false;
+
+  constructor(private formDataService: FormDataService, private http: HttpClient){}
 
   ngOnInit() {
     this.formDataService.getCountries().pipe(take(1)).subscribe( countries => {
@@ -44,6 +52,15 @@ export class PortfolioItemFormComponent {
       }
     )
     if (this.portfolioItem.country) this.updateCityList(this.portfolioItem.country);
+    this.showCustomKnowledge = this.portfolioItem.hardSkills.length != 0;
+    this.http.get('assets/transversalSkills.json').subscribe(
+      data => {
+        this.transversalSkills = data as TreeNode<any>[];
+      },
+      error => {
+        console.error('Error loading JSON', error);
+      }
+    );
   }
 
   updateCityList(country: Country) {
