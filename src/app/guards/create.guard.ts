@@ -18,9 +18,9 @@ export const CreateGuard: CanActivateFn = () => {
     take(1),
     map(portfolio => {
       if (portfolio) {
-        return router.createUrlTree(['portfolio']);
-      } else if (portfolio === null) {
         return router.createUrlTree(['']);
+      } else if (portfolio === null) {
+        return router.createUrlTree(['about']);
       } else return true
     })
   );

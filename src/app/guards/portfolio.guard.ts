@@ -20,7 +20,7 @@ export const PortfolioGuard: CanActivateFn = () => {
         return true;
       } else if (portfolio === undefined) {
         return router.createUrlTree(['new']);
-      } else return router.createUrlTree(['']);
+      } else return router.createUrlTree(['about']);
     })
   );
 };

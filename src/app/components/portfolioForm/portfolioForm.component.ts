@@ -61,8 +61,8 @@ export class PortfolioFormComponent {
   }
 
   returnToHomepage() {
-    if (this.inputPortfolio) this.router.navigate(['portfolio']);
-    else this.router.navigate(['']);
+    if (this.inputPortfolio) this.router.navigate(['']);
+    else this.router.navigate(['about']);
   }
 
   addEducationItem() {
@@ -135,7 +135,7 @@ export class PortfolioFormComponent {
       ).subscribe(() => {
         this.loading = false;
         this.router.navigate(
-            ['portfolio'], 
+            [''], 
             { 
               queryParams: { 
                 submited: true, 

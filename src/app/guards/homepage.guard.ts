@@ -17,7 +17,7 @@ export const HomepageGuard: CanActivateFn = () => {
     take(1),
     map(portfolio => {
       if (portfolio) {
-        return router.createUrlTree(['portfolio']);
+        return router.createUrlTree(['']);
       } else return true;
     })
   );

@@ -40,7 +40,7 @@ export class PortfolioPageComponent {
 
   ngOnInit() {
     this.portfolioSubscription = this.firebaseService.getUserPortfolio().pipe(take(1)).subscribe( portfolio => {
-        if (!portfolio) this.router.navigate(['']);
+        if (!portfolio) this.router.navigate(['about']);
         else {
           this.userPortfolio = portfolio;
           
@@ -99,7 +99,7 @@ export class PortfolioPageComponent {
 
   private deletePortfolio() {
     this.firebaseService.deletePortfolio().pipe(take(1)).subscribe( () => {
-      this.router.navigate([''], { queryParams: { submited: true, mode: 'delete'}});
+      this.router.navigate(['about'], { queryParams: { submited: true, mode: 'delete'}});
     });
   }
 

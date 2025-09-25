@@ -161,6 +161,6 @@ export class HomePageComponent {
   }
 
   goToPortfolio() {
-    this.router.navigate(['portfolio'])
+    this.router.navigate([''])
   }
 }
