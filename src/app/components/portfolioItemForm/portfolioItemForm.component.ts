@@ -18,6 +18,7 @@ import { BokModalComponent } from "../bokModal/bokModal.component";
 import { HttpClient } from '@angular/common/http';
 import { TreeNode } from 'primeng/api';
 import { TreeselectChipsComponent } from '../treeselectChips/treeselectChips.component';
+import { ESCOService } from '../../services/esco.service';
 
 @Component({
   standalone: true,
@@ -43,7 +44,7 @@ export class PortfolioItemFormComponent {
 
   showCustomKnowledge: boolean = false;
 
-  constructor(private formDataService: FormDataService, private http: HttpClient){}
+  constructor(private formDataService: FormDataService, private http: HttpClient, private escoService: ESCOService){}
 
   ngOnInit() {
     this.formDataService.getCountries().pipe(take(1)).subscribe( countries => {
@@ -53,12 +54,9 @@ export class PortfolioItemFormComponent {
     )
     if (this.portfolioItem.country) this.updateCityList(this.portfolioItem.country);
     this.showCustomKnowledge = this.portfolioItem.hardSkills.length != 0;
-    this.http.get('assets/transversalSkills.json').subscribe(
+    this.escoService.getTransversalSkillsFromJson().pipe(take(1)).subscribe(
       data => {
-        this.transversalSkills = data as TreeNode<any>[];
-      },
-      error => {
-        console.error('Error loading JSON', error);
+        this.transversalSkills = data;
       }
     );
   }
