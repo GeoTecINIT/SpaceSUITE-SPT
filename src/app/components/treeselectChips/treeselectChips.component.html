@@ -3,10 +3,10 @@
         <p-treeselect #treeSelect [options]="treeselectOptions" [ngModel]="treeSelection" inputId="{{fieldName}}"
             class="w-full custom-treeselect" (ngModelChange)="treeselectChange($event)" (onClear)="treeSelect.hide()"
             [class.invalid-treeselect]="error" [filter]="true" resetFilterOnHide="true" [virtualScroll]="true" 
-            [virtualScrollItemSize]="40" filterPlaceholder="Choose a {{fieldName}} or specify a custom value" [showClear]="true"
+            [virtualScrollItemSize]="40" filterPlaceholder="Choose a {{fieldName}}" [showClear]="true"
             [metaKeySelection]="true" selectionMode="checkbox" filter showClear fluid [propagateSelectionDown]="false"
             appendTo="body" panelStyleClass="custom-treeselect" [propagateSelectionUp]="false"
-            [virtualScrollOptions]="{ scrollHeight: '252px' }">
+            [virtualScrollOptions]="{ scrollHeight: '252px' }" [loading]="treeselectOptions.length == 0">
             <ng-template #filtericon>
                 <i class="pi pi-bookmark"></i>
             </ng-template>
