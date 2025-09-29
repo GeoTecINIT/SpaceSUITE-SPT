@@ -1,5 +1,6 @@
 <p-toast class="custom-toast" position="bottom-right"/>
 <p-confirmdialog />
+<upload-cv-modal [(visible)]="showNewPortfolioModal" (userPortfolioChange)="onPortfolioModalChange($event)"></upload-cv-modal>
 <div class="flex flex-column align-items-center justify-content-center p-4">
     <h2>{{pageName}}</h2>
     <p-stepper [value]="1" class="custom-stepper">

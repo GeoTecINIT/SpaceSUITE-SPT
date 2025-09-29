@@ -23,6 +23,7 @@ import { FormDataService } from '../../services/formData.service';
 import { PortfolioItemFormComponent } from "../portfolioItemForm/portfolioItemForm.component";
 import { ExitWithoutSavingService } from '@eo4geo/ngx-bok-utils';
 import { ConfirmDialog } from "primeng/confirmdialog";
+import { UploadCVModalComponent } from '../uploadCVModal/uploadCVModal.component';
 
 @Component({
   standalone: true,
@@ -30,7 +31,7 @@ import { ConfirmDialog } from "primeng/confirmdialog";
   templateUrl: './portfolioForm.component.html',
   styleUrls: ['./portfolioForm.component.css'],
   imports: [InputTextModule, FloatLabelModule, FormsModule, InputIconModule, IconFieldModule, TextareaModule, CommonModule, SelectModule, AccordionModule,
-    StepperModule, ButtonModule, TooltipModule, ToastModule, InputNumberModule, LanguageSelectComponent, PortfolioItemFormComponent, ConfirmDialog],
+    StepperModule, ButtonModule, TooltipModule, ToastModule, InputNumberModule, LanguageSelectComponent, PortfolioItemFormComponent, ConfirmDialog, UploadCVModalComponent],
   providers: [MessageService, ConfirmationService]
 })
 export class PortfolioFormComponent {
@@ -45,6 +46,8 @@ export class PortfolioFormComponent {
 
   loading: boolean = false;
 
+  showNewPortfolioModal: boolean = false;
+
   constructor(private firebaseService: FirebaseService, private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService,
               private exitWithoutSavingService: ExitWithoutSavingService, private formDataService: FormDataService){}
 
@@ -57,7 +60,12 @@ export class PortfolioFormComponent {
     if (this.inputPortfolio) this.portfolio = new UserPortfolio(this.inputPortfolio)
     this.exitWithoutSavingService.showModalSubject.subscribe(value => {
       if (value) this.confirmExitWithoutSaving()
-    })
+    });
+    this.showNewPortfolioModal = this.router.url == '/new';
+  }
+
+  onPortfolioModalChange(newPortfolio: UserPortfolio) {
+    this.portfolio = newPortfolio;
   }
 
   returnToHomepage() {

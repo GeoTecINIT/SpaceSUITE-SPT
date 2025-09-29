@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import * as pdfjsLib from 'pdfjs-dist';
+import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 import { CEFRLevel, LanguageSkill, UserPortfolio } from "../model/userPortfolio";
 import { FormDataService } from "./formData.service";
-import { from, Observable } from "rxjs";
+import { firstValueFrom, from, map, Observable } from "rxjs";
 
 @Injectable({
     providedIn: 'root',
@@ -14,26 +14,28 @@ export class EuropassService {
     private motherTongueRegex = /mother tongue\(s\):\s*([A-Za-z ,|]+)/i;
     private otherLanguagesRegex = /Other language\(s\):\s*([\s\S]*)/i;
 
-    constructor(private formDataService: FormDataService) {}
-
-    public parseUserPortfolio(file: File): Observable<UserPortfolio> {
-        return from(this.parsePortfolioAsync(file));
+    constructor(private formDataService: FormDataService) {
+        GlobalWorkerOptions.workerSrc = 'assets/pdf.worker.min.js';
     }
 
-    private async parsePortfolioAsync(file: File): Promise<UserPortfolio> {
-        const text = await this.extractText(file);
+    public parseUserPortfolio(arrayBuffer: ArrayBuffer): Observable<UserPortfolio> {
+        return from(this.parsePortfolioAsync(arrayBuffer));
+    }
+
+    private async parsePortfolioAsync(arrayBuffer: ArrayBuffer): Promise<UserPortfolio> {
+        const text = await this.extractText(arrayBuffer);
 
         const email = this.extractEmail(text);
-        const { phoneNumber, countryCode } = this.extractPhoneNumber(text);
+        const { phoneNumber, countryCode } = await this.extractPhoneNumber(text);
         const motherTongues = this.extractMotherTongues(text);
         const otherLanguages = this.extractOtherLanguages(text);
         const nativeLanguage = motherTongues.length > 0 ? motherTongues[0] : undefined;
         const combinedLanguages: LanguageSkill[] = [
-            ...otherLanguages,
             ...motherTongues.slice(1).map(lang => new LanguageSkill({
                 language: lang,
                 level: 'C2'
-            }))
+            })),
+            ...otherLanguages
         ];
 
         const portfolio: UserPortfolio = new UserPortfolio({
@@ -47,17 +49,39 @@ export class EuropassService {
         return portfolio;
     }
 
-    private async extractText(file: File): Promise<string> {
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+    private async extractText(arrayBuffer: ArrayBuffer): Promise<string> {
+        const pdf = await getDocument(arrayBuffer).promise;
         let text = '';
 
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
-        const content = await page.getTextContent();
-        text += content.items.map((item: any) => item.str).join('') + '\n';
-        }
+            const page = await pdf.getPage(pageNum);
+            const content = await page.getTextContent();
 
+            // Group items by their Y position
+            const lines: Map<number, any[]> = new Map();
+            for (const item of content.items as any[]) {
+                const y = Math.round(item.transform[5]); // vertical position
+                if (!lines.has(y)) lines.set(y, []);
+                lines.get(y)!.push(item);
+            }
+
+            // Sort lines from top to bottom
+            const sortedLines = Array.from(lines.entries())
+                .sort((a, b) => b[0] - a[0]); // Y axis: higher = earlier line
+            for (const [, items] of sortedLines) {
+                // Sort items left to right
+                items.sort((a, b) => a.transform[4] - b.transform[4]);
+                let line = '';
+                let lastX: number | null = null;
+                for (const item of items) {
+                    if (lastX !== null && item.transform[4] - lastX > 5) line += ' ';
+                    line += item.str;
+                    lastX = item.transform[4] + item.width;
+                }
+                text += line.trim() + '\n';
+            }
+            text += '\n'; // extra space between pages
+        }
         return this.normalizeText(text);
     }
 
@@ -73,18 +97,33 @@ export class EuropassService {
         return emailMatch ? emailMatch[0] : '';
     }
 
-    private extractPhoneNumber(raw: string): {phoneNumber?: string, countryCode?: string} {
+    private async extractPhoneNumber(raw: string): Promise<{ phoneNumber?: string; countryCode?: string; }> {
         const phoneMatch = raw.match(this.phoneRegex);
         const countryCode = phoneMatch ? phoneMatch[1] : undefined;
         const phoneNumber = phoneMatch ? phoneMatch[2] : undefined;
-        return {phoneNumber: phoneNumber, countryCode: countryCode}
+
+        const format$ = this.formDataService.getCountries().pipe(
+            map(countries => {
+                const country = countries.find(value => value.phoneCode.slice(1) === countryCode);
+                const finalCountryCode = country ? country.iso2 : undefined;
+                return { phoneNumber, countryCode: finalCountryCode };
+            })
+        );
+
+        return await firstValueFrom(format$);
     }
 
     private extractMotherTongues(raw: string): string[] {
         const match = raw.match(this.motherTongueRegex);
         let languages: string[] = [];
         if (match) languages = match[1].split(/[,|]/).map(lang => lang.trim()).filter(Boolean);
-        return languages
+        return languages.map(value => this.capitalizeFirstLetter(value))
+    }
+
+    private capitalizeFirstLetter(str: string): string {
+        if (!str) return '';
+        str = str.toLowerCase();
+        return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
     private getPredominantLevel(levels: CEFRLevel[]): CEFRLevel | undefined {
