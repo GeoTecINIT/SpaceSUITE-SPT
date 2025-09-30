@@ -1,13 +1,44 @@
-<p-dialog header="Upload Curriculum Vitae" [modal]="true" [(visible)]="visible" (onHide)="visibleChange.emit(false)">
-    <div class="flex flex-column flex-1 gap-4 my-2">
-        <p-fileupload mode="basic" chooseLabel="Upload File" chooseIcon="pi pi-upload" 
-                        accept="application/pdf" (onSelect)="onFileSelected($event)" 
+<p-dialog header="Upload Europass CV" [modal]="true" [(visible)]="visible" (onHide)="visibleChange.emit(false)" 
+            [style]="{ width: '30rem', color: 'var(--primary-color)' }" [draggable]="false">
+    <div class="flex flex-column flex-1 gap-3">
+        <div *ngIf="!fileUpload.hasFiles()">
+            <p class="text-sm m-0 p-0">
+                Upload your Europass CV in PDF format to automatically fill in your information. 
+            </p>
+            <p class="text-sm m-0 p-0" [style.color]="'var(--danger-color)'">
+                If you prefer, you can close this window and complete the form manually.
+            </p>
+        </div>
+        <div class="flex align-items-center">
+            <p-fileupload #fileUpload mode="basic" chooseLabel="Upload CV" chooseIcon="pi pi-upload"
+                        accept="application/pdf" (onSelect)="onFileSelected($event)" (onClear)="onClear()"
                         styleClass="justify-content-start custom-button"></p-fileupload>
+            <p-button class="text-button" text icon="pi pi-times" rounded *ngIf="progress === 100" (onClick)="fileUpload.clear()"></p-button>
+        </div>
         <div *ngIf="showProgressBar">
             <p-progressbar [value]="progress" class="custom-progress-bar"/>
         </div>
+        <div *ngIf="!showProgressBar && progress == 100" class="flex flex-column">
+            <h3 class="text-base font-semibold m-0">Extracted Information</h3>
+            <ul class="mt-1 ml-1 mb-1 text-sm">
+                <li *ngIf="userPortfolio.fullName"><strong>Full Name:</strong> {{ userPortfolio.fullName }}</li>
+                <li *ngIf="userPortfolio.email"><strong>Email:</strong> {{ userPortfolio.email }}</li>
+                <li *ngIf="userPortfolio.phoneCountryCode"><strong>Country Code:</strong> {{ userPortfolio.phoneCountryCode }}</li>
+                <li *ngIf="userPortfolio.phone"><strong>Phone:</strong> {{ userPortfolio.phone }}</li>
+                <li *ngIf="userPortfolio.nativeLanguage"><strong>Native Language:</strong> {{ userPortfolio.nativeLanguage }}</li>
+                <li *ngIf="userPortfolio.languageSkills?.length">
+                    <strong>Language Skills:</strong>
+                    <ul>
+                        <li *ngFor="let lang of userPortfolio.languageSkills">{{ lang.language }} - {{lang.level}}</li>
+                    </ul>
+                </li>
+            </ul>
+            <p class="text-sm m-0 p-0" [style.color]="'var(--danger-color)'" *ngIf="!hasExtractedData()">
+                No data could be extracted from the uploaded CV.
+            </p>
+        </div>
         <div *ngIf="!showProgressBar && progress == 100">
-            <p-button class="custom-button" label="Apply" (click)="userPortfolioChange.emit(this.userPortfolio)"></p-button>
+            <p-button class="custom-button" label="Apply" (click)="submitCV()" [disabled]="!hasExtractedData()"></p-button>
         </div>
     </div>
 </p-dialog>

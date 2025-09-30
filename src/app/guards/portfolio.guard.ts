@@ -18,8 +18,6 @@ export const PortfolioGuard: CanActivateFn = () => {
     map(portfolio => {
       if (portfolio) {
         return true;
-      } else if (portfolio === undefined) {
-        return router.createUrlTree(['new']);
       } else return router.createUrlTree(['about']);
     })
   );

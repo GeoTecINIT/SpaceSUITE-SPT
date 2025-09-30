@@ -25,6 +25,7 @@ export class EuropassService {
     private async parsePortfolioAsync(arrayBuffer: ArrayBuffer): Promise<UserPortfolio> {
         const text = await this.extractText(arrayBuffer);
 
+        const fullName = this.extractFullName(text);
         const email = this.extractEmail(text);
         const { phoneNumber, countryCode } = await this.extractPhoneNumber(text);
         const motherTongues = this.extractMotherTongues(text);
@@ -39,6 +40,7 @@ export class EuropassService {
         ];
 
         const portfolio: UserPortfolio = new UserPortfolio({
+            fullName,
             email,
             phone: phoneNumber,
             phoneCountryCode: countryCode,
@@ -56,33 +58,42 @@ export class EuropassService {
         for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
             const page = await pdf.getPage(pageNum);
             const content = await page.getTextContent();
-
-            // Group items by their Y position
-            const lines: Map<number, any[]> = new Map();
-            for (const item of content.items as any[]) {
-                const y = Math.round(item.transform[5]); // vertical position
-                if (!lines.has(y)) lines.set(y, []);
-                lines.get(y)!.push(item);
-            }
-
-            // Sort lines from top to bottom
-            const sortedLines = Array.from(lines.entries())
-                .sort((a, b) => b[0] - a[0]); // Y axis: higher = earlier line
-            for (const [, items] of sortedLines) {
-                // Sort items left to right
-                items.sort((a, b) => a.transform[4] - b.transform[4]);
-                let line = '';
-                let lastX: number | null = null;
-                for (const item of items) {
-                    if (lastX !== null && item.transform[4] - lastX > 5) line += ' ';
-                    line += item.str;
-                    lastX = item.transform[4] + item.width;
-                }
-                text += line.trim() + '\n';
-            }
-            text += '\n'; // extra space between pages
+            const lines: Map<number, any[]> = this.clusterYPositions(content.items as any[]);
+            const sortedLines = this.sortLines(lines);
+            sortedLines.forEach(line => {
+                if (line.endsWith('-') || line.endsWith('‐')) text += line.slice(0, -1).trim();
+                else text += line.trim() + '\n';
+            });
         }
+        console.log(text)
         return this.normalizeText(text);
+    }
+
+    private clusterYPositions(items: any[]): Map<number, any[]> {
+        const lines: Map<number, any[]> = new Map();
+        for (const item of items) {
+            const y = Math.round(item.transform[5]);
+            if (!lines.has(y)) lines.set(y, []);
+            lines.get(y)!.push(item);
+        }
+        return lines;
+    }
+
+    private sortLines(lines: Map<number, any[]>): string[] {
+        const sortedLines = Array.from(lines.entries())
+            .sort((a, b) => b[0] - a[0]); // PDF y-axis is inverted
+
+        return sortedLines.map(([_, items]) => {
+            items.sort((a, b) => a.transform[4] - b.transform[4]);
+            let line = '';
+            let lastX: number | null = null;
+            for (const item of items) {
+                if (lastX !== null && item.transform[4] - lastX > 5) line += ' ';
+                line += item.str;
+                lastX = item.transform[4] + item.width;
+            }
+            return line.endsWith('-') ? line.slice(0, -1).trim() : line.trim();
+        });
     }
 
     private normalizeText(raw: string): string {
@@ -90,6 +101,11 @@ export class EuropassService {
         .replace(/\s+\n/g, '\n')
         .replace(/\n{2,}/g, '\n')
         .trim();
+    }
+
+    private extractFullName(raw: string): string {
+        const lines = raw.split(/\n+/).map(l => l.trim()).filter(Boolean);
+        return lines[0];
     }
 
     private extractEmail(raw: string): string {
@@ -116,7 +132,7 @@ export class EuropassService {
     private extractMotherTongues(raw: string): string[] {
         const match = raw.match(this.motherTongueRegex);
         let languages: string[] = [];
-        if (match) languages = match[1].split(/[,|]/).map(lang => lang.trim()).filter(Boolean);
+        if (match) languages = match[1].split(/[,|\s]+/).map(lang => lang.trim()).filter(Boolean);
         return languages.map(value => this.capitalizeFirstLetter(value))
     }
 

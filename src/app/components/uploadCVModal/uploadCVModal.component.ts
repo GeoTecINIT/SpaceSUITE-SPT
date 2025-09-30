@@ -25,8 +25,6 @@ export class UploadCVModalComponent {
     progress: number = 0;
     showProgressBar: boolean = false;
 
-    file: File | null = null;
-
     private extractionSubscription: Subscription | null = null;
 
     constructor(private europassService: EuropassService) {}
@@ -35,6 +33,11 @@ export class UploadCVModalComponent {
       if (this.extractionSubscription) {
         this.extractionSubscription.unsubscribe();
       }
+    }
+
+    submitCV() {
+      this.userPortfolioChange.emit(this.userPortfolio)
+      this.visibleChange.emit(false);
     }
 
     async onFileSelected(input: FileSelectEvent) {
@@ -63,7 +66,6 @@ export class UploadCVModalComponent {
             this.userPortfolio = portfolio;
             this.progress = 100;
             this.showProgressBar = false;
-            console.log(this.userPortfolio)
           }
         );
       };
@@ -74,8 +76,19 @@ export class UploadCVModalComponent {
   }
 
   onClear() {
-    this.file = null;
     this.showProgressBar = false;
     this.progress = 0;
   }
+
+  hasExtractedData(): boolean {
+    return Boolean(
+      this.userPortfolio.fullName ||
+      this.userPortfolio.email ||
+      this.userPortfolio.phoneCountryCode ||
+      this.userPortfolio.phone ||
+      this.userPortfolio.nativeLanguage ||
+      (this.userPortfolio.languageSkills?.length)
+    );
+  }
+
 }

@@ -161,6 +161,7 @@ export class HomePageComponent {
   }
 
   goToPortfolio() {
-    this.router.navigate([''])
+    if (this.havePortfolio.getValue()) this.router.navigate([''])
+    this.router.navigate(['new'])
   }
 }
