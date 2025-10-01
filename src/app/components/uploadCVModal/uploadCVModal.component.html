@@ -34,7 +34,7 @@
                 </li>
             </ul>
             <p class="text-sm m-0 p-0" [style.color]="'var(--danger-color)'" *ngIf="!hasExtractedData()">
-                No data could be extracted from the uploaded CV.
+                The uploaded CV format is invalid for data extraction.
             </p>
         </div>
         <div *ngIf="!showProgressBar && progress == 100">
