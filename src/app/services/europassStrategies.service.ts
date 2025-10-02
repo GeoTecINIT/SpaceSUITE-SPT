@@ -1,12 +1,12 @@
 import { firstValueFrom, from, map, Observable, of } from "rxjs";
-import { CEFRLevel, LanguageSkill, UserPortfolio } from "./userPortfolio";
+import { CEFRLevel, LanguageSkill, UserPortfolio } from "../model/userPortfolio";
 import { PDFDocumentProxy } from "pdfjs-dist";
-import { FormDataService } from "../services/formData.service";
+import { FormDataService } from "./formData.service";
 import { inject, Injectable } from "@angular/core";
 
 export interface EuropassStrategy {
 	templateId: string;
-  extractData(pdf: PDFDocumentProxy): Observable<UserPortfolio>;
+  	extractData(pdf: PDFDocumentProxy): Observable<UserPortfolio>;
 }
 
 @Injectable({

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { UserPortfolio } from "../model/userPortfolio";
 import { catchError, concatMap, from, Observable, of } from "rxjs";
-import { EuropassStrategy, WhiteEuropassStrategy } from "../model/europassStrategies";
+import { EuropassStrategy, WhiteEuropassStrategy } from "./europassStrategies.service";
 import { getDocument, GlobalWorkerOptions, PDFDocumentProxy } from "pdfjs-dist";
 
 @Injectable({
@@ -32,7 +32,7 @@ export class EuropassService {
 		const text = new TextDecoder("utf-8").decode(data);
 
 		// Check if is a Europass CV
-		const matchEuropass = text.match(/europass/i); // case-insensitive
+		const matchEuropass = text.match(/europass/i);
 		const metadata = await pdf.getMetadata();
 		const title = (metadata.info as Record<string, any>)["Title"];
 		if (!matchEuropass || title !== "Europass") throw new Error("Unsupported CV template");

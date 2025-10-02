@@ -21,7 +21,7 @@ import { HomepageGuard } from './app/guards/homepage.guard';
 const routes: Routes = [
     { path: '', component: PortfolioPageComponent, canActivate: [PortfolioGuard], runGuardsAndResolvers: 'always'},
     { path: 'about', component: HomePageComponent, canActivate: [HomepageGuard], runGuardsAndResolvers: 'always'},
-    { path: 'new', component: PortfolioFormComponent, canActivate: [HomepageGuard], canDeactivate: [exitWithoutSavingGuard], runGuardsAndResolvers: 'always'},
+    { path: 'new', component: PortfolioFormComponent, canActivate: [AuthGuard, HomepageGuard], canDeactivate: [exitWithoutSavingGuard], runGuardsAndResolvers: 'always'},
     { path: 'edit', component: EditPageComponent, canActivate: [PortfolioGuard], canDeactivate: [exitWithoutSavingGuard], runGuardsAndResolvers: 'always'},
     { path: 'profile', component: UserPageComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
     { path: 'organizations', component: OrganizationPageComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},

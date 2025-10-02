@@ -40,7 +40,7 @@ export class UploadCVModalComponent {
       this.visibleChange.emit(false);
     }
 
-    async onFileSelected(input: FileSelectEvent) {
+  async onFileSelected(input: FileSelectEvent) {
     if (input.files && input.files.length > 0) {
       this.onClear();
       const file = input.files[0];
