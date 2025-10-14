@@ -42,11 +42,11 @@ export class PortfolioPageComponent {
 
   ngOnInit() {
     this.sessionSubscription = this.authService.getUserState().subscribe ( state => {
-      if (!state?.logged) this.router.navigate(['']);
+      if (!state?.logged) this.router.navigate([''], {onSameUrlNavigation: 'reload'});
     })
     this.portfolioSubscription = this.firebaseService.getUserPortfolio().pipe(take(1)).subscribe( portfolio => {
         if (portfolio == undefined) {
-          this.router.navigate(['']);
+          this.router.navigate([''], {onSameUrlNavigation: 'reload'});
         }
         else {
           this.userPortfolio = portfolio;
