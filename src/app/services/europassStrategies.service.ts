@@ -1,5 +1,5 @@
-import { firstValueFrom, from, map, Observable, of } from "rxjs";
-import { CEFRLevel, LanguageSkill, UserPortfolio } from "../model/userPortfolio";
+import { firstValueFrom, from, lastValueFrom, map, Observable, of } from "rxjs";
+import { CEFRLevel, Country, LanguageSkill, PortfolioItem, UserPortfolio } from "../model/userPortfolio";
 import { PDFDocumentProxy } from "pdfjs-dist";
 import { FormDataService } from "./formData.service";
 import { inject, Injectable } from "@angular/core";
@@ -42,6 +42,7 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 			})),
 			...otherLanguages
 		];
+		const workExperience = await this.extractExperience(text);
 
 		const portfolio: UserPortfolio = new UserPortfolio({
 			fullName,
@@ -49,7 +50,8 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 			phone: phoneNumber,
 			phoneCountryCode: countryCode,
 			nativeLanguage,
-			languageSkills: combinedLanguages
+			languageSkills: combinedLanguages,
+			workExperience: workExperience
 		});
 
 		return portfolio;
@@ -202,5 +204,76 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 		}
 
 		return result;
+	}
+
+	private async extractExperience(text: string): Promise<PortfolioItem[]> {
+		const workExpLines = this.getWorkExperienceLines(text);
+		const experiences: PortfolioItem[] = [];
+		let current: {
+				organization?: string;
+				city?: string;
+				country?: Country;
+				startDate?: Date;
+				endDate?: Date;
+				title?: string;
+			} = {};
+		for (const line of workExpLines) {
+			// TODO - Extract organization
+    		const cityCountryMatch = line.match(/^City:\s*(.+?)\s*\|\s*Country:\s*(.+)$/);
+			if (cityCountryMatch) {
+				const country$ = this.formDataService.getCountryByName(cityCountryMatch[2].trim());
+				const country = await lastValueFrom(country$);
+				// TODO - Check the city in a city list
+				current.city = cityCountryMatch[1].trim(),
+				current.country = country
+			}
+			const dateTitleMatch = line.match(/\[\s*([\d/]+)\s*[-–]\s*(Current|[\d/]+)\s*\]\s*(.*)/);
+			if (dateTitleMatch) {
+				current.startDate = this.parseDateEU(dateTitleMatch[1].trim());
+				current.endDate = dateTitleMatch[2].trim() != 'Current' ? this.parseDateEU(dateTitleMatch[2].trim()) : undefined;
+				current.title = dateTitleMatch[3].trim();
+			}
+			if (current.title) {
+				experiences.push(new PortfolioItem(current));
+				current = {};
+			}
+		}
+		return experiences;
+	}
+
+	private getWorkExperienceLines(text: string): string[] {
+		const lines = text
+			.replace(/\r\n|\r/g, "\n")
+			.split("\n")
+			.map(line => line.trim())
+			.filter(line => line.length > 0);
+		
+		let inWork = false;
+		const workLines: string[] = [];
+
+		for (const line of lines) {
+			if (/^WORK EXPERIENCE/i.test(line)) {
+				inWork = true;
+				continue;
+			}
+			if (inWork && /^(EDUCATION|LANGUAGE)/i.test(line)) {
+				break;
+			}
+			if (inWork) {
+				workLines.push(line);
+			}
+		}
+		return workLines;
+	}
+
+	private parseDateEU(dateStr: string): Date | undefined {
+		const parts = dateStr.split("/"); // ["dd", "mm", "yyyy"]
+		if (parts.length !== 3) return undefined;
+
+		const day = parseInt(parts[0], 10);
+		const month = parseInt(parts[1], 10) - 1; // JS months 0-11
+		const year = parseInt(parts[2], 10);
+
+		return new Date(year, month, day);
 	}
 }

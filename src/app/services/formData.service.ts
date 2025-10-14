@@ -116,6 +116,11 @@ export class FormDataService {
     if (this.countries.length != 0) return of(this.countries.find(value => value.iso2 == iso2));
     return this.getCountries().pipe(map( countries => countries.find(value => value.iso2 == iso2)));
   }
+
+  public getCountryByName(name: string): Observable<Country | undefined> {
+    if (this.countries.length != 0) return of(this.countries.find(value => value.name == name));
+    return this.getCountries().pipe(map( countries => countries.find(value => value.name == name)));
+  }
   
   public getCountries(): Observable<Country[]> {
     if (this.countries.length != 0) return of(this.countries);
