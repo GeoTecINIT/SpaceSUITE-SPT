@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { collection, collectionData, CollectionReference, deleteDoc, doc, docData, DocumentReference, Firestore, getDocs, serverTimestamp, setDoc, updateDoc } from "@angular/fire/firestore";
-import { catchError, concatMap, defaultIfEmpty, filter, forkJoin, from, map, Observable, of, ReplaySubject, switchMap, take } from "rxjs";
+import { catchError, concatMap, defaultIfEmpty, EMPTY, filter, forkJoin, from, map, Observable, of, ReplaySubject, switchMap, take } from "rxjs";
 import { FirebaseObject, LanguageSkill, PortfolioItem, UserPortfolio } from "../model/userPortfolio";
 import { BokInformationService } from "@eo4geo/ngx-bok-visualization";
 import { getDownloadURL, ref, uploadBytes, Storage, deleteObject } from "@angular/fire/storage";
@@ -26,6 +26,7 @@ export class FirebaseService {
   public getUserPortfolio(): Observable<UserPortfolio | undefined> {
     return this.userId.asObservable().pipe(
       concatMap(uid => {
+        if (!uid) return EMPTY
         const docRef = doc(this.portfolioCollection, uid);
         return docData(docRef).pipe(
           map(portfolio => ({ portfolio: portfolio as UserPortfolio, docRef }))

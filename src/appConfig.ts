@@ -16,23 +16,21 @@ import { HomePageComponent } from './app/components/homePage/homePage.component'
 import { PortfolioFormComponent } from './app/components/portfolioForm/portfolioForm.component';
 import { PortfolioGuard } from './app/guards/portfolio.guard';
 import { EditPageComponent } from './app/components/editPage/editPage.component';
-import { HomepageGuard } from './app/guards/homepage.guard';
+import { EmptyPortfolioGuard } from './app/guards/emptyPortfolio.guard';
 
 const routes: Routes = [
-    { path: '', component: PortfolioPageComponent, canActivate: [PortfolioGuard], runGuardsAndResolvers: 'always'},
-    { path: 'about', component: HomePageComponent, canActivate: [HomepageGuard], runGuardsAndResolvers: 'always'},
-    { path: 'new', component: PortfolioFormComponent, canActivate: [AuthGuard, HomepageGuard], canDeactivate: [exitWithoutSavingGuard], runGuardsAndResolvers: 'always'},
-    { path: 'edit', component: EditPageComponent, canActivate: [PortfolioGuard], canDeactivate: [exitWithoutSavingGuard], runGuardsAndResolvers: 'always'},
-    { path: 'profile', component: UserPageComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
-    { path: 'organizations', component: OrganizationPageComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
+    { path: '', component: PortfolioPageComponent, canMatch: [AuthGuard, PortfolioGuard]},
+    { path: '', component: HomePageComponent},
+    { path: 'new', component: PortfolioFormComponent, canMatch: [AuthGuard, EmptyPortfolioGuard], canDeactivate: [exitWithoutSavingGuard]},
+    { path: 'edit', component: EditPageComponent, canMatch: [AuthGuard, PortfolioGuard], canDeactivate: [exitWithoutSavingGuard]},
+    { path: 'profile', component: UserPageComponent, canMatch: [AuthGuard]},
+    { path: 'organizations', component: OrganizationPageComponent, canMatch: [AuthGuard]},
     { path: '**', component: NotFoundPageComponent}
 ];
 
 export const appConfig: ApplicationConfig = {
     providers: [
-        provideRouter(routes, withRouterConfig({
-            onSameUrlNavigation: 'reload'
-        })),
+        provideRouter(routes),
         provideHttpClient(),
         provideFirebaseApp(() => initializeApp(environment.FIREBASE)),
         provideAuth(() => getAuth()),

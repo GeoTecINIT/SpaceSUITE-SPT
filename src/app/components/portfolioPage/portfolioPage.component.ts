@@ -12,6 +12,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { AuthService } from '@eo4geo/ngx-bok-utils';
 
 @Component({
   standalone: true,
@@ -32,15 +33,21 @@ export class PortfolioPageComponent {
   reverseEducation: boolean = false;
 
   private portfolioSubscription?: Subscription;
+  private sessionSubscription?: Subscription;
 
   loading = false;
 
-  constructor(private firebaseService: FirebaseService, private router: Router, private route: ActivatedRoute, 
+  constructor(private firebaseService: FirebaseService, private router: Router, private route: ActivatedRoute, private authService: AuthService,
               private messageService: MessageService, private confirmationService: ConfirmationService){}
 
   ngOnInit() {
+    this.sessionSubscription = this.authService.getUserState().subscribe ( state => {
+      if (!state?.logged) this.router.navigate(['']);
+    })
     this.portfolioSubscription = this.firebaseService.getUserPortfolio().pipe(take(1)).subscribe( portfolio => {
-        if (!portfolio) this.router.navigate(['about']);
+        if (portfolio == undefined) {
+          this.router.navigate(['']);
+        }
         else {
           this.userPortfolio = portfolio;
           
@@ -91,6 +98,7 @@ export class PortfolioPageComponent {
 
   ngOnDestroy() {
     this.portfolioSubscription?.unsubscribe();
+    this.sessionSubscription?.unsubscribe();
   }
 
   editPortfolio() {
@@ -99,7 +107,7 @@ export class PortfolioPageComponent {
 
   private deletePortfolio() {
     this.firebaseService.deletePortfolio().pipe(take(1)).subscribe( () => {
-      this.router.navigate(['about'], { queryParams: { submited: true, mode: 'delete'}});
+      this.router.navigate([''], { queryParams: { submited: true, mode: 'delete'}});
     });
   }
 

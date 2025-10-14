@@ -13,7 +13,7 @@ import { StepperModule } from 'primeng/stepper';
 import { TooltipModule } from "primeng/tooltip";
 import { FirebaseService } from '../../services/firebase.service';
 import { Router } from '@angular/router';
-import { catchError, of, take } from 'rxjs';
+import { catchError, of, Subscription, take } from 'rxjs';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { LanguageSelectComponent } from "../languageSelect/languageSelect.component";
@@ -21,7 +21,7 @@ import { SelectModule } from 'primeng/select';
 import { AccordionModule } from 'primeng/accordion';
 import { FormDataService } from '../../services/formData.service';
 import { PortfolioItemFormComponent } from "../portfolioItemForm/portfolioItemForm.component";
-import { ExitWithoutSavingService } from '@eo4geo/ngx-bok-utils';
+import { AuthService, ExitWithoutSavingService } from '@eo4geo/ngx-bok-utils';
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { UploadCVModalComponent } from '../uploadCVModal/uploadCVModal.component';
 
@@ -48,10 +48,18 @@ export class PortfolioFormComponent {
 
   showNewPortfolioModal: boolean = false;
 
+  private sessionSubscription?: Subscription;
+
   constructor(private firebaseService: FirebaseService, private router: Router, private messageService: MessageService, private confirmationService: ConfirmationService,
-              private exitWithoutSavingService: ExitWithoutSavingService, private formDataService: FormDataService){}
+              private exitWithoutSavingService: ExitWithoutSavingService, private formDataService: FormDataService, private authService: AuthService){}
 
   ngOnInit() {
+    this.sessionSubscription = this.authService.getUserState().subscribe ( state => {
+      if (!state?.logged) {
+        this.exitWithoutSavingService.bypassGuard.next(true);
+        this.router.navigate(['']);
+      }
+    })
     this.languageList = this.formDataService.getLanguageList();
     this.formDataService.getCountries().pipe(take(1)).subscribe( countries => {
       this.countryList = countries;
@@ -64,13 +72,17 @@ export class PortfolioFormComponent {
     this.showNewPortfolioModal = this.router.url == '/new';
   }
 
+  ngOnDestroy() {
+    this.sessionSubscription?.unsubscribe();
+  }
+
   onPortfolioModalChange(newPortfolio: UserPortfolio) {
     this.portfolio = newPortfolio;
   }
 
   returnToHomepage() {
-    if (this.inputPortfolio) this.router.navigate(['']);
-    else this.router.navigate(['about']);
+    this.router.navigate(['']);
+
   }
 
   addEducationItem() {

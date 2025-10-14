@@ -161,7 +161,9 @@ export class HomePageComponent {
   }
 
   goToPortfolio() {
-    if (this.havePortfolio.getValue()) this.router.navigate([''])
-    this.router.navigate(['new'])
+    if (this.havePortfolio.getValue()) {
+      this.router.navigate([''], {onSameUrlNavigation: 'reload'})
+    }
+    else this.router.navigate(['new'])
   }
 }
