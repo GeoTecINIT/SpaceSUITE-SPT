@@ -3,6 +3,7 @@ import { CEFRLevel, Country, LanguageSkill, PortfolioItem, UserPortfolio } from 
 import { PDFDocumentProxy } from "pdfjs-dist";
 import { FormDataService } from "./formData.service";
 import { inject, Injectable } from "@angular/core";
+import { StringSimilarityService } from "./stringSimilarity.service";
 
 export interface EuropassStrategy {
 	templateId: string;
@@ -22,8 +23,10 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 	private motherTongueRegex = /mother tongue\(s\):\s*([A-Za-z ,|]+)/i;
 	private otherLanguagesRegex = /Other language\(s\):\s*([\s\S]*)/i;
 
-  public extractData(pdf: PDFDocumentProxy): Observable<UserPortfolio> {
-    return from(this.parsePortfolioAsync(pdf));
+	private stringSimilarityService: StringSimilarityService = inject(StringSimilarityService);
+
+	public extractData(pdf: PDFDocumentProxy): Observable<UserPortfolio> {
+		return from(this.parsePortfolioAsync(pdf));
 	}
 
 	private async parsePortfolioAsync(pdf: PDFDocumentProxy): Promise<UserPortfolio> {
@@ -92,6 +95,7 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 			let line = '';
 			let lastX: number | null = null;
 			for (const item of items) {
+				if (lastX === null && item.fontName == 'g_d0_f3') line += 'Organization: ';
 				if (lastX !== null && item.transform[4] - lastX > 5) line += ' ';
 				line += item.str;
 				lastX = item.transform[4] + item.width;
@@ -218,14 +222,22 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 				title?: string;
 			} = {};
 		for (const line of workExpLines) {
-			// TODO - Extract organization
+			const organizationMatch = line.match(/(?<=Organization:\s).*/);
+			if (organizationMatch) {
+				const organization = organizationMatch[0].trim();
+				current.organization = organization;
+			}
     		const cityCountryMatch = line.match(/^City:\s*(.+?)\s*\|\s*Country:\s*(.+)$/);
 			if (cityCountryMatch) {
 				const country$ = this.formDataService.getCountryByName(cityCountryMatch[2].trim());
 				const country = await lastValueFrom(country$);
-				// TODO - Check the city in a city list
-				current.city = cityCountryMatch[1].trim(),
-				current.country = country
+				if (country) {
+					const cities$ = this.formDataService.getCities(country.iso2);
+					const cities = await lastValueFrom(cities$);
+					const city = this.stringSimilarityService.findBestMatch(cityCountryMatch[1].trim(), cities);
+					current.city = city.bestMatch.rating >= 0.75 ? city.bestMatch.target : undefined;
+					current.country = country;
+				}
 			}
 			const dateTitleMatch = line.match(/\[\s*([\d/]+)\s*[-–]\s*(Current|[\d/]+)\s*\]\s*(.*)/);
 			if (dateTitleMatch) {
