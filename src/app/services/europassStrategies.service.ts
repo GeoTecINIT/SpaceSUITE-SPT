@@ -45,7 +45,20 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 			})),
 			...otherLanguages
 		];
-		const workExperience = await this.extractExperience(text);
+		const workLines = this.getSectionLines(
+			text,
+			/^WORK EXPERIENCE/i,
+			[/^EDUCATION/i, /^LANGUAGE/i]
+		);
+		const workExperience = await this.extractPortfolioItem(workLines);
+
+		const educationLines = this.getSectionLines(
+			text,
+			/^EDUCATION AND TRAINING/i,
+			[/^LANGUAGE/i]
+		);
+		console.log(educationLines.join('\n'))
+		const education = await this.extractPortfolioItem(educationLines);
 
 		const portfolio: UserPortfolio = new UserPortfolio({
 			fullName,
@@ -54,7 +67,8 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 			phoneCountryCode: countryCode,
 			nativeLanguage,
 			languageSkills: combinedLanguages,
-			workExperience: workExperience
+			workExperience: workExperience,
+			educationAndTraining: education
 		});
 
 		return portfolio;
@@ -210,8 +224,7 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 		return result;
 	}
 
-	private async extractExperience(text: string): Promise<PortfolioItem[]> {
-		const workExpLines = this.getWorkExperienceLines(text);
+	private async extractPortfolioItem(lines: string[]): Promise<PortfolioItem[]> {
 		const experiences: PortfolioItem[] = [];
 		let current: {
 				organization?: string;
@@ -221,12 +234,13 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 				endDate?: Date;
 				title?: string;
 			} = {};
-		for (const line of workExpLines) {
+		for (const line of lines) {
 			const organizationMatch = line.match(/(?<=Organization:\s).*/);
 			if (organizationMatch) {
 				const organization = organizationMatch[0].trim();
 				current.organization = organization;
 			}
+			// TODO - fix educational city extraction
     		const cityCountryMatch = line.match(/^City:\s*(.+?)\s*\|\s*Country:\s*(.+)$/);
 			if (cityCountryMatch) {
 				const country$ = this.formDataService.getCountryByName(cityCountryMatch[2].trim());
@@ -245,7 +259,7 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 				current.endDate = dateTitleMatch[2].trim() != 'Current' ? this.parseDateEU(dateTitleMatch[2].trim()) : undefined;
 				current.title = dateTitleMatch[3].trim();
 			}
-			if (current.title) {
+			if (current.title && current.organization) {
 				experiences.push(new PortfolioItem(current));
 				current = {};
 			}
@@ -253,29 +267,34 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 		return experiences;
 	}
 
-	private getWorkExperienceLines(text: string): string[] {
+	private getSectionLines(
+		text: string,
+		startPattern: RegExp,
+		endPatterns: RegExp[]
+	): string[] {
 		const lines = text
 			.replace(/\r\n|\r/g, "\n")
 			.split("\n")
 			.map(line => line.trim())
 			.filter(line => line.length > 0);
-		
-		let inWork = false;
-		const workLines: string[] = [];
+
+		let inSection = false;
+		const sectionLines: string[] = [];
 
 		for (const line of lines) {
-			if (/^WORK EXPERIENCE/i.test(line)) {
-				inWork = true;
+			if (startPattern.test(line)) {
+				inSection = true;
 				continue;
 			}
-			if (inWork && /^(EDUCATION|LANGUAGE)/i.test(line)) {
+			if (inSection && endPatterns.some(pattern => pattern.test(line))) {
 				break;
 			}
-			if (inWork) {
-				workLines.push(line);
+			if (inSection) {
+				sectionLines.push(line);
 			}
 		}
-		return workLines;
+
+		return sectionLines;
 	}
 
 	private parseDateEU(dateStr: string): Date | undefined {
