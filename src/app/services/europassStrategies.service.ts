@@ -1,4 +1,4 @@
-import { firstValueFrom, from, lastValueFrom, map, Observable, of } from "rxjs";
+import { firstValueFrom, from, lastValueFrom, map, Observable } from "rxjs";
 import { CEFRLevel, Country, LanguageSkill, PortfolioItem, UserPortfolio } from "../model/userPortfolio";
 import { PDFDocumentProxy } from "pdfjs-dist";
 import { FormDataService } from "./formData.service";
@@ -9,6 +9,8 @@ export interface EuropassStrategy {
 	templateId: string;
   	extractData(pdf: PDFDocumentProxy): Observable<UserPortfolio>;
 }
+
+type PortfolioMode = 'work' | 'education';
 
 @Injectable({
     providedIn: 'root',
@@ -50,15 +52,14 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 			/^WORK EXPERIENCE/i,
 			[/^EDUCATION/i, /^LANGUAGE/i]
 		);
-		const workExperience = await this.extractPortfolioItem(workLines);
+		const workExperience = await this.extractPortfolioItems(workLines, 'work');
 
 		const educationLines = this.getSectionLines(
 			text,
 			/^EDUCATION AND TRAINING/i,
 			[/^LANGUAGE/i]
 		);
-		console.log(educationLines.join('\n'))
-		const education = await this.extractPortfolioItem(educationLines);
+		const education = await this.extractPortfolioItems(educationLines, 'education');
 
 		const portfolio: UserPortfolio = new UserPortfolio({
 			fullName,
@@ -76,18 +77,33 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 
 	private async extractText(pdf: PDFDocumentProxy): Promise<string> {
 		let text = '';
+		let orgFont: string | undefined;
 
 		for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
 			const page = await pdf.getPage(pageNum);
 			const content = await page.getTextContent();
 			const lines: Map<number, any[]> = this.clusterYPositions(content.items as any[]);
-			const sortedLines = this.sortLines(lines);
+			if (!orgFont) orgFont = this.getOrgFont(lines);
+			const sortedLines = this.sortLines(lines, orgFont);
 			sortedLines.forEach(line => {
 				if (line.endsWith('-') || line.endsWith('‐')) text += line.slice(0, -1).trim();
 				else text += line.trim() + '\n';
 			});
 		}
 		return this.normalizeText(text);
+	}
+
+	private getOrgFont(lines: Map<number, any[]>): string | undefined {
+		let prevLine = ''
+		for (const items of lines.values()) {
+			items.sort((a, b) => a.transform[4] - b.transform[4]);
+			const line = items.map(item => item.str).join('');
+			if (prevLine === 'WORK EXPERIENCE') {
+				return items[0]?.fontName;
+			}
+			prevLine = line
+		}
+		return undefined
 	}
 
 	private clusterYPositions(items: any[]): Map<number, any[]> {
@@ -100,7 +116,7 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 		return lines;
 	}
 
-	private sortLines(lines: Map<number, any[]>): string[] {
+	private sortLines(lines: Map<number, any[]>, orgFont: string | undefined): string[] {
 		const sortedLines = Array.from(lines.entries())
 			.sort((a, b) => b[0] - a[0]); // PDF y-axis is inverted
 
@@ -109,7 +125,7 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 			let line = '';
 			let lastX: number | null = null;
 			for (const item of items) {
-				if (lastX === null && item.fontName == 'g_d0_f3') line += 'Organization: ';
+				if (lastX === null && item.fontName == orgFont) line += 'Organization: ';
 				if (lastX !== null && item.transform[4] - lastX > 5) line += ' ';
 				line += item.str;
 				lastX = item.transform[4] + item.width;
@@ -224,47 +240,66 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 		return result;
 	}
 
-	private async extractPortfolioItem(lines: string[]): Promise<PortfolioItem[]> {
-		const experiences: PortfolioItem[] = [];
+	private async extractPortfolioItems(lines: string[], mode: PortfolioMode): Promise<PortfolioItem[]> {
+		const items: PortfolioItem[] = [];
 		let current: {
-				organization?: string;
-				city?: string;
-				country?: Country;
-				startDate?: Date;
-				endDate?: Date;
-				title?: string;
-			} = {};
+			organization?: string;
+			city?: string;
+			country?: Country;
+			startDate?: Date;
+			endDate?: Date;
+			title?: string;
+			link?: string;
+		} = {};
+
 		for (const line of lines) {
+			// --- Title and Date ---
+			const dateTitleMatch = line.match(/\[\s*([\d/]+)\s*[-–]\s*(Current|[\d/]+)\s*\]\s*(.*)/);
+			if (dateTitleMatch) {
+				if (mode === 'education' && current.title) {
+					items.push(new PortfolioItem(current));
+					current = {};
+				}
+				current.startDate = this.parseDateEU(dateTitleMatch[1].trim());
+				current.endDate = dateTitleMatch[2].trim() !== 'Current' ? this.parseDateEU(dateTitleMatch[2].trim()) : undefined;
+				current.title = dateTitleMatch[3].trim();
+			}
+
+			// --- Organization and URL ---
 			const organizationMatch = line.match(/(?<=Organization:\s).*/);
 			if (organizationMatch) {
-				const organization = organizationMatch[0].trim();
-				current.organization = organization;
+				let organization = organizationMatch[0].trim();
+				const urlRegex = /\b((?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:[\/\\][^\s]*)?[\/\\]?)/g;
+				const urls = organization.match(urlRegex) || [];
+				organization = organization.replace(urlRegex, '').trim();
+
+				if (mode === 'work' && current.country) current.organization = organization;
+				else current.organization = current.organization ? current.organization + ' ' + organization : organization;
+				if (urls.length) current.link = urls[0];
 			}
-			// TODO - fix educational city extraction
-    		const cityCountryMatch = line.match(/^City:\s*(.+?)\s*\|\s*Country:\s*(.+)$/);
+
+			// --- City and Country ---
+			const cityCountryMatch = line.match(/(?:City:\s*([^|]+?)\s*\|\s*)?Country:\s*([^|]+?)(?:\s*\||$)/);
 			if (cityCountryMatch) {
 				const country$ = this.formDataService.getCountryByName(cityCountryMatch[2].trim());
 				const country = await lastValueFrom(country$);
 				if (country) {
-					const cities$ = this.formDataService.getCities(country.iso2);
-					const cities = await lastValueFrom(cities$);
-					const city = this.stringSimilarityService.findBestMatch(cityCountryMatch[1].trim(), cities);
-					current.city = city.bestMatch.rating >= 0.75 ? city.bestMatch.target : undefined;
 					current.country = country;
+					if (cityCountryMatch[1]) {
+						const cities$ = this.formDataService.getCities(country.iso2);
+						const cities = await lastValueFrom(cities$);
+						const city = this.stringSimilarityService.findBestMatch(cityCountryMatch[1].trim(), cities);
+						current.city = city.bestMatch.rating >= 0.9 ? city.bestMatch.target : undefined;
+					}
 				}
 			}
-			const dateTitleMatch = line.match(/\[\s*([\d/]+)\s*[-–]\s*(Current|[\d/]+)\s*\]\s*(.*)/);
-			if (dateTitleMatch) {
-				current.startDate = this.parseDateEU(dateTitleMatch[1].trim());
-				current.endDate = dateTitleMatch[2].trim() != 'Current' ? this.parseDateEU(dateTitleMatch[2].trim()) : undefined;
-				current.title = dateTitleMatch[3].trim();
-			}
-			if (current.title && current.organization) {
-				experiences.push(new PortfolioItem(current));
+			if (mode === 'work' && current.title) {
+				items.push(new PortfolioItem(current));
 				current = {};
 			}
 		}
-		return experiences;
+		if (mode === 'education') items.push(new PortfolioItem(current));
+		return items;
 	}
 
 	private getSectionLines(
