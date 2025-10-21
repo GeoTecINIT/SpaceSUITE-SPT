@@ -16,29 +16,29 @@ import { ButtonModule } from 'primeng/button';
   imports: [DialogModule, FileUploadModule, ProgressBarModule, CommonModule, ButtonModule],
 })
 export class UploadCVModalComponent {
-    @Input() visible: boolean = false;
-    @Output() visibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Input() visible: boolean = false;
+  @Output() visibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    @Output() userPortfolioChange: EventEmitter<UserPortfolio> = new EventEmitter<UserPortfolio>()
-    userPortfolio: UserPortfolio = new UserPortfolio();
+  @Output() userPortfolioChange: EventEmitter<UserPortfolio> = new EventEmitter<UserPortfolio>()
+  userPortfolio: UserPortfolio = new UserPortfolio();
 
-    progress: number = 0;
-    showProgressBar: boolean = false;
+  progress: number = 0;
+  showProgressBar: boolean = false;
 
-    private extractionSubscription: Subscription | null = null;
+  private extractionSubscription: Subscription | null = null;
 
-    constructor(private europassService: EuropassService) {}
+  constructor(private europassService: EuropassService) {}
 
-    ngOnDestroy(): void {
-      if (this.extractionSubscription) {
-        this.extractionSubscription.unsubscribe();
-      }
+  ngOnDestroy(): void {
+    if (this.extractionSubscription) {
+      this.extractionSubscription.unsubscribe();
     }
+  }
 
-    submitCV() {
-      this.userPortfolioChange.emit(this.userPortfolio)
-      this.visibleChange.emit(false);
-    }
+  submitCV() {
+    this.userPortfolioChange.emit(this.userPortfolio)
+    this.visibleChange.emit(false);
+  }
 
   async onFileSelected(input: FileSelectEvent) {
     if (input.files && input.files.length > 0) {
@@ -66,6 +66,7 @@ export class UploadCVModalComponent {
             this.userPortfolio = portfolio;
             this.progress = 100;
             this.showProgressBar = false;
+            if (this.hasExtractedData()) this.submitCV();
           }
         );
       };
