@@ -13,11 +13,11 @@
     </div>
     <strong>About me</strong>
     <div class="text-sm text-justify mt-2 mb-3">{{userPortfolio?.profileSummary}}</div>
+    <strong>Languages</strong>
+    <skill-tags class="mt-2 mb-3 w-full" style="padding-top: 0.2rem;" [tags]="languages" direction="center"></skill-tags>
     <strong>Knowledge</strong>
     <skill-tags class="mt-2 mb-3 w-full" style="padding-top: 0.2rem;" [tags]="bokConcepts.concat(hardSkills)" direction="center"></skill-tags>
     <strong>Transversal Skills</strong>
     <skill-tags class="mt-2 mb-3 w-full" style="padding-top: 0.2rem;" [tags]="softSkills" direction="center"></skill-tags>
-    <strong>Languages</strong>
-    <skill-tags class="mt-2 mb-3 w-full" style="padding-top: 0.2rem;" [tags]="languages" direction="center"></skill-tags>
 </div>
 <update-image-modal [(visible)]="showModal" (onImageUpdate)="updateUserImage($event)"></update-image-modal>

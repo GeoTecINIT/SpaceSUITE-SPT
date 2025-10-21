@@ -8,10 +8,10 @@
 
 .secondary-tag {
     font-size: .8rem;
-    --p-tag-primary-color: white;
+    --p-tag-primary-color: var(--primary-color);
     cursor: default;
     text-decoration: none;
-    background: var(--secondary-color);
+    background: color-mix(in srgb, var(--secondary-color) 50%, rgba(0, 0, 0, 0) 50%);
 }
 
 .bok-tag {
