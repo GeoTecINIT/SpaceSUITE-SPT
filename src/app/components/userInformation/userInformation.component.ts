@@ -60,8 +60,8 @@ export class UserInformationComponent {
       experience.bokConcepts?.forEach( value => bokConceptsSet.add(value));
     })
     this.bokConcepts = this.utilsService.stringToTag(Array.from(bokConceptsSet).sort(), 'bok');
-    this.hardSkills = this.utilsService.stringToTag(Array.from(hardSkillsSet), 'secondary');
-    this.softSkills = this.utilsService.stringToTag(Array.from(softSkillsSet));
+    this.hardSkills = this.utilsService.stringToTag(Array.from(hardSkillsSet).sort(), 'secondary');
+    this.softSkills = this.utilsService.stringToTag(Array.from(softSkillsSet).sort());
     if (this.userPortfolio?.nativeLanguage) {
       this.languages.push(new Tag(this.userPortfolio?.nativeLanguage + ': Native'));
     }
