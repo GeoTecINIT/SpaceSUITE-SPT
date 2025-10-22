@@ -178,7 +178,7 @@ export class PortfolioFormComponent {
   }
 
   goToNextStep(callback: (nextStepValue: number) => void, index: number) {
-    this.errorMap = this.formDataService.validate(this.portfolio);
+    this.errorMap = this.formDataService.validate(this.portfolio, index - 1);
     const allValid: boolean = Array.from(this.errorMap.values()).every(value => value === undefined);
     if (allValid) {
       callback(index);

@@ -3,7 +3,7 @@
 <upload-cv-modal [(visible)]="showNewPortfolioModal" (userPortfolioChange)="onPortfolioModalChange($event)"></upload-cv-modal>
 <div class="flex flex-column align-items-center justify-content-center p-4">
     <h2>{{pageName}}</h2>
-    <p-stepper [value]="1" class="custom-stepper">
+    <p-stepper [value]="1" class="custom-stepper" [linear]="true">
         <p-step-list>
             <p-step [value]="1">General Information</p-step>
             <p-step [value]="2">Education and Training</p-step>

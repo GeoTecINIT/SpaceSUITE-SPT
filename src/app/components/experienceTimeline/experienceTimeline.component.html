@@ -13,18 +13,22 @@
                 </ng-template>
                 <div *ngIf="event.organization"><i class="pi pi-building-columns mr-2"></i>{{event.organization}}</div>
                 <div *ngIf="event.country"><i class="pi pi-map-marker mr-2"></i>{{event.city ? event.city + ', ' : ''}}{{event.country.name}}</div>
-                <div class="flex flex-column gap-1">
-                    <div *ngIf="showDetail[events.indexOf(event)]" class="mt-1">
-                        <div *ngIf="event.description" class="text-sm">{{event.description}}</div>
-                        <a *ngIf="event.link" [href]="event.link" class="text-sm">{{event.link}}</a>
+                <p-divider *ngIf="showDetail[events.indexOf(event)]" />
+                <div class="flex flex-column gap-3">
+                    <div *ngIf="showDetail[events.indexOf(event)] && event.description">
+                        <div class="mb-2 text-sm text-left"><strong>Description</strong></div>
+                        <div class="text-sm text-left" style="white-space: pre-line;">{{event.description}}</div>
                     </div>
-                    <div *ngIf="showDetail[events.indexOf(event)] && (event.bokConcepts.length > 0 || event.hardSkills.length > 0)" class="mt-2">
-                        <div class="mb-2 text-sm"><strong>Knowledge</strong></div>
-                        <skill-tags [tags]="stringToTag(event.bokConcepts, 'bok').concat(stringToTag(event.hardSkills, 'secondary'))" [direction]="((!reverse == (events.indexOf(event) % 2 != 0)) && !smallScreen) ? 'reverse' : 'original'"></skill-tags>
+                    <div *ngIf="showDetail[events.indexOf(event)] && event.link" class="text-sm text-left">
+                        <a [href]="event.link">{{event.link}}</a>
                     </div>
-                    <div *ngIf="showDetail[events.indexOf(event)] && event.softSkills.length > 0" class="mt-2">
-                        <div class="mb-2 text-sm"><strong>Transversal Skills</strong></div>
-                        <skill-tags [tags]="stringToTag(event.softSkills)" [direction]="((!reverse == (events.indexOf(event) % 2 != 0)) && !smallScreen) ? 'reverse' : 'original'"></skill-tags>
+                    <div *ngIf="showDetail[events.indexOf(event)] && (event.bokConcepts.length > 0 || event.hardSkills.length > 0)">
+                        <div class="mb-2 text-sm text-left"><strong>Knowledge</strong></div>
+                        <skill-tags [tags]="stringToTag(event.bokConcepts, 'bok').concat(stringToTag(event.hardSkills, 'secondary'))"></skill-tags>
+                    </div>
+                    <div *ngIf="showDetail[events.indexOf(event)] && event.softSkills.length > 0">
+                        <div class="mb-2 text-sm text-left"><strong>Transversal Skills</strong></div>
+                        <skill-tags [tags]="stringToTag(event.softSkills)"></skill-tags>
                     </div>
                     <a *ngIf="event.description || event.link || event.hardSkills.length > 0 || event.softSkills.length > 0 || event.bokConcepts.length > 0" class="text-sm mt-2" style="cursor: pointer;" 
                         (click)="showDetail[events.indexOf(event)] = !showDetail[events.indexOf(event)]">

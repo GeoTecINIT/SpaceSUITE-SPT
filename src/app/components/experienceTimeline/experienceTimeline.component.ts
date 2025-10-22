@@ -5,13 +5,14 @@ import { CommonModule } from '@angular/common';
 import { SkillTagComponent } from "../skillTags/skillTags.component";
 import { PortfolioItem } from '../../model/userPortfolio';
 import { Tag, Variant } from '../../model/tag';
+import { DividerModule } from 'primeng/divider';
 
 @Component({
   standalone: true,
   selector: 'experience-timeline',
   templateUrl: './experienceTimeline.component.html',
   styleUrls: ['./experienceTimeline.component.css'],
-  imports: [Timeline, CardModule, CommonModule, SkillTagComponent],
+  imports: [Timeline, CardModule, CommonModule, SkillTagComponent, DividerModule],
 })
 export class ExperienceTimelineComponent {
   @Input() title: string = ''

@@ -250,23 +250,33 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 			endDate?: Date;
 			title?: string;
 			link?: string;
+			description?: string;
 		} = {};
 
 		for (const line of lines) {
-			// --- Title and Date ---
+			// --- Match Patterns ---
 			const dateTitleMatch = line.match(/\[\s*([\d/]+)\s*[-–]\s*(Current|[\d/]+)\s*\]\s*(.*)/);
+			const organizationMatch = line.match(/(?<=Organization:\s).*/);
+			const cityCountryMatch = line.match(/(?:City:\s*([^|]+?)\s*\|\s*)?Country:\s*([^|]+?)(?:\s*\||$)/);
+
+			// --- Add Item ---
+			if (mode === 'education' && dateTitleMatch && current.title) {
+				items.push(new PortfolioItem(current));
+				current = {};
+			}
+			if (mode === 'work' && organizationMatch && current.title && current.organization) {
+				items.push(new PortfolioItem(current));
+				current = {};
+			}
+
+			// --- Extract Title and Date ---
 			if (dateTitleMatch) {
-				if (mode === 'education' && current.title) {
-					items.push(new PortfolioItem(current));
-					current = {};
-				}
 				current.startDate = this.parseDateEU(dateTitleMatch[1].trim());
 				current.endDate = dateTitleMatch[2].trim() !== 'Current' ? this.parseDateEU(dateTitleMatch[2].trim()) : undefined;
 				current.title = dateTitleMatch[3].trim();
 			}
 
-			// --- Organization and URL ---
-			const organizationMatch = line.match(/(?<=Organization:\s).*/);
+			// --- Extract Organization and URL ---
 			if (organizationMatch) {
 				let organization = organizationMatch[0].trim();
 				const urlRegex = /\b((?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:[\/\\][^\s]*)?[\/\\]?)/g;
@@ -278,8 +288,7 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 				if (urls.length) current.link = urls[0];
 			}
 
-			// --- City and Country ---
-			const cityCountryMatch = line.match(/(?:City:\s*([^|]+?)\s*\|\s*)?Country:\s*([^|]+?)(?:\s*\||$)/);
+			// --- Extract City and Country ---
 			if (cityCountryMatch) {
 				const country$ = this.formDataService.getCountryByName(cityCountryMatch[2].trim());
 				const country = await lastValueFrom(country$);
@@ -293,12 +302,17 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 					}
 				}
 			}
-			if (mode === 'work' && current.title) {
-				items.push(new PortfolioItem(current));
-				current = {};
+			
+			// --- Extract Description ---
+			if (mode === 'work' && dateTitleMatch === null && current.title) {
+				if (current.description) current.description += '\n' + line;
+				else current.description = line;
 			}
 		}
-		if (mode === 'education') items.push(new PortfolioItem(current));
+		const isEmpty =
+			Object.keys(current).length === 0 ||
+			Object.values(current).every(v => v === undefined);
+		if (!isEmpty) items.push(new PortfolioItem(current));
 		return items;
 	}
 

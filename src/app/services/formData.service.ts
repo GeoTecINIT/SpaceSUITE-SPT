@@ -147,7 +147,7 @@ export class FormDataService {
     );
   }
 
-  public validate(portfolio: UserPortfolio): Map<string, string | undefined> {
+  public validate(portfolio: UserPortfolio, step?: number): Map<string, string | undefined> {
     const urlRegex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+(:\d+)?(\/\S*)?$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^[1-9]\d{7,14}$/;
@@ -159,92 +159,99 @@ export class FormDataService {
     };
   
     // General Information fields
-    setError('fullName', !portfolio.fullName.trim(), 'Name is required.');
-    setError('email', portfolio.email.trim() != '' && !emailRegex.test(portfolio.email), 'Invalid email format.');
-    setError('phone', portfolio.phone != undefined && !phoneRegex.test(portfolio.phone), 'Invalid phone number.');
-    if (portfolio.phone != undefined && !portfolio.phoneCountryCode) {
-      errors.set('phone', 'A phone country code must be selected.');
-    }
-    if (portfolio.phone == undefined && portfolio.phoneCountryCode) {
-      errors.set('phone', 'Please enter a phone number before selecting a country code.');
-    }
-    setError('lang', !portfolio.nativeLanguage, 'Native Language is required.');
-    if (portfolio.languageSkills.some( value => value.language === portfolio.nativeLanguage)) {
-      errors.set('langSkills', 'The native language cannot be added as a Language Skill.');
-    }
-    const langSet: Set<string> = new Set<string>(portfolio.languageSkills.map(value => value.language))
-    if (portfolio.languageSkills.length != langSet.size) {
-      errors.set('langSkills', 'A language cannot be added more than once.');
+    if (!step || step == 1) {
+      setError('fullName', !portfolio.fullName.trim(), 'Name is required.');
+      setError('email', portfolio.email.trim() != '' && !emailRegex.test(portfolio.email), 'Invalid email format.');
+      setError('phone', portfolio.phone != undefined && !phoneRegex.test(portfolio.phone), 'Invalid phone number.');
+      if (portfolio.phone != undefined && !portfolio.phoneCountryCode) {
+        errors.set('phone', 'A phone country code must be selected.');
+      }
+      if (portfolio.phone == undefined && portfolio.phoneCountryCode) {
+        errors.set('phone', 'Please enter a phone number before selecting a country code.');
+      }
+      setError('lang', !portfolio.nativeLanguage, 'Native Language is required.');
+      if (portfolio.languageSkills.some( value => value.language === portfolio.nativeLanguage)) {
+        errors.set('langSkills', 'The native language cannot be added as a Language Skill.');
+      }
+      const langSet: Set<string> = new Set<string>(portfolio.languageSkills.map(value => value.language))
+      if (portfolio.languageSkills.length != langSet.size) {
+        errors.set('langSkills', 'A language cannot be added more than once.');
+      }
     }
 
     // Education fields
-    portfolio.educationAndTraining.forEach((item, index) => {
-      setError('E' + index + 'Title', !item.title.trim(), 'Title is required.');
-      setError('E' + index + 'Org', !item.organization.trim(), 'Institution is required.');
-      setError('E' + index + 'startDate', !item.startDate, 'Start date is required.');
-      if (item.startDate && isNaN(Date.parse(item.startDate.toISOString()))) {
-        errors.set('E' + index + 'startDate', 'Start date format is invalid.');
-      }
-      if (item.startDate && item.startDate > new Date()) {
-        errors.set('E' + index + 'startDate', 'Start date can not be later than today.');
-      }
-      if (item.endDate && isNaN(Date.parse(item.endDate.toISOString()))) {
-        errors.set('E' + index + 'endDate', 'End date format is invalid.');
-      }
-      if (item.endDate && item.endDate > new Date()) {
-        errors.set('E' + index + 'endDate', 'End date can not be later than today.');
-      }
-      if (item.startDate && item.endDate && item.startDate > item.endDate) {
-        errors.set('E' + index + 'endDate', 'End date can not be earlier than the start date.');
-      }
-      if (item.link) setError('E' + index + 'Link', !urlRegex.test(item.link), 'Invalid url format.');
-    })
+    if (!step || step == 2) {
+      portfolio.educationAndTraining.forEach((item, index) => {
+        setError('E' + index + 'Title', !item.title.trim(), 'Title is required.');
+        setError('E' + index + 'Org', !item.organization.trim(), 'Institution is required.');
+        setError('E' + index + 'startDate', !item.startDate, 'Start date is required.');
+        if (item.startDate && isNaN(Date.parse(item.startDate.toISOString()))) {
+          errors.set('E' + index + 'startDate', 'Start date format is invalid.');
+        }
+        if (item.startDate && item.startDate > new Date()) {
+          errors.set('E' + index + 'startDate', 'Start date can not be later than today.');
+        }
+        if (item.endDate && isNaN(Date.parse(item.endDate.toISOString()))) {
+          errors.set('E' + index + 'endDate', 'End date format is invalid.');
+        }
+        if (item.endDate && item.endDate > new Date()) {
+          errors.set('E' + index + 'endDate', 'End date can not be later than today.');
+        }
+        if (item.startDate && item.endDate && item.startDate > item.endDate) {
+          errors.set('E' + index + 'endDate', 'End date can not be earlier than the start date.');
+        }
+        if (item.link) setError('E' + index + 'Link', !urlRegex.test(item.link), 'Invalid url format.');
+      })
+    }
 
     // Experience fields
-    portfolio.workExperience.forEach((item, index) => {
-      setError('W' + index + 'Title', !item.title.trim(), 'Title is required.');
-      setError('W' + index + 'Org', !item.organization.trim(), 'Title is required.');
-      setError('W' + index + 'startDate', !item.startDate, 'Start date is required.');
-      if (item.startDate && isNaN(Date.parse(item.startDate.toISOString()))) {
-        errors.set('W' + index + 'startDate', 'Start date format is invalid.');
-      }
-      if (item.startDate && item.startDate > new Date()) {
-        errors.set('W' + index + 'startDate', 'Start date can not be later than today.');
-      }
-      if (item.endDate && isNaN(Date.parse(item.endDate.toISOString()))) {
-        errors.set('W' + index + 'endDate', 'End date format is invalid.');
-      }
-      if (item.endDate && item.endDate > new Date()) {
-        errors.set('W' + index + 'endDate', 'End date can not be later than today.');
-      }
-      if (item.startDate && item.endDate && item.startDate > item.endDate) {
-        errors.set('W' + index + 'endDate', 'End date can not be earlier than the start date.');
-      }
-      if (item.link) setError('W' + index + 'Link', !urlRegex.test(item.link), 'Invalid url format.');
-    })
-
+      if (!step || step == 3) {
+      portfolio.workExperience.forEach((item, index) => {
+        setError('W' + index + 'Title', !item.title.trim(), 'Title is required.');
+        setError('W' + index + 'Org', !item.organization.trim(), 'Title is required.');
+        setError('W' + index + 'startDate', !item.startDate, 'Start date is required.');
+        if (item.startDate && isNaN(Date.parse(item.startDate.toISOString()))) {
+          errors.set('W' + index + 'startDate', 'Start date format is invalid.');
+        }
+        if (item.startDate && item.startDate > new Date()) {
+          errors.set('W' + index + 'startDate', 'Start date can not be later than today.');
+        }
+        if (item.endDate && isNaN(Date.parse(item.endDate.toISOString()))) {
+          errors.set('W' + index + 'endDate', 'End date format is invalid.');
+        }
+        if (item.endDate && item.endDate > new Date()) {
+          errors.set('W' + index + 'endDate', 'End date can not be later than today.');
+        }
+        if (item.startDate && item.endDate && item.startDate > item.endDate) {
+          errors.set('W' + index + 'endDate', 'End date can not be earlier than the start date.');
+        }
+        if (item.link) setError('W' + index + 'Link', !urlRegex.test(item.link), 'Invalid url format.');
+      })
+    }
     // Project fields
-    portfolio.projects.forEach((item, index) => {
-      setError('P' + index + 'Title', !item.title.trim(), 'Title is required.');
-      setError('P' + index + 'Org', !item.organization.trim(), 'Title is required.');
-      setError('P' + index + 'startDate', !item.startDate, 'Start date is required.');
-      if (item.startDate && isNaN(Date.parse(item.startDate.toISOString()))) {
-        errors.set('P' + index + 'startDate', 'Start date format is invalid.');
-      }
-      if (item.startDate && item.startDate > new Date()) {
-        errors.set('P' + index + 'startDate', 'Start date can not be later than today.');
-      }
-      if (item.endDate && isNaN(Date.parse(item.endDate.toISOString()))) {
-        errors.set('P' + index + 'endDate', 'End date format is invalid.');
-      }
-      if (item.endDate && item.endDate > new Date()) {
-        errors.set('P' + index + 'endDate', 'End date can not be later than today.');
-      }
-      if (item.startDate && item.endDate && item.startDate > item.endDate) {
-        errors.set('P' + index + 'endDate', 'End date can not be earlier than the start date.');
-      }
-      if (item.link) setError('P' + index + 'Link', !urlRegex.test(item.link), 'Invalid url format.');
-    })
+    if (!step || step == 4) {
+      portfolio.projects.forEach((item, index) => {
+        setError('P' + index + 'Title', !item.title.trim(), 'Title is required.');
+        setError('P' + index + 'Org', !item.organization.trim(), 'Title is required.');
+        setError('P' + index + 'startDate', !item.startDate, 'Start date is required.');
+        if (item.startDate && isNaN(Date.parse(item.startDate.toISOString()))) {
+          errors.set('P' + index + 'startDate', 'Start date format is invalid.');
+        }
+        if (item.startDate && item.startDate > new Date()) {
+          errors.set('P' + index + 'startDate', 'Start date can not be later than today.');
+        }
+        if (item.endDate && isNaN(Date.parse(item.endDate.toISOString()))) {
+          errors.set('P' + index + 'endDate', 'End date format is invalid.');
+        }
+        if (item.endDate && item.endDate > new Date()) {
+          errors.set('P' + index + 'endDate', 'End date can not be later than today.');
+        }
+        if (item.startDate && item.endDate && item.startDate > item.endDate) {
+          errors.set('P' + index + 'endDate', 'End date can not be earlier than the start date.');
+        }
+        if (item.link) setError('P' + index + 'Link', !urlRegex.test(item.link), 'Invalid url format.');
+      })
+    }
   
     return errors;
   }
