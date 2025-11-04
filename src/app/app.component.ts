@@ -41,7 +41,7 @@ export class AppComponent {
           target: '_blank'
         },
         {
-          label: 'Training Catalogue Tool',
+          label: 'Training Catalogue',
           icon: 'pi pi-graduation-cap',
           url: 'https://spacesuite-project-tct.web.app/',
           target: '_blank'
