@@ -348,6 +348,7 @@ export class WhiteEuropassStrategy implements EuropassStrategy {
 
 	private parseDateEU(dateStr: string): Date | undefined {
 		const parts = dateStr.split("/"); // ["dd", "mm", "yyyy"]
+		if (parts.length === 1) return new Date(parseInt(parts[0], 10), 0, 1);
 		if (parts.length !== 3) return undefined;
 
 		const day = parseInt(parts[0], 10);
