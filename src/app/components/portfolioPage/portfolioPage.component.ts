@@ -13,6 +13,8 @@ import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AuthService } from '@eo4geo/ngx-bok-utils';
+import { PdfService } from '../../services/pdf.service';
+import { PdfResult } from '../../model/pdfResult';
 
 @Component({
   standalone: true,
@@ -38,7 +40,7 @@ export class PortfolioPageComponent {
   loading = false;
 
   constructor(private firebaseService: FirebaseService, private router: Router, private route: ActivatedRoute, private authService: AuthService,
-              private messageService: MessageService, private confirmationService: ConfirmationService){}
+              private messageService: MessageService, private confirmationService: ConfirmationService, private pdfService: PdfService){}
 
   ngOnInit() {
     this.sessionSubscription = this.authService.getUserState().subscribe ( state => {
@@ -109,6 +111,11 @@ export class PortfolioPageComponent {
     this.firebaseService.deletePortfolio().pipe(take(1)).subscribe( () => {
       this.router.navigate([''], { queryParams: { submited: true, mode: 'delete'}});
     });
+  }
+
+  downloadPortfolioPdf() {
+    const pdf: PdfResult = this.pdfService.generatePortfolioPdf(new UserPortfolio(this.userPortfolio));
+    console.log(pdf);
   }
 
   deleteModal(event: Event) {

@@ -14,7 +14,7 @@
         </div>
         <div class="flex flex-wrap xl:flex-column justify-content-center xl:justify-content-start xl:align-items-center gap-2 px-4 mr-2 pt-4 xl:pt-0">
             <p-button class="custom-button" size="small" icon="pi pi-pencil" label="Edit" (onClick)="editPortfolio()"></p-button>
-            <p-button class="custom-button" size="small" icon="pi pi-share-alt" label="Share" [disabled]="true"></p-button>
+            <p-button class="custom-button" size="small" icon="pi pi-share-alt" label="Share" (onClick)="downloadPortfolioPdf()"></p-button>
             <p-button class="delete-button" size="small" icon="pi pi-trash" label="Delete" (onClick)="deleteModal($event)"></p-button>
         </div>
     </div>
