@@ -114,8 +114,9 @@ export class PortfolioPageComponent {
   }
 
   downloadPortfolioPdf() {
-    const pdf: PdfResult = this.pdfService.generatePortfolioPdf(new UserPortfolio(this.userPortfolio));
-    console.log(pdf);
+    this.pdfService.generatePortfolioPdf(new UserPortfolio(this.userPortfolio)).subscribe( pdf => {
+      console.log(pdf);
+    });
   }
 
   deleteModal(event: Event) {
