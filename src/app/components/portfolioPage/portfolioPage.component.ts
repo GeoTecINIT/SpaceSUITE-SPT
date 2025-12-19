@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { UserInformationComponent } from "../userInformation/userInformation.component";
 import { PortfolioItem, UserPortfolio } from '../../model/userPortfolio';
 import { DividerModule } from 'primeng/divider';
@@ -14,14 +14,14 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AuthService } from '@eo4geo/ngx-bok-utils';
 import { PdfService } from '../../services/pdf.service';
-import { PdfResult } from '../../model/pdfResult';
+import { Popover, PopoverModule } from 'primeng/popover';
 
 @Component({
   standalone: true,
   selector: 'portfolio-page',
   templateUrl: './portfolioPage.component.html',
   styleUrls: ['./portfolioPage.component.css'],
-  imports: [CommonModule, UserInformationComponent, DividerModule, ExperienceTimelineComponent, ButtonModule, ToastModule, ProgressSpinnerModule, ConfirmDialogModule],
+  imports: [CommonModule, UserInformationComponent, DividerModule, ExperienceTimelineComponent, ButtonModule, ToastModule, ProgressSpinnerModule, ConfirmDialogModule, PopoverModule],
   providers: [MessageService, ConfirmationService]
 })
 export class PortfolioPageComponent {
@@ -38,6 +38,8 @@ export class PortfolioPageComponent {
   private sessionSubscription?: Subscription;
 
   loading = false;
+
+  @ViewChild('op') op!: Popover;
 
   constructor(private firebaseService: FirebaseService, private router: Router, private route: ActivatedRoute, private authService: AuthService,
               private messageService: MessageService, private confirmationService: ConfirmationService, private pdfService: PdfService){}
@@ -114,9 +116,19 @@ export class PortfolioPageComponent {
   }
 
   downloadPortfolioPdf() {
+    document.body.style.cursor = 'wait';
+    this.op.hide();
     this.pdfService.generatePortfolioPdf(new UserPortfolio(this.userPortfolio)).subscribe( pdf => {
-      console.log(pdf);
+      this.downloadURI(pdf.url, pdf.filename);
+      document.body.style.cursor = '';
     });
+  }
+
+  private downloadURI(uri: string, name: string) {
+    const link = document.createElement("a");
+    link.download = name;
+    link.href = uri;
+    link.click();
   }
 
   deleteModal(event: Event) {
