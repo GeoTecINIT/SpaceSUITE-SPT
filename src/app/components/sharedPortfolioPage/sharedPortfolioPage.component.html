@@ -1,6 +1,6 @@
 <div *ngIf="userPortfolio else spinner" class="flex flex-column xl:flex-row gap-4 m-2">
     <div class="flex flex-column xl:flex-row align-items-center">
-        <user-information class="w-full xl:max-w-28rem mb-auto" style="max-width: 35rem;" [userPortfolio]="userPortfolio"></user-information>
+        <user-information class="w-full xl:max-w-28rem mb-auto" style="max-width: 35rem;" [userPortfolio]="userPortfolio" [sharedPortfolio]="true"></user-information>
         <p-divider layout="vertical" class="hidden xl:flex"/>
         <p-divider class="flex xl:hidden"/>
     </div>

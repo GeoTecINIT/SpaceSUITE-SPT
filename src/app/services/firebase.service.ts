@@ -378,14 +378,16 @@ export class FirebaseService {
     );
   }
 
-  public getUserImage(): Observable<string> {
+  public getUserImage(otherUserId?: string): Observable<string> {
+    const getImageByID = (uid: string) => {
+      const path = `Portfolio_Images/${uid}`;
+      const storageRef = ref(this.storage, path);
+      return from(getDownloadURL(storageRef)).pipe(catchError( () => of('')));
+    }
+    if (otherUserId) return getImageByID(otherUserId);
     return this.userId.asObservable().pipe(
       take(1),
-      concatMap(uid => {
-        const path = `Portfolio_Images/${uid}`;
-        const storageRef = ref(this.storage, path);
-        return from(getDownloadURL(storageRef)).pipe(catchError( () => of('')));
-      })
+      concatMap(uid => getImageByID(uid))
     );
   }
 

@@ -4,6 +4,13 @@
     --p-button-text-primary-active-background: color-mix(in srgb, var(--secondary-color) 20%, rgba(255, 255, 255, 0) 80%);
 }
 
+.padlock-button {
+    --p-button-text-primary-color: var(--primary-color);
+    --p-button-text-primary-hover-background: color-mix(in srgb, var(--primary-color) 10%, rgba(255, 255, 255, 0) 90%);
+    --p-button-text-primary-active-background: color-mix(in srgb, var(--primary-color) 20%, rgba(255, 255, 255, 0) 80%);
+    pointer-events: none;
+}
+
 ::ng-deep .p-tooltip {
     --p-tooltip-background: var(--primary-color);
     --p-tooltip-max-width: 20rem;

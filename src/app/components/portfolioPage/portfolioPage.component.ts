@@ -15,13 +15,15 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AuthService } from '@eo4geo/ngx-bok-utils';
 import { PdfService } from '../../services/pdf.service';
 import { Popover, PopoverModule } from 'primeng/popover';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   standalone: true,
   selector: 'portfolio-page',
   templateUrl: './portfolioPage.component.html',
   styleUrls: ['./portfolioPage.component.css'],
-  imports: [CommonModule, UserInformationComponent, DividerModule, ExperienceTimelineComponent, ButtonModule, ToastModule, ProgressSpinnerModule, ConfirmDialogModule, PopoverModule],
+  imports: [CommonModule, UserInformationComponent, DividerModule, ExperienceTimelineComponent, ButtonModule, ToastModule, ProgressSpinnerModule, ConfirmDialogModule, 
+            PopoverModule, TooltipModule],
   providers: [MessageService, ConfirmationService]
 })
 export class PortfolioPageComponent {

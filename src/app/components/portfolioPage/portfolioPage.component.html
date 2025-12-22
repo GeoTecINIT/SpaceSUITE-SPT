@@ -14,15 +14,14 @@
         </div>
         <div class="flex flex-wrap xl:flex-column justify-content-center xl:justify-content-start xl:align-items-center gap-2 px-4 mr-2 pt-4 xl:pt-0">
             <p-button class="custom-button" size="small" icon="pi pi-pencil" label="Edit" (onClick)="editPortfolio()"></p-button>
-            <p-button class="custom-button" size="small" icon="pi pi-share-alt" label="Share" (onClick)="op.toggle($event)"></p-button>
+            <p-button class="custom-button" size="small" icon="pi pi-share-alt" label="Share" (onClick)="copyPortfolioUrl()" [tooltipOptions]="{disabled: userPortfolio.isPublic}"
+                pTooltip="This option is not available for private portfolios" tooltipPosition="left" [disabled]="!userPortfolio.isPublic"></p-button>
+            <p-button class="custom-button" size="small" icon="pi pi-download" label="Download" (onClick)="op.toggle($event)"></p-button>
             <p-button class="delete-button" size="small" icon="pi pi-trash" label="Delete" (onClick)="deleteModal($event)"></p-button>
             <p-popover #op>
                 <div style="color: var(--primary-color)">
-                    <span class="font-medium block mb-2"><strong>Share Format</strong></span>
+                    <span class="font-medium block mb-2"><strong>Choose Format</strong></span>
                     <ul class="p-0 m-0 flex flex-column">
-                        <li class="flex items-center gap-2 px-2 py-2 cursor-pointer popover-element" (click)="copyPortfolioUrl()">
-                            <span class="font-medium">URL</span>
-                        </li>
                         <li class="flex items-center gap-2 px-2 py-2 cursor-pointer popover-element" (click)="downloadPortfolioPdf()">
                             <span class="font-medium">PDF</span>
                         </li>

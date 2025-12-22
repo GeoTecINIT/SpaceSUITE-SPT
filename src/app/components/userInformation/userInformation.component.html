@@ -1,9 +1,14 @@
 <div class="flex flex-column align-items-center px-6 my-4">
-    <a class="image-container image-container-boder mb-4 flex justify-content-center align-items-center" target="_self" (click)="showModal = !showModal">
+    <a *ngIf="!sharedPortfolio else simpleImage" class="image-container image-container-boder mb-4 flex justify-content-center align-items-center" target="_self" (click)="showModal = !showModal">
         <img [src]="(userImage != '' && userImage != undefined) ? userImage : 'assets/images/avatar_image.png'">
         <div class="overlay"><i class="pi pi-pencil"></i></div>
     </a>
-    <strong class="text-xl">{{userPortfolio?.fullName}}</strong>
+    <div *ngIf="!sharedPortfolio else simpleTitle" class="flex align-items-center">
+        <strong class="text-xl">{{userPortfolio?.fullName}}</strong>
+        <div pTooltip="The portfolio visibility is {{userPortfolio?.isPublic ? 'public' : 'private'}}" tooltipPosition="right" class="px-2">
+            <i [class]="userPortfolio?.isPublic ? 'pi pi-lock-open' : 'pi pi-lock'"></i>
+        </div>
+    </div>
     <div class="text-sm text-center">{{userPortfolio?.shortDescription}}</div>
     <div class="flex flew-wrap gap-2 mt-2 mb-3">
         <p-button icon="pi pi-envelope" [rounded]="true" [text]="true" class="contact-button" [disabled]="!userPortfolio?.email"
@@ -21,3 +26,13 @@
     <skill-tags class="mt-2 mb-3 w-full" style="padding-top: 0.2rem;" [tags]="softSkills" direction="center"></skill-tags>
 </div>
 <update-image-modal [(visible)]="showModal" (onImageUpdate)="updateUserImage($event)"></update-image-modal>
+
+<ng-template #simpleTitle>
+    <strong class="text-xl">{{userPortfolio?.fullName}}</strong>
+</ng-template>
+
+<ng-template #simpleImage>
+    <div class="image-container image-container-boder mb-4 flex justify-content-center align-items-center" target="_self">
+        <img [src]="(userImage != '' && userImage != undefined) ? userImage : 'assets/images/avatar_image.png'">
+    </div>
+</ng-template>

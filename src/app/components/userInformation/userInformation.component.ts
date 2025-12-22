@@ -23,6 +23,7 @@ import { FormDataService } from '../../services/formData.service';
 })
 export class UserInformationComponent {
   @Input() userPortfolio: UserPortfolio | undefined;
+  @Input() sharedPortfolio: boolean = false;
 
   bokConcepts: Tag[] = [];
   hardSkills: Tag[] = [];
@@ -38,7 +39,8 @@ export class UserInformationComponent {
   constructor(private messageService: MessageService, private utilsService: UtilsService, private firebaseService: FirebaseService, private formDataService: FormDataService) {}
 
   ngOnInit() {
-    this.firebaseService.getUserImage().pipe(take(1)).subscribe(url => this.userImage = url);
+    const imageId: string | undefined = this.sharedPortfolio ? this.userPortfolio?._id : undefined;
+    this.firebaseService.getUserImage(imageId).pipe(take(1)).subscribe(url => this.userImage = url);
 
     const hardSkillsSet = new Set<string>();
     const softSkillsSet = new Set<string>();

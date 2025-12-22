@@ -14,6 +14,12 @@
             <p-step-panel [value]="1">
                 <ng-template #content let-activateCallback="activateCallback">
                     <div class="flex flex-column gap-3">
+                        <div class="flex w-full">
+                            <p-selectbutton [options]="visibilityFieldOptions" [(ngModel)]="portfolio.isPublic" optionLabel="label" optionValue="value"
+                                pTooltip="Specifies whether this portfolio is public or private." allowEmpty="false"
+                                tooltipPosition="right" showDelay="200" hideDelay="200"/>
+                        </div>
+
                         <div>
                             <p-floatlabel variant="on" class="custom-floatlabel">
                                 <p-iconfield>
