@@ -12,6 +12,7 @@ export class UserPortfolio implements FirebaseObject {
   languageSkills: LanguageSkill[] = [];
   projects: PortfolioItem[] = [];
   updatedAt: any;
+  isPublic: boolean = false;
 
   constructor(data?: Partial<UserPortfolio>) {
     if (!data) return;
@@ -28,6 +29,7 @@ export class UserPortfolio implements FirebaseObject {
     this.languageSkills = data.languageSkills?.map(item => new LanguageSkill(item)) || [];
     this.projects = data.projects?.map(item => new PortfolioItem(item)) || [];
     this.updatedAt = data.updatedAt || null;
+    this.isPublic = data.isPublic || false;
   }
 
   toFirebase() {
@@ -40,7 +42,8 @@ export class UserPortfolio implements FirebaseObject {
       shortDescription: this.shortDescription,
       profileSummary: this.profileSummary,
       nativeLanguage: this.nativeLanguage || null,
-      updatedAt: this.updatedAt
+      updatedAt: this.updatedAt,
+      isPublic: this.isPublic
     }
   }
 }

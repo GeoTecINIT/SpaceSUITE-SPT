@@ -20,6 +20,9 @@
                 <div style="color: var(--primary-color)">
                     <span class="font-medium block mb-2"><strong>Share Format</strong></span>
                     <ul class="p-0 m-0 flex flex-column">
+                        <li class="flex items-center gap-2 px-2 py-2 cursor-pointer popover-element" (click)="copyPortfolioUrl()">
+                            <span class="font-medium">URL</span>
+                        </li>
                         <li class="flex items-center gap-2 px-2 py-2 cursor-pointer popover-element" (click)="downloadPortfolioPdf()">
                             <span class="font-medium">PDF</span>
                         </li>

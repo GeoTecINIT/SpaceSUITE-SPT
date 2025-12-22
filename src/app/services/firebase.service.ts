@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { collection, collectionData, CollectionReference, deleteDoc, doc, docData, DocumentReference, Firestore, getDocs, serverTimestamp, setDoc, updateDoc } from "@angular/fire/firestore";
+import { collection, collectionData, CollectionReference, deleteDoc, doc, docData, DocumentData, DocumentReference, Firestore, getDocs, serverTimestamp, setDoc, updateDoc } from "@angular/fire/firestore";
 import { catchError, concatMap, defaultIfEmpty, EMPTY, filter, forkJoin, from, map, Observable, of, ReplaySubject, switchMap, take } from "rxjs";
 import { FirebaseObject, LanguageSkill, PortfolioItem, UserPortfolio } from "../model/userPortfolio";
 import { BokInformationService } from "@eo4geo/ngx-bok-visualization";
@@ -23,53 +23,56 @@ export class FirebaseService {
     this.authService.getUserState().pipe(filter(state => state != undefined)).subscribe(state => this.userId.next(state.uid));
   }
 
-  public getUserPortfolio(): Observable<UserPortfolio | undefined> {
+  public getUserPortfolio(otherUserId?: string): Observable<UserPortfolio | undefined> {
+    const getPortfolioById = (uid: string) => {
+      const docRef = doc(this.portfolioCollection, uid);
+      return docData(docRef).pipe(
+        map(portfolio => ({ portfolio: portfolio as UserPortfolio, docRef })),
+        concatMap(({ portfolio, docRef }) => this.getPortfolioContent(portfolio, docRef))
+      );
+    };
+    if (otherUserId) return getPortfolioById(otherUserId);
     return this.userId.asObservable().pipe(
-      concatMap(uid => {
-        if (!uid) return EMPTY
-        const docRef = doc(this.portfolioCollection, uid);
-        return docData(docRef).pipe(
-          map(portfolio => ({ portfolio: portfolio as UserPortfolio, docRef }))
-        );
-      }),
-      concatMap(({ portfolio, docRef }) => {
-        if (!portfolio) return of(undefined);
+      concatMap(uid => uid ? getPortfolioById(uid) : EMPTY)
+    );
+  }
 
-        const experienceCollection = collection(docRef, 'workExperience');
-        const projectsCollection = collection(docRef, 'projects');
-        const educationCollection = collection(docRef, 'educationAndTraining');
-        const languageCollection = collection(docRef, 'languageSkills');
+  private getPortfolioContent( portfolio: UserPortfolio, docRef: DocumentReference<DocumentData, DocumentData> ) {
+    if (!portfolio) return of(undefined);
 
-        const workExperience = collectionData(experienceCollection, {}) as Observable<PortfolioItem[]>;
-        const projects = collectionData(projectsCollection) as Observable<PortfolioItem[]>;
-        const educationAndTraining = collectionData(educationCollection) as Observable<PortfolioItem[]>;
-        const languageSkills = collectionData(languageCollection) as Observable<LanguageSkill[]>;
+    const experienceCollection = collection(docRef, 'workExperience');
+    const projectsCollection = collection(docRef, 'projects');
+    const educationCollection = collection(docRef, 'educationAndTraining');
+    const languageCollection = collection(docRef, 'languageSkills');
 
-        return forkJoin({
-          workExperience: workExperience.pipe(take(1)),
-          projects: projects.pipe(take(1)),
-          educationAndTraining: educationAndTraining.pipe(take(1)),
-          languageSkills: languageSkills.pipe(take(1)),
-        }).pipe(
-          map(({ workExperience, projects, educationAndTraining, languageSkills }) => {
-            portfolio.workExperience = this.formatPortfolioItems(workExperience);
-            portfolio.projects = this.formatPortfolioItems(projects);
-            portfolio.educationAndTraining = this.formatPortfolioItems(educationAndTraining);
-            portfolio.languageSkills = languageSkills;
-            return portfolio;
-          })
-        );
+    const workExperience = collectionData(experienceCollection, {}) as Observable<PortfolioItem[]>;
+    const projects = collectionData(projectsCollection) as Observable<PortfolioItem[]>;
+    const educationAndTraining = collectionData(educationCollection) as Observable<PortfolioItem[]>;
+    const languageSkills = collectionData(languageCollection) as Observable<LanguageSkill[]>;
+
+    return forkJoin({
+      workExperience: workExperience.pipe(take(1)),
+      projects: projects.pipe(take(1)),
+      educationAndTraining: educationAndTraining.pipe(take(1)),
+      languageSkills: languageSkills.pipe(take(1)),
+    }).pipe(
+      map(({ workExperience, projects, educationAndTraining, languageSkills }) => {
+        portfolio.workExperience = this.formatPortfolioItems(workExperience);
+        portfolio.projects = this.formatPortfolioItems(projects);
+        portfolio.educationAndTraining = this.formatPortfolioItems(educationAndTraining);
+        portfolio.languageSkills = languageSkills;
+        return portfolio;
       })
     );
   }
 
   private formatPortfolioItems(items: PortfolioItem[]): PortfolioItem[] {
     return items.map( item => {
-            item.bokConcepts = this.formatFirestoreConcepts(item.bokConcepts)
-            if (item.startDate) item.startDate = item.startDate.toDate();
-            if (item.endDate) item.endDate = item.endDate.toDate();
-            return item
-          });
+      item.bokConcepts = this.formatFirestoreConcepts(item.bokConcepts)
+      if (item.startDate) item.startDate = item.startDate.toDate();
+      if (item.endDate) item.endDate = item.endDate.toDate();
+      return item
+    });
   }
 
   public deletePortfolio(): Observable<void> {

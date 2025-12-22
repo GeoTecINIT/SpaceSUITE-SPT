@@ -115,6 +115,17 @@ export class PortfolioPageComponent {
     });
   }
 
+  copyPortfolioUrl() {
+    navigator.clipboard.writeText(window.location.host + '/shared/' + this.userPortfolio?._id);
+    this.messageService.add({ 
+      severity: 'info', 
+      summary: 'Info', 
+      detail: `You copied the portfolio share url to clipboard!`,
+      life: 3000, 
+      closable: true 
+    });
+  }
+
   downloadPortfolioPdf() {
     document.body.style.cursor = 'wait';
     this.op.hide();

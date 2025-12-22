@@ -1,0 +1,20 @@
+<div *ngIf="userPortfolio else spinner" class="flex flex-column xl:flex-row gap-4 m-2">
+    <div class="flex flex-column xl:flex-row align-items-center">
+        <user-information class="w-full xl:max-w-28rem mb-auto" style="max-width: 35rem;" [userPortfolio]="userPortfolio"></user-information>
+        <p-divider layout="vertical" class="hidden xl:flex"/>
+        <p-divider class="flex xl:hidden"/>
+    </div>
+    <div class="flex flex-1 flex-column xl:flex-row my-4 gap-2">
+        <div class="flex flex-1 flex-column align-items-center gap-6">
+            <experience-timeline *ngIf="experienceItems.length > 0" [events]="experienceItems" title="Experience" icon="pi pi-briefcase" class="w-full"></experience-timeline>
+            <experience-timeline *ngIf="projectsItems.length > 0" [events]="projectsItems" [reverse]="reverseProjects" title="Projects" icon="pi pi-wrench" class="w-full"></experience-timeline>
+            <experience-timeline *ngIf="educationItems.length > 0" [events]="educationItems" [reverse]="reverseEducation" title="Education" icon="pi pi-graduation-cap" class="w-full"></experience-timeline>
+        </div>
+    </div>
+</div>
+
+<ng-template #spinner>
+    <div *ngIf="loading" class="flex justify-content-center align-items-center" style="min-height: 60vh;">
+        <p-progress-spinner ariaLabel="loading" />
+    </div>
+</ng-template>

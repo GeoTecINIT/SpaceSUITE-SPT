@@ -17,14 +17,17 @@ import { PortfolioFormComponent } from './app/components/portfolioForm/portfolio
 import { PortfolioGuard } from './app/guards/portfolio.guard';
 import { EditPageComponent } from './app/components/editPage/editPage.component';
 import { EmptyPortfolioGuard } from './app/guards/emptyPortfolio.guard';
+import { SharedPortfolioPageComponent } from './app/components/sharedPortfolioPage/sharedPortfolioPage.component';
 
 const routes: Routes = [
     { path: '', component: PortfolioPageComponent, canMatch: [AuthGuard, PortfolioGuard]},
     { path: '', component: HomePageComponent},
+    { path: 'shared/:dynamicValue', component: SharedPortfolioPageComponent },
     { path: 'new', component: PortfolioFormComponent, canMatch: [AuthGuard, EmptyPortfolioGuard], canDeactivate: [exitWithoutSavingGuard]},
     { path: 'edit', component: EditPageComponent, canMatch: [AuthGuard, PortfolioGuard], canDeactivate: [exitWithoutSavingGuard]},
     { path: 'profile', component: UserPageComponent, canMatch: [AuthGuard]},
     { path: 'organizations', component: OrganizationPageComponent, canMatch: [AuthGuard]},
+    { path: 'not_found', component: NotFoundPageComponent},
     { path: '**', component: NotFoundPageComponent}
 ];
 
