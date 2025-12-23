@@ -16,6 +16,7 @@ import { AuthService } from '@eo4geo/ngx-bok-utils';
 import { PdfService } from '../../services/pdf.service';
 import { Popover, PopoverModule } from 'primeng/popover';
 import { TooltipModule } from 'primeng/tooltip';
+import { RdfService } from '../../services/rdf.service';
 
 @Component({
   standalone: true,
@@ -44,7 +45,7 @@ export class PortfolioPageComponent {
   @ViewChild('op') op!: Popover;
 
   constructor(private firebaseService: FirebaseService, private router: Router, private route: ActivatedRoute, private authService: AuthService,
-              private messageService: MessageService, private confirmationService: ConfirmationService, private pdfService: PdfService){}
+              private messageService: MessageService, private confirmationService: ConfirmationService, private pdfService: PdfService, private rdfService: RdfService){}
 
   ngOnInit() {
     this.sessionSubscription = this.authService.getUserState().subscribe ( state => {
@@ -135,6 +136,26 @@ export class PortfolioPageComponent {
       this.downloadURI(pdf.url, pdf.filename);
       document.body.style.cursor = '';
     });
+  }
+
+  downloadPortfolioRdf(format: 'ttl' | 'xml' | 'rdfa') {
+    document.body.style.cursor = 'wait';
+    this.op.hide();
+    switch (format){
+      case 'ttl':
+        const ttlUrl = this.rdfService.getRdfTtlUrl(new UserPortfolio(this.userPortfolio));
+        this.downloadURI(ttlUrl, 'portfolio.ttl');
+        break;
+      case 'xml':
+        const xmlUrl = this.rdfService.getRdfXmlUrl(new UserPortfolio(this.userPortfolio));
+        this.downloadURI(xmlUrl, 'portfolio.rdf.xml');
+        break;
+      case 'rdfa':
+        const rdfaUrl = this.rdfService.getRdfaUrl(new UserPortfolio(this.userPortfolio));
+        this.downloadURI(rdfaUrl, 'portfolio.html');
+        break;
+    }
+    document.body.style.cursor = '';
   }
 
   private downloadURI(uri: string, name: string) {

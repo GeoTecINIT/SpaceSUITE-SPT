@@ -4,7 +4,7 @@ import { UserPortfolio, PortfolioItem, LanguageSkill} from '../model/userPortfol
 @Injectable({
   providedIn: 'root'
 })
-export class UserPortfolioRdfConverterService {
+export class RdfService {
 
   /* ============================
      Public API
@@ -34,11 +34,11 @@ export class UserPortfolioRdfConverterService {
 
     let ttl =
         `@prefix dcterms: <http://purl.org/dc/terms/> .
-        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-        @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-        @prefix geospacebok: <https://geospacebok.eu/> .
+ @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix geospacebok: <https://geospacebok.eu/> .
 
-        `;
+`;
     
     ttl += `geospacebok:WorkExperience rdf:type rdfs:Class .\n`;
     ttl += `geospacebok:Education rdf:type rdfs:Class .\n`;
@@ -266,7 +266,12 @@ export class UserPortfolioRdfConverterService {
      ============================ */
 
   private escape(str: string): string {
-    return str.replace(/[<>&'"]/g, c =>
+    const inlineString: string = str
+      .split("\n")
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+      .join(" ");
+    return inlineString.replace(/[<>&'"]/g, c =>
       ({ '<':'&lt;', '>':'&gt;', '&':'&amp;', '\'':'&apos;', '"':'&quot;' }[c]!)
     );
   }

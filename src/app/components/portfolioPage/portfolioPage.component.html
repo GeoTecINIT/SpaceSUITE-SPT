@@ -25,13 +25,13 @@
                         <li class="flex items-center gap-2 px-2 py-2 cursor-pointer popover-element" (click)="downloadPortfolioPdf()">
                             <span class="font-medium">PDF</span>
                         </li>
-                        <li [style.color]="'#787878'" class="flex items-center gap-2 px-2 py-2 cursor-pointer popover-element">
+                        <li class="flex items-center gap-2 px-2 py-2 cursor-pointer popover-element" (click)="downloadPortfolioRdf('rdfa')">
                             <span class="font-medium">RDFa</span>
                         </li>
-                        <li [style.color]="'#787878'" class="flex items-center gap-2 px-2 py-2 cursor-pointer popover-element">
+                        <li class="flex items-center gap-2 px-2 py-2 cursor-pointer popover-element" (click)="downloadPortfolioRdf('xml')">
                             <span class="font-medium">RDF/XML</span>
                         </li>
-                        <li [style.color]="'#787878'" class="flex items-center gap-2 px-2 py-2 cursor-pointer popover-element">
+                        <li class="flex items-center gap-2 px-2 py-2 cursor-pointer popover-element" (click)="downloadPortfolioRdf('ttl')">
                             <span class="font-medium">Turtle</span>
                         </li>
                     </ul>
