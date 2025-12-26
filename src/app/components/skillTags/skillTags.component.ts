@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import {Component, Input} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, HostListener, Input, ViewChild} from '@angular/core';
 import { TagModule } from 'primeng/tag';
 import { Tag } from '../../model/tag'
 import { BokInformationService } from '@eo4geo/ngx-bok-visualization';
 import { UtilsService } from '../../services/utils.service';
-import { map, Observable } from 'rxjs';
+import { combineLatest, debounceTime, fromEvent, map, Observable, Subscription, take } from 'rxjs';
 import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
@@ -17,8 +17,38 @@ import { TooltipModule } from 'primeng/tooltip';
 export class SkillTagComponent {
   @Input() tags: Tag[] = [];
   @Input() direction: Direction = 'original';
+  overflowTags: boolean = false;
 
-  constructor(private bokInfo: BokInformationService, private utilsService: UtilsService) {}
+  @ViewChild('bokDiv', { static: false }) bokDiv!: ElementRef<HTMLDivElement>;
+
+  resizeSub!: Subscription;
+
+  constructor(private bokInfo: BokInformationService, private utilsService: UtilsService, private cd: ChangeDetectorRef) {}
+
+  ngAfterViewInit() {
+    this.resizeSub = fromEvent(window, 'resize')
+      .subscribe(() => this.checkOverflow());
+      
+    this.checkOverflow();
+  }
+
+  ngOnDestroy() {
+    this.resizeSub?.unsubscribe();
+  }
+
+  checkOverflow() {
+    const el = this.bokDiv.nativeElement;
+    let isOverflowing = false;
+    if (this.overflowTags) {
+      this.overflowTags = false;
+      this.cd.detectChanges();
+    }
+    isOverflowing = el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight;
+    if (this.overflowTags !== isOverflowing) {
+      this.overflowTags = isOverflowing;
+      this.cd.detectChanges();
+    }
+  }
 
   getBokColor(concept: string): Observable<string> {
     return this.bokInfo.getConceptColor(concept).pipe(
