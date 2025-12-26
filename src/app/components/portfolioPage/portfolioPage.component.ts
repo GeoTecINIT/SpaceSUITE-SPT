@@ -141,18 +141,24 @@ export class PortfolioPageComponent {
   downloadPortfolioRdf(format: 'ttl' | 'xml' | 'rdfa') {
     document.body.style.cursor = 'wait';
     this.op.hide();
+    const fileName = (this.userPortfolio?.fullName || 'default_name')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '_')
+      .replace(/[^\w_-]/g, '')
+      .toLowerCase();
     switch (format){
       case 'ttl':
         const ttlUrl = this.rdfService.getRdfTtlUrl(new UserPortfolio(this.userPortfolio));
-        this.downloadURI(ttlUrl, 'portfolio.ttl');
+        this.downloadURI(ttlUrl, fileName + '_portfolio.ttl');
         break;
       case 'xml':
         const xmlUrl = this.rdfService.getRdfXmlUrl(new UserPortfolio(this.userPortfolio));
-        this.downloadURI(xmlUrl, 'portfolio.rdf.xml');
+        this.downloadURI(xmlUrl, fileName + '_portfolio.rdf.xml');
         break;
       case 'rdfa':
         const rdfaUrl = this.rdfService.getRdfaUrl(new UserPortfolio(this.userPortfolio));
-        this.downloadURI(rdfaUrl, 'portfolio.html');
+        this.downloadURI(rdfaUrl, fileName + '_portfolio.html');
         break;
     }
     document.body.style.cursor = '';
