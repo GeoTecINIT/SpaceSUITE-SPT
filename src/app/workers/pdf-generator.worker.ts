@@ -52,10 +52,26 @@ addEventListener('message', ({data}: {data: PdfWorkerPayload}) => {
 function applyMetadata(doc: jsPDF, portfolio: UserPortfolio) {
   doc.setProperties({
     title: `${portfolio.fullName} – Portfolio`,
-    subject: 'Professional Portfolio',
+    subject: getSubjectMetadata(portfolio),
     author: 'SpaceSuite',
-    creator: 'SpaceSuite'
+    creator: 'SpaceSuite Skill Portfolio',
+    keywords: 'spacesuite, skill portfolio, portfolio, cv',
   });
+}
+
+function getSubjectMetadata(portfolio: UserPortfolio) {
+  let subject = '@prefix dc: <http://purl.org/dc/terms/> . @prefix geospacebok: <https://geospacebok.eu/> . ';
+  subject = subject + '<> dc:type "Portfolio"; <> dc:title "' + portfolio.fullName + '"';
+  portfolio.educationAndTraining.concat(portfolio.projects).concat(portfolio.workExperience).forEach((item: PortfolioItem) => {
+    item.bokConcepts.forEach(know => {
+      const bokCode = know.split(']', 1)[0].split('[', 2)[1];
+      if (bokCode) {
+        subject = subject + '; dc:relation geospacebok:' + bokCode;
+      }
+    });
+  });
+  subject = subject + '  .';
+  return subject;
 }
 
 /* ============================
