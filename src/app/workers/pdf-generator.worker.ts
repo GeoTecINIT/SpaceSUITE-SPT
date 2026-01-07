@@ -29,7 +29,7 @@ addEventListener('message', ({data}: {data: PdfWorkerPayload}) => {
   doc.setLineHeightFactor(scaleFactor);
 
   applyMetadata(doc, portfolio);
-  y = renderHeader(doc, portfolio, y);
+  y = renderHeader(doc, portfolio, y, assets);
   y = renderSummary(doc, portfolio, y, assets);
   y = renderWorkExperience(doc, portfolio, y, assets);
   y = renderEducation(doc, portfolio, y, assets);
@@ -78,11 +78,22 @@ function getSubjectMetadata(portfolio: UserPortfolio) {
     HEADER
 ============================ */
 
-function renderHeader(doc: jsPDF, p: UserPortfolio, y: number): number {
+function renderHeader(doc: jsPDF, p: UserPortfolio, y: number,  assets: {
+    poppinsRegular?: string | undefined;
+    poppinsBold?: string | undefined;
+    poppinsItalic?: string | undefined;
+    watermark?: string | undefined;
+    euLogo?: string | undefined;
+    spaceSuiteLogo?: string | undefined;
+  }): number {
   doc.setFontSize(26).setFont('Poppins', 'bold');
   doc.setTextColor('#0e145d');
-  doc.text(p.fullName, 20, y);
-  y += 8 * 1.35;
+
+  const lines = doc.splitTextToSize(p.fullName, 170);
+  const linesSize = lines.length * 10.4 * 1.35;
+  y = checkEnd(doc, y, linesSize, assets);
+  doc.text(lines, 20, y);
+  y += linesSize;
 
   doc.setFontSize(10).setFont('Poppins', 'normal');
   doc.text(
@@ -176,9 +187,12 @@ function renderSummary(doc: jsPDF, p: UserPortfolio, y: number, assets: {
 
   y += 4 * 1.35;
   const lines = doc.splitTextToSize(p.profileSummary, 170);
+  const linesSize = lines.length * 4 * 1.35;
+  y = checkEnd(doc, y, linesSize, assets);
   doc.text(lines, 20, y);
+  y += linesSize;
 
-  return y + lines.length * 4 * 1.35;
+  return y;
 }
 
 /* ============================
