@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import {ChangeDetectorRef, Component, ElementRef, HostListener, Input, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, Input, ViewChild} from '@angular/core';
 import { TagModule } from 'primeng/tag';
 import { Tag } from '../../model/tag'
 import { BokInformationService } from '@eo4geo/ngx-bok-visualization';
 import { UtilsService } from '../../services/utils.service';
-import { combineLatest, debounceTime, fromEvent, map, Observable, Subscription, take } from 'rxjs';
+import { fromEvent, map, Observable, Subscription } from 'rxjs';
 import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
@@ -57,14 +57,12 @@ export class SkillTagComponent {
   }
 
   getBoKTooltip(concept: string): Observable<string> {
-    return this.bokInfo.getConceptName(concept).pipe(
-      map(tooltip => tooltip ? tooltip : 'Deprecated concept')
-    );
+    return this.bokInfo.getConceptName(concept);
   }
 
   getTooltipClass(concept: string): Observable<string> {
     return this.getBoKTooltip(concept).pipe(
-      map(tooltip => tooltip == 'Deprecated concept' ? 'custom-p-tooltip-text' : '')
+      map(tooltip => tooltip == 'Unknown Concept' ? 'custom-p-tooltip-text' : '')
     );
   }
 
