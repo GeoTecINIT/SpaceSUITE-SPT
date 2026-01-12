@@ -4,14 +4,13 @@ import { UserPortfolio } from '../../model/userPortfolio';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { SkeletonModule } from 'primeng/skeleton';
-import { SkillTagComponent } from "../skillTags/skillTags.component";
-import { Tag } from '../../model/tag';
 import { MessageService } from 'primeng/api';
 import { UtilsService } from '../../services/utils.service';
 import { UpdateImageModalComponent } from "../updateImageModal/updateImageModal.component";
 import { FirebaseService } from '../../services/firebase.service';
 import { map, Observable, of, take } from 'rxjs';
 import { FormDataService } from '../../services/formData.service';
+import { SkillTagComponent, Tag } from '@eo4geo/ngx-bok-utils';
 
 @Component({
   standalone: true,
@@ -61,13 +60,29 @@ export class UserInformationComponent {
       experience.softSkills?.forEach( value => softSkillsSet.add(value));
       experience.bokConcepts?.forEach( value => bokConceptsSet.add(value));
     })
-    this.bokConcepts = this.utilsService.stringToTag(Array.from(bokConceptsSet).sort(), 'bok');
-    this.hardSkills = this.utilsService.stringToTag(Array.from(hardSkillsSet).sort(), 'secondary');
-    this.softSkills = this.utilsService.stringToTag(Array.from(softSkillsSet).sort());
+    this.utilsService
+      .stringToTag(Array.from(bokConceptsSet).sort(), 'bok')
+      .subscribe(tags => (this.bokConcepts = tags));
+
+    this.utilsService
+      .stringToTag(Array.from(hardSkillsSet).sort(), 'secondary')
+      .subscribe(tags => (this.hardSkills = tags));
+
+    this.utilsService
+      .stringToTag(Array.from(softSkillsSet).sort())
+      .subscribe(tags => (this.softSkills = tags));
+
     if (this.userPortfolio?.nativeLanguage) {
       this.languages.push(new Tag(this.userPortfolio?.nativeLanguage + ': Native'));
     }
-    this.languages = this.languages.concat(this.utilsService.stringToTag((this.userPortfolio?.languageSkills ?? []).map(value => `${value.language}: ${value.level}`)));
+    this.utilsService.stringToTag(
+      (this.userPortfolio?.languageSkills ?? []).map(
+        value => `${value.language}: ${value.level}`
+      )
+    )
+    .subscribe(tags => {
+      this.languages = this.languages.concat(tags);
+    });
 
     this.getPhoneNumber().pipe(take(1)).subscribe(value => this.phoneNumber = value);
     this.email = this.userPortfolio?.email || '';

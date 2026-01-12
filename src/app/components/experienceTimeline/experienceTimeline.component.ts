@@ -2,10 +2,11 @@ import {ChangeDetectorRef, Component, ElementRef, Input, ViewChild} from '@angul
 import { Timeline } from 'primeng/timeline';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
-import { SkillTagComponent } from "../skillTags/skillTags.component";
 import { PortfolioItem } from '../../model/userPortfolio';
-import { Tag, Variant } from '../../model/tag';
 import { DividerModule } from 'primeng/divider';
+import { SkillTagComponent, Tag, Variant } from '@eo4geo/ngx-bok-utils';
+import { UtilsService } from '../../services/utils.service';
+import { Observable } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -26,7 +27,7 @@ export class ExperienceTimelineComponent {
   private resizeObserver!: ResizeObserver;
   smallScreen: boolean = false;
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  constructor(private cdRef: ChangeDetectorRef, private utilsService: UtilsService) {}
 
   ngOnInit() {
     this.showDetail = this.events.map( () => false);
@@ -42,8 +43,8 @@ export class ExperienceTimelineComponent {
     return startDate.toLocaleDateString() + (endDate ? ' to ' + endDate.toLocaleDateString() : '')
   }
 
-  stringToTag(values: string[], variant?: Variant): Tag[] {
-    return values.map(skill => new Tag(skill, variant ?? undefined))
+  stringToTag(values: string[], variant?: Variant): Observable<Tag[]> {
+    return this.utilsService.stringToTag(values, variant);
   }
 
   ngAfterViewInit(): void {

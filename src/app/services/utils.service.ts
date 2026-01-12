@@ -1,10 +1,14 @@
 import { Injectable } from "@angular/core";
-import { Tag, Variant } from "../model/tag";
+import { Tag, Variant } from "@eo4geo/ngx-bok-utils";
+import { BokInformationService } from "@eo4geo/ngx-bok-visualization";
+import { combineLatest, forkJoin, map, Observable, of, take } from "rxjs";
 
 @Injectable({
     providedIn: 'root',
 })
 export class UtilsService {
+
+    constructor(private bokInfo: BokInformationService) {}
     
     convertHexToRgba(hex: string, alpha: number): string {
         hex = hex.replace('#', '');
@@ -14,7 +18,20 @@ export class UtilsService {
         return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     }
 
-    stringToTag(values: string[], variant?: Variant): Tag[] {
-        return values.map(skill => new Tag(skill, variant ?? undefined))
+    stringToTag(values: string[], variant?: Variant): Observable<Tag[]> {
+        if (variant !== 'bok') return of(values.map(skill => new Tag(skill, variant ?? undefined)))
+        else {
+            return forkJoin(
+                values.map(value =>
+                    combineLatest([
+                        this.bokInfo.getConceptName(value),
+                        this.bokInfo.getConceptColor(value),
+                    ]).pipe(
+                        take(1),
+                        map(([tooltip, color]) => new Tag(value, variant, tooltip, color))
+                    )
+                )
+            );
+        }
     }
 }

@@ -7,6 +7,10 @@
     padding-bottom: 1rem !important;
 }
 
+::ng-deep .p-timeline-event-content {
+    min-width: 0;
+}
+
 ::ng-deep .aligned-timeline .p-timeline-event-opposite {
     display: none !important;
 }
@@ -21,4 +25,8 @@ a:hover {
 
 ::ng-deep .p-card {
   border: 1px solid #e2e8f0 !important;
+}
+
+::ng-deep .p-tag {
+    text-align: left;
 }

@@ -3,12 +3,11 @@ import { ChangeDetectorRef, Component, ElementRef, ViewChild } from "@angular/co
 import { ButtonModule } from "primeng/button";
 import { Timeline } from 'primeng/timeline';
 import { CardModule } from 'primeng/card';
-import { SkillTagComponent } from "../skillTags/skillTags.component";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FirebaseService } from "../../services/firebase.service";
 import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
-import { AuthService } from "@eo4geo/ngx-bok-utils";
+import { AuthService, SkillTagComponent } from "@eo4geo/ngx-bok-utils";
 import { BehaviorSubject, map, of, Subscription, switchMap, tap } from "rxjs";
 
 @Component({
