@@ -24,7 +24,7 @@
                     </div>
                     <div *ngIf="showDetail[events.indexOf(event)] && (event.bokConcepts.length > 0 || event.hardSkills.length > 0)">
                         <div class="mb-2 text-sm text-left"><strong>Knowledge</strong></div>
-                        <skill-tags [tags]="((stringToTag(event.bokConcepts.sort(), 'bok')  | async) || []).concat((stringToTag(event.hardSkills.sort(), 'secondary') | async) || [])"></skill-tags>
+                        <skill-tags [tags]="((stringToTag(event.bokConcepts.sort(), 'bok')  | async) || []).concat((stringToTag(event.hardSkills.sort(), 'secondary') | async) || [])" [compactThreshold]="350"></skill-tags>
                     </div>
                     <div *ngIf="showDetail[events.indexOf(event)] && event.softSkills.length > 0">
                         <div class="mb-2 text-sm text-left"><strong>Transversal Skills</strong></div>
