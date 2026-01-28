@@ -49,7 +49,7 @@ export class AppComponent {
           target: '_blank'
         },
         {
-          label: 'Skill Portfolio Tool',
+          label: 'Skill Portfolio',
           icon: 'pi pi-user',
           style: {'--p-tieredmenu-item-color': 'var(--hover-color)'},
           iconStyle: {'color': 'var(--hover-color)'}
