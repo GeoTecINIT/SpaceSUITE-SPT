@@ -68,7 +68,7 @@ export class RdfService {
       ttl += `  dcterms:language "${this.escape(model.nativeLanguage)}" ;\n`;
 
     if (model.updatedAt)
-      ttl += `  dcterms:modified "${model.updatedAt instanceof Date ? model.updatedAt.toISOString() : model.updatedAt}" ;\n`;
+      ttl += `  dcterms:modified "${model.updatedAt instanceof Date ? model.updatedAt.toISOString() : model.updatedAt.toDate().toISOString()}" ;\n`;
 
     model.workExperience.forEach((item, i) => {
       const node = `_:EXPERIENCE${i}`;
@@ -174,8 +174,7 @@ export class RdfService {
       if (model.profileSummary) xml += `    <dcterms:description>${this.escapeXml(model.profileSummary)}</dcterms:description>\n`;
       if (model.nativeLanguage) xml += `    <dcterms:language>${this.escapeXml(model.nativeLanguage)}</dcterms:language>\n`;
       if (model.updatedAt) {
-        const dt = model.updatedAt.toDate().toISOString();
-
+        const dt = model.updatedAt instanceof Date ? model.updatedAt.toISOString() : model.updatedAt.toDate().toISOString();
         xml += `    <dcterms:modified>${this.escapeXml(dt)}</dcterms:modified>\n`;
       }
 
@@ -259,7 +258,7 @@ export class RdfService {
         html += `  <span property="language">${this.escapeHtml(model.nativeLanguage)}</span><br/>\n`;
 
       if (model.updatedAt) {
-        const dt = model.updatedAt.toDate().toISOString();
+        const dt = model.updatedAt instanceof Date ? model.updatedAt.toISOString() : model.updatedAt.toDate().toISOString();
         html += `  <time property="modified">${this.escapeHtml(dt)}</time><br/>\n`;
       }
 
