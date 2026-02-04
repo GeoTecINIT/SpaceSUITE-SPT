@@ -71,7 +71,6 @@ export class PortfolioPageComponent {
     setTimeout(() => {
       if (!this.userPortfolio) this.loading = true;
     }, 500);
-    this.messageService.messageObserver.subscribe(value => console.log(value))
   }
 
   ngAfterViewInit() {
