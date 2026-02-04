@@ -16,7 +16,6 @@ import { BehaviorSubject, map, of, Subscription, switchMap, tap } from "rxjs";
   templateUrl: './homePage.component.html',
   styleUrls: ['./homePage.component.css'],
   imports: [CommonModule, ButtonModule, Timeline, CardModule, SkillTagComponent, ToastModule],
-  providers: [MessageService]
 })
 export class HomePageComponent {
   @ViewChild('timeline') containerDiv!: ElementRef;

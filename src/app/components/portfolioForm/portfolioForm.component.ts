@@ -33,7 +33,6 @@ import { SelectButtonModule } from 'primeng/selectbutton';
   styleUrls: ['./portfolioForm.component.css'],
   imports: [InputTextModule, FloatLabelModule, FormsModule, InputIconModule, IconFieldModule, TextareaModule, CommonModule, SelectModule, AccordionModule, SelectButtonModule, 
     StepperModule, ButtonModule, TooltipModule, ToastModule, InputNumberModule, LanguageSelectComponent, PortfolioItemFormComponent, ConfirmDialog, UploadCVModalComponent],
-  providers: [MessageService, ConfirmationService]
 })
 export class PortfolioFormComponent {
 

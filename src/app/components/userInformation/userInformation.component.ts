@@ -18,7 +18,6 @@ import { SkillTagComponent, Tag } from '@eo4geo/ngx-bok-utils';
   templateUrl: './userInformation.component.html',
   styleUrls: ['./userInformation.component.css'],
   imports: [CommonModule, ButtonModule, SkillTagComponent, TooltipModule, UpdateImageModalComponent, SkeletonModule],
-  providers: [MessageService]
 })
 export class UserInformationComponent {
   @Input() userPortfolio: UserPortfolio | undefined;

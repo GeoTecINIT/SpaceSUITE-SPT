@@ -18,6 +18,7 @@ import { PortfolioGuard } from './app/guards/portfolio.guard';
 import { EditPageComponent } from './app/components/editPage/editPage.component';
 import { EmptyPortfolioGuard } from './app/guards/emptyPortfolio.guard';
 import { SharedPortfolioPageComponent } from './app/components/sharedPortfolioPage/sharedPortfolioPage.component';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 const routes: Routes = [
     { path: '', component: PortfolioPageComponent, canMatch: [AuthGuard, PortfolioGuard]},
@@ -50,6 +51,8 @@ export const appConfig: ApplicationConfig = {
                     cssLayer: false
                 }             
             }
-        })
+        }),
+        MessageService,
+        ConfirmationService
     ]
 };

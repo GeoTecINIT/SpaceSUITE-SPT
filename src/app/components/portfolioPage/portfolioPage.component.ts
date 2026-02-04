@@ -24,8 +24,7 @@ import { RdfService } from '../../services/rdf.service';
   templateUrl: './portfolioPage.component.html',
   styleUrls: ['./portfolioPage.component.css'],
   imports: [CommonModule, UserInformationComponent, DividerModule, ExperienceTimelineComponent, ButtonModule, ToastModule, ProgressSpinnerModule, ConfirmDialogModule, 
-            PopoverModule, TooltipModule],
-  providers: [MessageService, ConfirmationService]
+            PopoverModule, TooltipModule]
 })
 export class PortfolioPageComponent {
   public userPortfolio?: UserPortfolio;
@@ -72,6 +71,7 @@ export class PortfolioPageComponent {
     setTimeout(() => {
       if (!this.userPortfolio) this.loading = true;
     }, 500);
+    this.messageService.messageObserver.subscribe(value => console.log(value))
   }
 
   ngAfterViewInit() {
