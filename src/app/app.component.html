@@ -1,6 +1,6 @@
 <div class="flex flex-column min-h-screen">
     <header [toolName]="'Skill Portfolio'" [items]="headerItems" [login]="true" (profileClick)="redirectToProfile()" (organizationClick)="redirectToOrganizations()"></header>
     <router-outlet></router-outlet>
-    <footer (openReleaseNotes)="releaseNotes = !releaseNotes" class="mt-auto"></footer>
+    <footer (openReleaseNotes)="releaseNotes = !releaseNotes" (openUserManual)="openPdf()" class="mt-auto"></footer>
     <release-notes [(visible)]="releaseNotes"></release-notes>
 </div>

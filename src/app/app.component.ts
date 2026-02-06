@@ -3,6 +3,7 @@ import { HeaderComponent, FooterComponent } from '@eo4geo/ngx-bok-utils';
 import { MenuItem } from 'primeng/api';
 import { Router, RouterOutlet } from '@angular/router';
 import { ReleaseNotesComponent } from "./components/releaseNotes/releaseNotes.component";
+import { PdfService } from './services/pdf.service';
 
 @Component({
   standalone: true,
@@ -100,7 +101,7 @@ export class AppComponent {
     }
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private pdfService: PdfService) {}
 
   redirectToProfile() {
     this.router.navigate(['profile']);
@@ -108,5 +109,12 @@ export class AppComponent {
 
   redirectToOrganizations() {
     this.router.navigate(['organizations']);
+  }
+
+  openPdf() {
+    this.pdfService.getUserManualPdf().subscribe(pdfBlob => {
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      window.open(pdfUrl, '_blank');
+    });
   }
 }

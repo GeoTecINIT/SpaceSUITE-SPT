@@ -21,6 +21,8 @@ export class PdfService {
   private resourcesLoaded: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private scaleFactor: number = 1.5;
 
+  private userManualPdf = '/assets/SP_User_Guide.pdf';
+
   constructor(private http: HttpClient, private bokUtils: BokInformationService, private formDataService: FormDataService) {
     const poppinsRegular$ = this.loadFont('assets/fonts/poppins/Poppins-Regular.ttf').pipe(
       first(), 
@@ -159,4 +161,8 @@ export class PdfService {
 
   safeForkJoin = (sources: Observable<any>[]) =>
       sources.length ? forkJoin(sources) : of(null);
+
+  getUserManualPdf(): Observable<Blob> {
+    return this.http.get(this.userManualPdf, { responseType: 'blob' });
+  }
 }
