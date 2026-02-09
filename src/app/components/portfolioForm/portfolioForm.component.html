@@ -3,12 +3,60 @@
 <upload-cv-modal [(visible)]="showNewPortfolioModal" (userPortfolioChange)="onPortfolioModalChange($event)"></upload-cv-modal>
 <div class="flex flex-column align-items-center justify-content-center p-4">
     <h2>{{pageName}}</h2>
-    <p-stepper [value]="1" class="custom-stepper" [linear]="true">
+    <p-stepper [value]="1" class="custom-stepper">
         <p-step-list>
-            <p-step [value]="1">General Information</p-step>
-            <p-step [value]="2">Education and Training</p-step>
-            <p-step [value]="3">Work Experience</p-step>
-            <p-step [value]="4">Personal Projects</p-step>
+            <p-step [value]="1">
+                <ng-template #content let-activateCallback="activateCallback" let-value="value" let-active="active">
+                    <button class="p-step-header" 
+                            tabindex="0" 
+                            role="tab"
+                            [attr.aria-controls]="'steppanel_' + value"
+                            [attr.aria-selected]="active"
+                            (click)="goToNextStep(activateCallback, value)">
+                        <span class="p-step-number">{{ value }}</span>
+                        <span class="p-step-title">General Information</span>
+                    </button>
+                </ng-template>
+            </p-step>
+            <p-step [value]="2">
+                <ng-template #content let-activateCallback="activateCallback" let-value="value" let-active="active">
+                    <button class="p-step-header" 
+                            tabindex="0" 
+                            role="tab"
+                            [attr.aria-controls]="'steppanel_' + value"
+                            [attr.aria-selected]="active"
+                            (click)="goToNextStep(activateCallback, value)">
+                        <span class="p-step-number">{{ value }}</span>
+                        <span class="p-step-title">Education and Training</span>
+                    </button>
+                </ng-template>
+            </p-step>
+            <p-step [value]="3">
+                <ng-template #content let-activateCallback="activateCallback" let-value="value" let-active="active">
+                    <button class="p-step-header" 
+                            tabindex="0" 
+                            role="tab"
+                            [attr.aria-controls]="'steppanel_' + value"
+                            [attr.aria-selected]="active"
+                            (click)="goToNextStep(activateCallback, value)">
+                        <span class="p-step-number">{{ value }}</span>
+                        <span class="p-step-title">Work Experience</span>
+                    </button>
+                </ng-template>
+            </p-step>
+            <p-step [value]="4">
+                <ng-template #content let-activateCallback="activateCallback" let-value="value" let-active="active">
+                    <button class="p-step-header" 
+                            tabindex="0" 
+                            role="tab"
+                            [attr.aria-controls]="'steppanel_' + value"
+                            [attr.aria-selected]="active"
+                            (click)="goToNextStep(activateCallback, value)">
+                        <span class="p-step-number">{{ value }}</span>
+                        <span class="p-step-title">Personal Projects</span>
+                    </button>
+                </ng-template>
+            </p-step>
         </p-step-list>
         <p-step-panels>
             <p-step-panel [value]="1">

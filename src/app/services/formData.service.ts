@@ -159,7 +159,7 @@ export class FormDataService {
     };
   
     // General Information fields
-    if (!step || step == 1) {
+    if (!step || step >= 1) {
       setError('fullName', !portfolio.fullName.trim(), 'Name is required.');
       setError('email', portfolio.email.trim() != '' && !emailRegex.test(portfolio.email), 'Invalid email format.');
       setError('phone', portfolio.phone != undefined && !phoneRegex.test(portfolio.phone), 'Invalid phone number.');
@@ -180,7 +180,7 @@ export class FormDataService {
     }
 
     // Education fields
-    if (!step || step == 2) {
+    if (!step || step >= 2) {
       portfolio.educationAndTraining.forEach((item, index) => {
         setError('E' + index + 'Title', !item.title.trim(), 'Title is required.');
         setError('E' + index + 'Org', !item.organization.trim(), 'Institution is required.');
@@ -205,7 +205,7 @@ export class FormDataService {
     }
 
     // Experience fields
-      if (!step || step == 3) {
+      if (!step || step >= 3) {
       portfolio.workExperience.forEach((item, index) => {
         setError('W' + index + 'Title', !item.title.trim(), 'Title is required.');
         setError('W' + index + 'Org', !item.organization.trim(), 'Title is required.');
@@ -229,7 +229,7 @@ export class FormDataService {
       })
     }
     // Project fields
-    if (!step || step == 4) {
+    if (!step || step >= 4) {
       portfolio.projects.forEach((item, index) => {
         setError('P' + index + 'Title', !item.title.trim(), 'Title is required.');
         setError('P' + index + 'Org', !item.organization.trim(), 'Title is required.');
