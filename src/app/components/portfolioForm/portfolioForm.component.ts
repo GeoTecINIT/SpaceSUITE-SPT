@@ -13,7 +13,7 @@ import { StepperModule } from 'primeng/stepper';
 import { TooltipModule } from "primeng/tooltip";
 import { FirebaseService } from '../../services/firebase.service';
 import { Router } from '@angular/router';
-import { catchError, of, Subscription, take } from 'rxjs';
+import { catchError, EMPTY, Subscription, take } from 'rxjs';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { LanguageSelectComponent } from "../languageSelect/languageSelect.component";
@@ -152,7 +152,7 @@ export class PortfolioFormComponent {
             life: 3000, 
             closable: true 
           });
-          return of(null)
+          return EMPTY;
         })
       ).subscribe(() => {
         this.loading = false;
