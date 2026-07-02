@@ -147,7 +147,9 @@ function renderFooter(doc: jsPDF, assets: {
       pageWidth - targetWidth - 20,
       y + footerHeight / 2 - targetHeight / 2,
       targetWidth,
-      targetHeight
+      targetHeight,
+      undefined,
+      'FAST'
     );
   }
 
@@ -164,7 +166,9 @@ function renderFooter(doc: jsPDF, assets: {
       20,
       y + footerHeight / 2 - targetHeight / 2,
       targetWidth,
-      targetHeight
+      targetHeight,
+      undefined,
+      'FAST'
     );
   }
 }
@@ -338,7 +342,7 @@ function addWatermark(doc: jsPDF, watermark: string): void {
   if (watermark) {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    doc.addImage(watermark, 'PNG', 0, 0, pageWidth, pageHeight);
+    doc.addImage(watermark, 'PNG', 0, 0, pageWidth, pageHeight, undefined, 'FAST');
   }
 }
 
