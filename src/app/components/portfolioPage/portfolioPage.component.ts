@@ -163,6 +163,30 @@ export class PortfolioPageComponent {
     document.body.style.cursor = '';
   }
 
+  downloadPortfolioJson() {
+    this.op.hide();
+
+    const fileName = (this.userPortfolio!.fullName || 'default_name')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '_')
+      .replace(/[^\w_-]/g, '')
+      .toLowerCase();
+    
+    const portfolioToExport: UserPortfolio = new UserPortfolio(this.userPortfolio); 
+    const plainPortfolio: any = portfolioToExport.toFirebase();
+    delete plainPortfolio['_id'];
+    plainPortfolio['workExperience'] = portfolioToExport.workExperience.map(value => value.toFirebase());
+    plainPortfolio['educationAndTraining'] = portfolioToExport.educationAndTraining.map(value => value.toFirebase());
+    plainPortfolio['projects'] = portfolioToExport.projects.map(value => value.toFirebase());
+    plainPortfolio['languageSkills'] = portfolioToExport.languageSkills.map(value => value.toFirebase());
+    const jsonStr = JSON.stringify(plainPortfolio, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+
+    this.downloadURI(url, fileName + '_portfolio.json');
+  }
+
   private downloadURI(uri: string, name: string) {
     const link = document.createElement("a");
     link.download = name;
