@@ -38,7 +38,7 @@ export class AppComponent {
           target: '_blank'
         },
         {
-          label: 'Ecusational Design Tool',
+          label: 'Educational Design Tool',
           icon: 'pi pi-sitemap',
           url: 'https://spacesuite-educational-design-tool.web.app',
           target: '_blank'
