@@ -7,13 +7,14 @@ import { Subscription } from 'rxjs';
 import { EuropassService } from '../../services/europass.service';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
+import { ImageModule } from 'primeng/image';
 
 @Component({
   standalone: true,
   selector: 'upload-cv-modal',
   templateUrl: './uploadCVModal.component.html',
   styleUrls: ['./uploadCVModal.component.css'],
-  imports: [DialogModule, FileUploadModule, ProgressBarModule, CommonModule, ButtonModule],
+  imports: [DialogModule, FileUploadModule, ProgressBarModule, CommonModule, ButtonModule, ImageModule],
 })
 export class UploadCVModalComponent {
   @Input() visible: boolean = false;

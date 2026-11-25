@@ -5,9 +5,32 @@
             <p class="text-sm m-0 p-0">
                 Upload your Europass CV in PDF format to automatically fill in your information. 
             </p>
-            <p class="text-sm m-0 p-0" [style.color]="'var(--hover-color)'">
-                If you prefer, you can close this window and complete the form manually.
-            </p>
+            <div class="mt-4 mb-2">
+                <b class="flex align-items-center gap-2">
+                    <i class="pi pi-info-circle"></i>
+                    Supported Europass format
+                </b>
+                <div class="mt-2 flex align gap-2">
+                    <p-image
+                        src="assets/images/EuropassCV4Example.png"
+                        alt="Example of the supported Europass CV template"
+                        height="200px" [preview]="true" appendTo="body"
+                        class="mx-3"
+                    >
+                        <ng-template #indicator>
+                            <i class="pi pi-search"></i>
+                        </ng-template>
+                    </p-image>
+                    <div class="mt-2">
+                        <p class="text-sm m-0 p-0">
+                            Only the template shown here is supported for automatic data extraction.
+                        </p>
+                        <p class="text-sm m-0 p-0 mt-2">
+                            If you prefer, you can close this window and complete the form manually.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="flex align-items-center">
             <p-fileupload #fileUpload mode="basic" chooseLabel="Upload CV" chooseIcon="pi pi-upload"
