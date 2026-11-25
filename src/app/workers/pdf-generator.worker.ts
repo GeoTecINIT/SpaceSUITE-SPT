@@ -4,7 +4,7 @@ import jsPDF from 'jspdf';
 import { PdfWorkerPayload } from '../model/pdfWorkerPayload';
 import { PortfolioItem, UserPortfolio } from '../model/userPortfolio';
 
-addEventListener('message', ({data}: {data: PdfWorkerPayload}) => {
+addEventListener('message', ({ data }: { data: PdfWorkerPayload }) => {
   const { portfolio, assets, scaleFactor } = data;
   const doc = new jsPDF();
 
@@ -17,10 +17,12 @@ addEventListener('message', ({data}: {data: PdfWorkerPayload}) => {
     doc.addFileToVFS('Poppins-Regular.ttf', assets.poppinsRegular);
     doc.addFont('Poppins-Regular.ttf', 'Poppins', 'normal');
   }
+
   if (assets.poppinsBold) {
     doc.addFileToVFS('Poppins-Bold.ttf', assets.poppinsBold);
     doc.addFont('Poppins-Bold.ttf', 'Poppins', 'bold');
-  } 
+  }
+
   if (assets.poppinsItalic) {
     doc.addFileToVFS('Poppins-Italic.ttf', assets.poppinsItalic);
     doc.addFont('Poppins-Italic.ttf', 'Poppins', 'italic');
@@ -41,7 +43,7 @@ addEventListener('message', ({data}: {data: PdfWorkerPayload}) => {
 
   postMessage({
     blob,
-    filename: buildFilename(portfolio)
+    filename: buildFilename(portfolio),
   });
 });
 
@@ -49,7 +51,7 @@ addEventListener('message', ({data}: {data: PdfWorkerPayload}) => {
     METADATA
 ============================ */
 
-function applyMetadata(doc: jsPDF, portfolio: UserPortfolio) {
+function applyMetadata(doc: jsPDF, portfolio: UserPortfolio): void {
   doc.setProperties({
     title: `${portfolio.fullName} – Portfolio`,
     subject: getSubjectMetadata(portfolio),
@@ -59,18 +61,22 @@ function applyMetadata(doc: jsPDF, portfolio: UserPortfolio) {
   });
 }
 
-function getSubjectMetadata(portfolio: UserPortfolio) {
-  let subject = '@prefix dc: <http://purl.org/dc/terms/> . @prefix eo4geo: <https://geospacebok.eu/> . ';
-  subject = subject + '<> dc:type "Portfolio"; <> dc:title "' + portfolio.fullName + '"';
-  portfolio.educationAndTraining.concat(portfolio.projects).concat(portfolio.workExperience).forEach((item: PortfolioItem) => {
-    item.bokConcepts.forEach(know => {
-      const bokCode = know.split(']', 1)[0].split('[', 2)[1];
-      if (bokCode) {
-        subject = subject + '; dc:relation eo4geo:' + bokCode;
-      }
+function getSubjectMetadata(portfolio: UserPortfolio): string {
+  let subject = `@prefix dc: <http://purl.org/dc/terms/> . @prefix eo4geo: <https://geospacebok.eu/> . <> dc:type "Portfolio"; <> dc:title "${portfolio.fullName}"`;
+
+  portfolio.educationAndTraining
+    .concat(portfolio.projects)
+    .concat(portfolio.workExperience)
+    .forEach((item: PortfolioItem) => {
+      item.bokConcepts.forEach((concept) => {
+        const bokCode = concept.match(/^\[([^\]]+)\]/);
+
+        if (bokCode) subject = subject + '; dc:relation eo4geo:' + bokCode[1];
+      });
     });
-  });
+
   subject = subject + '  .';
+
   return subject;
 }
 
@@ -78,33 +84,42 @@ function getSubjectMetadata(portfolio: UserPortfolio) {
     HEADER
 ============================ */
 
-function renderHeader(doc: jsPDF, p: UserPortfolio, y: number,  assets: {
+function renderHeader(
+  doc: jsPDF,
+  p: UserPortfolio,
+  y: number,
+  assets: {
     poppinsRegular?: string | undefined;
     poppinsBold?: string | undefined;
     poppinsItalic?: string | undefined;
     watermark?: string | undefined;
     euLogo?: string | undefined;
     spaceSuiteLogo?: string | undefined;
-  }): number {
+  },
+): number {
   doc.setFontSize(26).setFont('Poppins', 'bold');
   doc.setTextColor('#0e145d');
 
   const lines = doc.splitTextToSize(p.fullName, 170);
   const linesSize = lines.length * 10.4 * 1.35;
   y = checkEnd(doc, y, linesSize, assets);
+
   doc.text(lines, 20, y);
+
   y += linesSize;
 
   doc.setFontSize(10).setFont('Poppins', 'normal');
+
   doc.text(
     [p.email, p.phone ? `${p.phoneCountryCode ?? ''} ${p.phone}` : null]
       .filter(Boolean)
       .join(' | '),
     20,
-    y
+    y,
   );
 
   y += 4 * 1.35;
+
   return y;
 }
 
@@ -112,14 +127,18 @@ function renderHeader(doc: jsPDF, p: UserPortfolio, y: number,  assets: {
   FOOTER
 ============================ */
 
-function renderFooter(doc: jsPDF, assets: {
+function renderFooter(
+  doc: jsPDF,
+  assets: {
     poppinsRegular?: string | undefined;
     poppinsBold?: string | undefined;
     poppinsItalic?: string | undefined;
     watermark?: string | undefined;
     euLogo?: string | undefined;
     spaceSuiteLogo?: string | undefined;
-  }, y = 275): void {
+  },
+  y = 275,
+): void {
   const pageWidth = doc.internal.pageSize.getWidth();
   const footerHeight = doc.internal.pageSize.getHeight() - y;
 
@@ -127,20 +146,22 @@ function renderFooter(doc: jsPDF, assets: {
   doc.rect(0, y, pageWidth, footerHeight, 'F');
 
   const page = doc.getCurrentPageInfo().pageNumber;
+
   doc.setFontSize(9).setFont('Poppins', 'normal');
   doc.setTextColor('#ffffff');
-  doc.text(page.toString(), pageWidth / 2, y + footerHeight / 2 + 1) // + 1 
+  doc.text(page.toString(), pageWidth / 2, y + footerHeight / 2 + 1); // + 1
   doc.setFontSize(10).setFont('Poppins', 'normal');
   doc.setTextColor('#0e145d');
 
   if (assets.euLogo) {
     const props = doc.getImageProperties(assets.euLogo);
     const imgWidthPx = props.width;
-    const imgHeightPx = props.height
+    const imgHeightPx = props.height;
     const targetWidth = 30;
     const ratio = imgHeightPx / imgWidthPx;
     const targetHeight = targetWidth * ratio;
     const pageWidth = doc.internal.pageSize.getWidth();
+
     doc.addImage(
       assets.euLogo,
       'PNG',
@@ -149,17 +170,18 @@ function renderFooter(doc: jsPDF, assets: {
       targetWidth,
       targetHeight,
       undefined,
-      'FAST'
+      'FAST',
     );
   }
 
   if (assets.spaceSuiteLogo) {
     const props = doc.getImageProperties(assets.spaceSuiteLogo);
     const imgWidthPx = props.width;
-    const imgHeightPx = props.height
+    const imgHeightPx = props.height;
     const targetWidth = 30;
     const ratio = imgHeightPx / imgWidthPx;
     const targetHeight = targetWidth * ratio;
+
     doc.addImage(
       assets.spaceSuiteLogo,
       'PNG',
@@ -168,7 +190,7 @@ function renderFooter(doc: jsPDF, assets: {
       targetWidth,
       targetHeight,
       undefined,
-      'FAST'
+      'FAST',
     );
   }
 }
@@ -177,23 +199,30 @@ function renderFooter(doc: jsPDF, assets: {
     SUMMARY
 ============================ */
 
-function renderSummary(doc: jsPDF, p: UserPortfolio, y: number, assets: {
+function renderSummary(
+  doc: jsPDF,
+  p: UserPortfolio,
+  y: number,
+  assets: {
     poppinsRegular?: string | undefined;
     poppinsBold?: string | undefined;
     poppinsItalic?: string | undefined;
     watermark?: string | undefined;
     euLogo?: string | undefined;
     spaceSuiteLogo?: string | undefined;
-  }): number {
+  },
+): number {
   if (!p.profileSummary) return y;
 
-  y = sectionTitle(doc, 'Profile Summary', y, assets);
-
+  y = sectionTitle(doc, 'About Me', y, assets);
   y += 4 * 1.35;
+
   const lines = doc.splitTextToSize(p.profileSummary, 170);
   const linesSize = lines.length * 4 * 1.35;
   y = checkEnd(doc, y, linesSize, assets);
+
   doc.text(lines, 20, y);
+
   y += linesSize;
 
   return y;
@@ -203,19 +232,24 @@ function renderSummary(doc: jsPDF, p: UserPortfolio, y: number, assets: {
     WORK EXPERIENCE
 ============================ */
 
-function renderWorkExperience(doc: jsPDF, p: UserPortfolio, y: number, assets: {
+function renderWorkExperience(
+  doc: jsPDF,
+  p: UserPortfolio,
+  y: number,
+  assets: {
     poppinsRegular?: string | undefined;
     poppinsBold?: string | undefined;
     poppinsItalic?: string | undefined;
     watermark?: string | undefined;
     euLogo?: string | undefined;
     spaceSuiteLogo?: string | undefined;
-  }): number {
+  },
+): number {
   if (!p.workExperience.length) return y;
 
   y = sectionTitle(doc, 'Work Experience', y, assets);
 
-  p.workExperience.forEach(item => {
+  p.workExperience.forEach((item) => {
     y = itemContent(doc, item, y, assets);
   });
 
@@ -226,19 +260,24 @@ function renderWorkExperience(doc: jsPDF, p: UserPortfolio, y: number, assets: {
     EDUCATION
 ============================ */
 
-function renderEducation(doc: jsPDF, p: UserPortfolio, y: number, assets: {
+function renderEducation(
+  doc: jsPDF,
+  p: UserPortfolio,
+  y: number,
+  assets: {
     poppinsRegular?: string | undefined;
     poppinsBold?: string | undefined;
     poppinsItalic?: string | undefined;
     watermark?: string | undefined;
     euLogo?: string | undefined;
     spaceSuiteLogo?: string | undefined;
-  }): number {
+  },
+): number {
   if (!p.educationAndTraining.length) return y;
 
   y = sectionTitle(doc, 'Education & Training', y, assets);
 
-  p.educationAndTraining.forEach(item => {
+  p.educationAndTraining.forEach((item) => {
     y = itemContent(doc, item, y, assets);
   });
 
@@ -249,19 +288,24 @@ function renderEducation(doc: jsPDF, p: UserPortfolio, y: number, assets: {
     PROJECTS
 ============================ */
 
-function renderProjects(doc: jsPDF, p: UserPortfolio, y: number, assets: {
+function renderProjects(
+  doc: jsPDF,
+  p: UserPortfolio,
+  y: number,
+  assets: {
     poppinsRegular?: string | undefined;
     poppinsBold?: string | undefined;
     poppinsItalic?: string | undefined;
     watermark?: string | undefined;
     euLogo?: string | undefined;
     spaceSuiteLogo?: string | undefined;
-  }): number {
+  },
+): number {
   if (!p.projects.length) return y;
 
   y = sectionTitle(doc, 'Projects', y, assets);
 
-  p.projects.forEach(item => {
+  p.projects.forEach((item) => {
     y = itemContent(doc, item, y, assets);
   });
 
@@ -272,16 +316,19 @@ function renderProjects(doc: jsPDF, p: UserPortfolio, y: number, assets: {
     LANGUAGES
 ============================ */
 
-function renderLanguages(doc: jsPDF, p: UserPortfolio, y: number, assets: {
+function renderLanguages(
+  doc: jsPDF,
+  p: UserPortfolio,
+  y: number,
+  assets: {
     poppinsRegular?: string | undefined;
     poppinsBold?: string | undefined;
     poppinsItalic?: string | undefined;
     watermark?: string | undefined;
     euLogo?: string | undefined;
     spaceSuiteLogo?: string | undefined;
-  }): number {
-  if (!p.languageSkills.length) return y;
-
+  },
+): number {
   y = sectionTitle(doc, 'Languages', y, assets);
 
   if (p.nativeLanguage) {
@@ -290,7 +337,9 @@ function renderLanguages(doc: jsPDF, p: UserPortfolio, y: number, assets: {
     doc.text(`• ${p.nativeLanguage} – Native`, 20, y);
   }
 
-  p.languageSkills.forEach(ls => {
+  if (!p.languageSkills.length) return y;
+
+  p.languageSkills.forEach((ls) => {
     y += 4 * 1.35;
     y = checkEnd(doc, y, 0, assets);
     doc.text(`• ${ls.language} - ${ls.level}`, 20, y);
@@ -303,38 +352,52 @@ function renderLanguages(doc: jsPDF, p: UserPortfolio, y: number, assets: {
     HELPERS
 ============================ */
 
-function sectionTitle(doc: jsPDF, title: string, y: number, assets: {
+function sectionTitle(
+  doc: jsPDF,
+  title: string,
+  y: number,
+  assets: {
     poppinsRegular?: string | undefined;
     poppinsBold?: string | undefined;
     poppinsItalic?: string | undefined;
     watermark?: string | undefined;
     euLogo?: string | undefined;
     spaceSuiteLogo?: string | undefined;
-  }): number {
+  },
+): number {
   y += 8 * 1.35;
-  y = checkEnd(doc, y, 0, assets);  
+  y = checkEnd(doc, y, 0, assets);
+
   doc.setFontSize(14).setFont('Poppins', 'bold');
   doc.setTextColor('#0e145d');
   doc.text(title, 20, y);
   doc.setFontSize(10).setFont('Poppins', 'normal');
   doc.setTextColor('#0e145d');
+
   return y + 2 * 1.35;
 }
 
-function checkEnd(doc: jsPDF, y: number, contentSize: number = 0, assets: {
+function checkEnd(
+  doc: jsPDF,
+  y: number,
+  contentSize: number = 0,
+  assets: {
     poppinsRegular?: string | undefined;
     poppinsBold?: string | undefined;
     poppinsItalic?: string | undefined;
     watermark?: string | undefined;
     euLogo?: string | undefined;
     spaceSuiteLogo?: string | undefined;
-  }): number {
+  },
+): number {
   if (y + contentSize > 270) {
     renderFooter(doc, assets);
     doc.addPage();
     addWatermark(doc, assets.watermark || '');
+
     return 20;
   }
+
   return y;
 }
 
@@ -342,7 +405,17 @@ function addWatermark(doc: jsPDF, watermark: string): void {
   if (watermark) {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    doc.addImage(watermark, 'PNG', 0, 0, pageWidth, pageHeight, undefined, 'FAST');
+
+    doc.addImage(
+      watermark,
+      'PNG',
+      0,
+      0,
+      pageWidth,
+      pageHeight,
+      undefined,
+      'FAST',
+    );
   }
 }
 
@@ -350,30 +423,38 @@ function buildFilename(p: UserPortfolio): string {
   return `${p.fullName.replace(/\s+/g, '_')}_Portfolio.pdf`;
 }
 
-function itemContent(doc: jsPDF, item: PortfolioItem, y: number, assets: {
+function itemContent(
+  doc: jsPDF,
+  item: PortfolioItem,
+  y: number,
+  assets: {
     poppinsRegular?: string | undefined;
     poppinsBold?: string | undefined;
     poppinsItalic?: string | undefined;
     watermark?: string | undefined;
     euLogo?: string | undefined;
     spaceSuiteLogo?: string | undefined;
-  }): number {
+  },
+): number {
   y += 4 * 1.35;
   y = checkEnd(doc, y, 0, assets);
+
   doc.setFont('Poppins', 'bold').setFontSize(10);
   doc.text(item.title, 20, y);
-  
+
   y += 4 * 1.35;
   y = checkEnd(doc, y, 0, assets);
+
   doc.setFont('Poppins', 'italic');
+
   let date: string = item.startDate.toLocaleDateString() + ' - ';
-  if (item.endDate !== null && item.endDate != undefined) {
+
+  if (item.endDate !== null && item.endDate != undefined)
     date += item.endDate.toLocaleDateString();
-  } else{
-    date += 'current';
-  }
+  else date += 'current';
+
   doc.text(date, 20, y);
-  doc.setFont('Poppins', 'normal')
+  doc.setFont('Poppins', 'normal');
 
   y += 4 * 1.35;
   y = checkEnd(doc, y, 0, assets);
@@ -391,61 +472,84 @@ function itemContent(doc: jsPDF, item: PortfolioItem, y: number, assets: {
   }
 
   y += 2 * 1.35;
-  
+
   if (item.description) {
     y += 4 * 1.35;
+
     const lines = doc.splitTextToSize(item.description, 170);
     const linesSize = lines.length * 4 * 1.35;
+
     y = checkEnd(doc, y, linesSize, assets);
     doc.text(lines, 20, y);
     y += linesSize;
   }
 
-  const knowledge = item.hardSkills.concat(formatFirestoreConcepts(item.bokConcepts));
+  const knowledge = item.bokConcepts.concat(item.hardSkills);
 
-  if (knowledge && knowledge.length != 0) {
+  if (knowledge.length != 0) {
     y += 4 * 1.35;
-    y = checkEnd(doc, y, 0, assets);
+
     doc.setFont('Poppins', 'italic');
     doc.text('Knowledge:', 20, y);
-    doc.setFont('Poppins', 'normal')
+    doc.setFont('Poppins', 'normal');
+
     y += 4 * 1.35;
-    const lines = doc.splitTextToSize(knowledge.join('; ') + '.', 170);
-    const linesSize = lines.length * 4 * 1.35;
-    y = checkEnd(doc, y, linesSize, assets);
-    doc.text(lines, 20, y);
-    y += linesSize;
+
+    knowledge.forEach((concept) => {
+      const lines = doc.splitTextToSize(concept, 170);
+
+      for (let i = 0; i < lines.length; i++) {
+        if (i == 0) lines[i] = '• ' + lines[i];
+        else lines[i] = '   ' + lines[i];
+      }
+
+      const linesSize = lines.length * 4 * 1.35;
+      y = checkEnd(doc, y, linesSize, assets);
+
+      const match = concept.match(/^\[([^\]]+)\]/);
+
+      if (match) {
+        doc.setTextColor('#3fb3f8');
+        doc.textWithLink(lines, 20, y, {
+          url: 'https://geospacebok.eu/' + match[1],
+        });
+        doc.setTextColor('#0e145d');
+      } else doc.text(lines, 20, y);
+
+      y += linesSize;
+    });
   }
 
-  if (item.softSkills && item.softSkills.length != 0) {
+  if (item.softSkills.length != 0) {
     y += 4 * 1.35;
-    y = checkEnd(doc, y, 0 , assets);
+    y = checkEnd(doc, y, 0, assets);
+
     doc.setFont('Poppins', 'italic');
     doc.text('Transversal Skills:', 20, y);
-    doc.setFont('Poppins', 'normal')
+    doc.setFont('Poppins', 'normal');
+
     y += 4 * 1.35;
+
     const lines = doc.splitTextToSize(item.softSkills.join('; ') + '.', 170);
     const linesSize = lines.length * 4 * 1.35;
+
     y = checkEnd(doc, y, linesSize, assets);
+
     doc.text(lines, 20, y);
+
     y += linesSize;
   }
 
   if (item.link) {
     y += 4 * 1.35;
     y = checkEnd(doc, y, 0, assets);
+
     doc.setTextColor('#3fb3f8');
     doc.textWithLink(item.link, 20, y, { url: item.link });
     doc.setTextColor('#0e145d');
+
     y += 4 * 1.35;
   }
 
   return y;
-}
-
-function formatFirestoreConcepts(concepts: string[]): string[] {
-  const regex = /\]\s*(.*)$/;
-  return concepts
-    .map(concept => concept.match(regex)?.[1])
-    .filter(Boolean) as string[];
 }
