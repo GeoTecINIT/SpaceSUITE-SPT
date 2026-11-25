@@ -64,6 +64,8 @@ body {
 .custom-select {
     --p-select-hover-border-color: var(--hover-color);
     --p-select-focus-border-color: var(--hover-color);
+    --p-inputtext-focus-border-color: var(--hover-color);
+    --p-inputtext-hover-border-color: var(--hover-color);
 }
 
 .invalid-select {
