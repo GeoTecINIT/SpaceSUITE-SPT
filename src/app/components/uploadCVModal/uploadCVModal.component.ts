@@ -8,13 +8,14 @@ import { EuropassService } from '../../services/europass.service';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { ImageModule } from 'primeng/image';
+import { ImageEscapeFirstDirective } from '../../directives/imageEscapeFirst.directive';
 
 @Component({
   standalone: true,
   selector: 'upload-cv-modal',
   templateUrl: './uploadCVModal.component.html',
   styleUrls: ['./uploadCVModal.component.css'],
-  imports: [DialogModule, FileUploadModule, ProgressBarModule, CommonModule, ButtonModule, ImageModule],
+  imports: [DialogModule, FileUploadModule, ProgressBarModule, CommonModule, ButtonModule, ImageModule, ImageEscapeFirstDirective],
 })
 export class UploadCVModalComponent {
   @Input() visible: boolean = false;
