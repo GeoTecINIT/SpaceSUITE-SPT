@@ -172,7 +172,7 @@ export class PortfolioFormComponent {
       this.messageService.add({ 
         severity: 'error', 
         summary: 'Error', 
-        detail: 'There are incomplete mandatory fields. Please review the form and try to submit again.', 
+        detail: 'There are incomplete mandatory fields. Please review the form and try to save again.', 
         life: 3000, 
         closable: true 
       });
